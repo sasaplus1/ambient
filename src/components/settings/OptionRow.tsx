@@ -1,9 +1,10 @@
-export type Option<T extends string> = {
+/** Numbers are allowed as well as strings, so a count keeps its own type */
+export type Option<T extends string | number> = {
   value: T;
   label: string;
 };
 
-type OptionRowProps<T extends string> = {
+type OptionRowProps<T extends string | number> = {
   label: string;
   options: readonly Option<T>[];
   selected: T;
@@ -15,7 +16,7 @@ type OptionRowProps<T extends string> = {
  * A select element is avoided because the native picker is awkward on a small
  * screen.
  */
-export function OptionRow<T extends string>({
+export function OptionRow<T extends string | number>({
   label,
   options,
   selected,
