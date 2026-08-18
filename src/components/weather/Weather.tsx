@@ -44,7 +44,7 @@ export function Weather() {
 
   const temperatureText =
     unit === 'both'
-      ? `${show('celsius')} / ${show('fahrenheit')}`
+      ? `${show('celsius')} ${show('fahrenheit')}`
       : show(unit);
   const condition = t(`condition.${conditionFor(reading.weatherCode)}`);
 
