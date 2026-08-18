@@ -16,6 +16,13 @@ body {
 }
 
 .dashboard {
+  /*
+   * The minimum separation between widgets, and the same value again as the
+   * horizontal padding. space-evenly then shares out what is left in equal
+   * parts, so the margin at each edge ends up matching the gap in the middle.
+   */
+  --widget-gap: clamp(0.75rem, 4vmin, 3rem);
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -23,9 +30,10 @@ body {
   width: 100%;
   min-height: 100dvh;
 
-  padding: clamp(0.75rem, 3vmin, 2.5rem);
   padding-top: max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-top));
   padding-bottom: max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-bottom));
+  padding-left: max(var(--widget-gap), env(safe-area-inset-left));
+  padding-right: max(var(--widget-gap), env(safe-area-inset-right));
 }
 
 /*
@@ -42,7 +50,7 @@ body {
   justify-content: center;
 
   width: 100%;
-  gap: clamp(0.75rem, 4vmin, 3rem);
+  gap: var(--widget-gap);
 }
 
 .dashboard__clock-group {
@@ -59,12 +67,16 @@ body {
 }
 
 @media (orientation: landscape) {
+  /*
+   * space-evenly, so the margin at each edge matches the gap between the clock
+   * and the calendar. space-around would only give half of it at the edges, and
+   * space-between none at all.
+   *
+   * With the calendar off there is a single block, which the same rule centres
+   * - no special case needed.
+   */
   .dashboard__widgets {
     flex-direction: row;
-  }
-
-  /* Two blocks, so let them take opposite edges of the screen */
-  .dashboard__widgets[data-split='true'] {
-    justify-content: space-between;
+    justify-content: space-evenly;
   }
 }
