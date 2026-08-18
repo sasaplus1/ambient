@@ -360,7 +360,7 @@ export const THEMES: readonly Theme[] = [
   },
 ] as const;
 
-export const DEFAULT_THEME = 'dark';
+export const DEFAULT_THEME = 'midnight';
 
 export function findTheme(id: string): Theme | undefined {
   return THEMES.find((theme) => theme.id === id);

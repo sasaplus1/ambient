@@ -18,37 +18,37 @@
 @property --bg {
   syntax: '<color>';
   inherits: true;
-  initial-value: #121214;
+  initial-value: #05070d;
 }
 
 @property --fg {
   syntax: '<color>';
   inherits: true;
-  initial-value: #ececf0;
+  initial-value: #e9edf6;
 }
 
 @property --fg-secondary {
   syntax: '<color>';
   inherits: true;
-  initial-value: #8e8e93;
+  initial-value: #8f9bb3;
 }
 
 @property --fg-tertiary {
   syntax: '<color>';
   inherits: true;
-  initial-value: #5a5a5f;
+  initial-value: #525c70;
 }
 
 @property --accent {
   syntax: '<color>';
   inherits: true;
-  initial-value: #0a84ff;
+  initial-value: #5aa9ff;
 }
 
 @property --surface {
   syntax: '<color>';
   inherits: true;
-  initial-value: #1e1e21;
+  initial-value: #111725;
 }
 
 :root {
