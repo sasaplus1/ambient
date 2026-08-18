@@ -1,0 +1,30 @@
+/*
+ * Behind the user's background image, which sits at -1, and behind everything
+ * else. Out of the flow, so it never affects layout.
+ */
+.theme-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+
+  pointer-events: none;
+}
+
+.theme-backdrop__layer {
+  position: absolute;
+  inset: 0;
+
+  background-size: cover;
+  opacity: 0;
+  transition: opacity var(--theme-fade) ease;
+}
+
+.theme-backdrop__layer[data-front='true'] {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-backdrop__layer {
+    transition: none;
+  }
+}

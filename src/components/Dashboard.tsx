@@ -10,6 +10,7 @@ import { DateDisplay } from './DateDisplay';
 import { DebugOverlay } from './debug/DebugOverlay';
 import { SettingsButton } from './settings/SettingsButton';
 import { SettingsOverlay } from './settings/SettingsOverlay';
+import { ThemeBackdrop } from './ThemeBackdrop';
 import { Weather } from './weather/Weather';
 
 export function Dashboard() {
@@ -47,6 +48,7 @@ export function Dashboard() {
 
   return (
     <div class="dashboard">
+      <ThemeBackdrop />
       <Background />
 
       <div class="dashboard__widgets">

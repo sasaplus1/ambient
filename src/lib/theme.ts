@@ -399,7 +399,6 @@ export function applyThemeTo(theme: Theme, element: HTMLElement): void {
   element.style.setProperty('--surface', colors.surface);
   element.style.setProperty('--surface-border', colors.surfaceBorder);
   element.style.setProperty('--scrim', colors.scrim);
-  element.style.setProperty('--theme-gradient', colors.gradient ?? 'none');
   element.style.setProperty('color-scheme', theme.tone);
 }
 

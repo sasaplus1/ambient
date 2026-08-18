@@ -9,30 +9,76 @@
  * --accent       the single accent colour, such as highlighting today
  */
 
+/*
+ * Registered as colours so they can be transitioned. A custom property is a
+ * string to the engine unless it is declared, and a string cannot be
+ * interpolated - so without this the text would snap to the new theme while the
+ * background behind it was still fading.
+ */
+@property --bg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #121214;
+}
+
+@property --fg {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #ececf0;
+}
+
+@property --fg-secondary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #8e8e93;
+}
+
+@property --fg-tertiary {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #5a5a5f;
+}
+
+@property --accent {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #0a84ff;
+}
+
+@property --surface {
+  syntax: '<color>';
+  inherits: true;
+  initial-value: #1e1e21;
+}
+
 :root {
   color-scheme: dark;
 
-  --bg: #121214;
-  --fg: #ececf0;
-  --fg-secondary: #8e8e93;
-  --fg-tertiary: #5a5a5f;
-  --accent: #0a84ff;
-
-  --surface: #1e1e21;
   --surface-border: rgb(255 255 255 / 0.12);
   --scrim: rgb(0 0 0 / 0.6);
 
-  --theme-gradient: none;
+  /* How long a theme change takes; the backdrop fades over the same span */
+  --theme-fade: 1200ms;
+
+  transition:
+    --bg var(--theme-fade) ease,
+    --fg var(--theme-fade) ease,
+    --fg-secondary var(--theme-fade) ease,
+    --fg-tertiary var(--theme-fade) ease,
+    --accent var(--theme-fade) ease,
+    --surface var(--theme-fade) ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --theme-fade: 1ms;
+  }
 }
 
 /*
- * The gradient belongs to the theme, so it is painted here rather than by the
- * background widget - which is only ever about a picture the user supplied.
- * Fixed, so it covers the viewport rather than repeating down a taller page.
+ * Only the flat colour here. The gradient belongs to the theme too, but it is
+ * painted by ThemeBackdrop, which can cross-fade one into the next.
  */
 body {
   background-color: var(--bg);
-  background-image: var(--theme-gradient);
-  background-attachment: fixed;
-  background-size: cover;
 }

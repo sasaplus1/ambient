@@ -3,6 +3,7 @@ import { settings, updateSettings } from '../../state/settings';
 import { Calendar } from '../Calendar';
 import { Clock } from '../clock/Clock';
 import { DateDisplay } from '../DateDisplay';
+import { ThemeBackdrop } from '../ThemeBackdrop';
 import { Weather } from '../weather/Weather';
 
 /**
@@ -53,6 +54,7 @@ export function SettingsPreview() {
         <div class="settings-preview__frame" aria-hidden="true">
           <div class="settings-preview__stage">
             <div class="dashboard">
+              <ThemeBackdrop />
               <div class="dashboard__widgets">
                 {clockType === 'analog' ? (
                   <>
