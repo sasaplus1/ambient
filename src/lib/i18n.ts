@@ -45,23 +45,17 @@ const DICTIONARY = {
   'settings.close': { ja: '閉じる', en: 'Close' },
   'settings.reset': { ja: '初期化', en: 'Reset' },
 
-  'section.display': { ja: '表示', en: 'Display' },
   'section.clock': { ja: '時計', en: 'Clock' },
   'section.date': { ja: '日付', en: 'Date' },
   'section.calendar': { ja: 'カレンダー', en: 'Calendar' },
   'section.weather': { ja: '天気', en: 'Weather' },
   'section.background': { ja: '背景', en: 'Background' },
   'section.debug': { ja: 'デバッグ', en: 'Debug' },
-  'section.typography': { ja: '文字', en: 'Type' },
   'section.theme': { ja: 'テーマ', en: 'Theme' },
   'section.language': { ja: '言語', en: 'Language' },
 
-  'widget.clock': { ja: '時計', en: 'Clock' },
-  'widget.date': { ja: '日付', en: 'Date' },
-
   'date.format': { ja: '表記', en: 'Format' },
 
-  'widget.calendar': { ja: 'カレンダー', en: 'Calendar' },
   'calendar.weekStart': { ja: '週の始まり', en: 'Week starts on' },
   'weekStart.sunday': { ja: '日曜', en: 'Sunday' },
   'weekStart.monday': { ja: '月曜', en: 'Monday' },
@@ -93,8 +87,6 @@ const DICTIONARY = {
   'language.auto': { ja: '自動', en: 'Auto' },
   'language.ja': { ja: '日本語', en: '日本語' },
   'language.en': { ja: 'English', en: 'English' },
-
-  'widget.weather': { ja: '天気', en: 'Weather' },
 
   'weather.noLocation': { ja: '地点が未設定です', en: 'No location set' },
   'weather.loading': { ja: '取得中', en: 'Loading' },
@@ -133,20 +125,15 @@ const DICTIONARY = {
   'backgroundFit.contain': { ja: '全体を入れる', en: 'Contain' },
   'backgroundFit.fill': { ja: '引き伸ばす', en: 'Stretch' },
 
+  'widget.visible': { ja: '表示', en: 'Show' },
   'type.scale': { ja: '全体の大きさ', en: 'Overall size' },
-  'type.scale.clock': { ja: '時計の大きさ', en: 'Clock size' },
-  'type.scale.date': { ja: '日付の大きさ', en: 'Date size' },
-  'type.scale.weather': { ja: '天気の大きさ', en: 'Weather size' },
-  'type.scale.calendar': { ja: 'カレンダーの大きさ', en: 'Calendar size' },
+  'type.size': { ja: '大きさ', en: 'Size' },
+  'type.face': { ja: '書体', en: 'Face' },
   'textScale.s': { ja: '小', en: 'S' },
   'textScale.m': { ja: '中', en: 'M' },
   'textScale.l': { ja: '大', en: 'L' },
   'textScale.xl': { ja: '最大', en: 'XL' },
 
-  'type.font.clock': { ja: '時計の書体', en: 'Clock face' },
-  'type.font.date': { ja: '日付の書体', en: 'Date face' },
-  'type.font.weather': { ja: '天気の書体', en: 'Weather face' },
-  'type.font.calendar': { ja: 'カレンダーの書体', en: 'Calendar face' },
   'font.sans': { ja: 'ゴシック', en: 'Sans' },
   'font.serif': { ja: '明朝', en: 'Serif' },
   'font.mono': { ja: '等幅', en: 'Mono' },

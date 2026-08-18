@@ -14,13 +14,7 @@ import {
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
 import { THEMES, themeLabel, type Theme } from '../../lib/theme';
-import {
-  FONT_FAMILIES,
-  FONT_TARGETS,
-  TEXT_SCALES,
-  type FontFamily,
-  type TextScale,
-} from '../../lib/typography';
+import { TEXT_SCALES, type TextScale } from '../../lib/typography';
 import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
@@ -29,6 +23,7 @@ import { BackgroundRow } from './BackgroundRow';
 import { LocationRow } from './LocationRow';
 import { OptionRow, type Option } from './OptionRow';
 import { ToggleRow } from './ToggleRow';
+import { WidgetSection } from './WidgetSection';
 
 import './settings.css';
 
@@ -96,13 +91,6 @@ function textScaleOptions(): readonly Option<TextScale>[] {
   }));
 }
 
-function fontOptions(): readonly Option<FontFamily>[] {
-  return FONT_FAMILIES.map((value) => ({
-    value,
-    label: t(`font.${value}`),
-  }));
-}
-
 function logLevelOptions(): readonly Option<LogLevel>[] {
   return LOG_LEVELS.map((value) => ({
     value,
@@ -122,11 +110,11 @@ type SettingsOverlayProps = {
 };
 
 /**
- * Every setting sits on one scrolling page.
+ * Every setting sits on one scrolling page, grouped by what it affects.
  *
- * Options that only apply to the clock you are not using are left out rather
- * than shown inert, which keeps the list about as short as a second level would
- * have without hiding anything behind a tap.
+ * Each widget owns its whole section - whether it shows, how it behaves, and
+ * how its type looks - so there is one place to go per widget rather than the
+ * same widget appearing under several headings.
  */
 export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
   const current = settings.value;
@@ -169,112 +157,93 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
       </header>
 
       <div class="settings-overlay__body">
-        <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.display')}</h2>
-          <div class="settings-section__items">
-            <ToggleRow
-              label={t('widget.clock')}
-              checked={current.showClock}
-              onChange={(showClock) => updateSettings({ showClock })}
-            />
-            <ToggleRow
-              label={t('widget.date')}
-              checked={current.showDate}
-              onChange={(showDate) => updateSettings({ showDate })}
-            />
-            <ToggleRow
-              label={t('widget.weather')}
-              checked={current.showWeather}
-              onChange={(showWeather) => updateSettings({ showWeather })}
-            />
-            <ToggleRow
-              label={t('widget.calendar')}
-              checked={current.showCalendar}
-              onChange={(showCalendar) => updateSettings({ showCalendar })}
-            />
-          </div>
-        </section>
+        <WidgetSection
+          target="clock"
+          title={t('section.clock')}
+          visible={current.showClock}
+          onVisibleChange={(showClock) => updateSettings({ showClock })}
+        >
+          <OptionRow
+            label={t('clock.type')}
+            options={clockTypeOptions()}
+            selected={current.clockType}
+            onChange={(clockType) => updateSettings({ clockType })}
+          />
 
-        <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.clock')}</h2>
-          <div class="settings-section__items">
-            <OptionRow
-              label={t('clock.type')}
-              options={clockTypeOptions()}
-              selected={current.clockType}
-              onChange={(clockType) => updateSettings({ clockType })}
-            />
+          {/* Only the options that apply to the clock actually in use */}
+          {current.clockType === 'digital' ? (
+            <>
+              <ToggleRow
+                label={t('clock.hour12')}
+                checked={current.hour12}
+                onChange={(hour12) => updateSettings({ hour12 })}
+              />
+              <ToggleRow
+                label={t('clock.showSeconds')}
+                checked={current.showSeconds}
+                onChange={(showSeconds) => updateSettings({ showSeconds })}
+              />
+            </>
+          ) : (
+            <>
+              <OptionRow
+                label={t('clock.secondHand')}
+                options={secondHandOptions()}
+                selected={current.secondHand}
+                onChange={(secondHand) => updateSettings({ secondHand })}
+              />
+              <OptionRow
+                label={t('clock.dial')}
+                options={numeralsOptions()}
+                selected={current.analogNumerals}
+                onChange={(analogNumerals) => updateSettings({ analogNumerals })}
+              />
+            </>
+          )}
+        </WidgetSection>
 
-            {current.clockType === 'digital' ? (
-              <>
-                <ToggleRow
-                  label={t('clock.hour12')}
-                  checked={current.hour12}
-                  onChange={(hour12) => updateSettings({ hour12 })}
-                />
-                <ToggleRow
-                  label={t('clock.showSeconds')}
-                  checked={current.showSeconds}
-                  onChange={(showSeconds) => updateSettings({ showSeconds })}
-                />
-              </>
-            ) : (
-              <>
-                <OptionRow
-                  label={t('clock.secondHand')}
-                  options={secondHandOptions()}
-                  selected={current.secondHand}
-                  onChange={(secondHand) => updateSettings({ secondHand })}
-                />
-                <OptionRow
-                  label={t('clock.dial')}
-                  options={numeralsOptions()}
-                  selected={current.analogNumerals}
-                  onChange={(analogNumerals) =>
-                    updateSettings({ analogNumerals })
-                  }
-                />
-              </>
-            )}
-          </div>
-        </section>
+        <WidgetSection
+          target="date"
+          title={t('section.date')}
+          visible={current.showDate}
+          onVisibleChange={(showDate) => updateSettings({ showDate })}
+        >
+          <OptionRow
+            label={t('date.format')}
+            options={dateFormatOptions(new Date())}
+            selected={current.dateFormat}
+            onChange={(dateFormat) => updateSettings({ dateFormat })}
+          />
+        </WidgetSection>
 
-        <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.date')}</h2>
-          <div class="settings-section__items">
-            <OptionRow
-              label={t('date.format')}
-              options={dateFormatOptions(new Date())}
-              selected={current.dateFormat}
-              onChange={(dateFormat) => updateSettings({ dateFormat })}
-            />
-          </div>
-        </section>
+        <WidgetSection
+          target="weather"
+          title={t('section.weather')}
+          visible={current.showWeather}
+          onVisibleChange={(showWeather) => updateSettings({ showWeather })}
+        >
+          <LocationRow />
+        </WidgetSection>
 
-        <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.weather')}</h2>
-          <div class="settings-section__items">
-            <LocationRow />
-          </div>
-        </section>
-
-        <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.calendar')}</h2>
-          <div class="settings-section__items">
-            <OptionRow
-              label={t('calendar.weekStart')}
-              options={weekStartOptions()}
-              selected={current.weekStart}
-              onChange={(weekStart) => updateSettings({ weekStart })}
-            />
-            <OptionRow
-              label={t('calendar.adjacentDays')}
-              options={adjacentDaysOptions()}
-              selected={current.adjacentDays}
-              onChange={(adjacentDays) => updateSettings({ adjacentDays })}
-            />
-          </div>
-        </section>
+        <WidgetSection
+          target="calendar"
+          title={t('section.calendar')}
+          visible={current.showCalendar}
+          onVisibleChange={(showCalendar) => updateSettings({ showCalendar })}
+        >
+          <OptionRow
+            label={t('calendar.weekStart')}
+            options={weekStartOptions()}
+            selected={current.weekStart}
+            onChange={(weekStart) => updateSettings({ weekStart })}
+          />
+          <OptionRow
+            label={t('calendar.adjacentDays')}
+            options={adjacentDaysOptions()}
+            selected={current.adjacentDays}
+            onChange={(adjacentDays) => updateSettings({ adjacentDays })}
+          />
+        </WidgetSection>
 
         <section class="settings-section">
           <h2 class="settings-section__title">{t('section.theme')}</h2>
@@ -285,44 +254,13 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
               selected={current.theme}
               onChange={(theme) => updateSettings({ theme })}
             />
-          </div>
-        </section>
-
-        <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.typography')}</h2>
-          <div class="settings-section__items">
+            {/* Scales the whole dashboard; the per-widget sizes stack on top */}
             <OptionRow
               label={t('type.scale')}
               options={textScaleOptions()}
               selected={current.textScale}
               onChange={(textScale) => updateSettings({ textScale })}
             />
-            {FONT_TARGETS.map((target) => (
-              <OptionRow
-                key={`scale-${target}`}
-                label={t(`type.scale.${target}`)}
-                options={textScaleOptions()}
-                selected={current.scales[target]}
-                onChange={(scale) =>
-                  updateSettings({
-                    scales: { ...current.scales, [target]: scale },
-                  })
-                }
-              />
-            ))}
-            {FONT_TARGETS.map((target) => (
-              <OptionRow
-                key={`font-${target}`}
-                label={t(`type.font.${target}`)}
-                options={fontOptions()}
-                selected={current.fonts[target]}
-                onChange={(family) =>
-                  updateSettings({
-                    fonts: { ...current.fonts, [target]: family },
-                  })
-                }
-              />
-            ))}
           </div>
         </section>
 
