@@ -7,8 +7,16 @@
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
     <meta name="color-scheme" content="dark light" />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#121214" />
     <title>Ambient Dashboard</title>
+
+    <!--
+      No service worker. A manifest alone satisfies the install criteria, so
+      giving up offline startup avoids a stale cache lodging on the device.
+    -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
   </head>
   <body>
     <div id="app"></div>
