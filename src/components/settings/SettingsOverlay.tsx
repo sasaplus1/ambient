@@ -223,10 +223,24 @@ export function SettingsOverlay({
 
     return () => {
       document.removeEventListener('keydown', onKeyDown);
-      // Leave the miniature standing in the present for next time
-      previewHour.value = null;
     };
   }, [onClose]);
+
+  /*
+   * Leave the miniature standing in the present for next time.
+   *
+   * On its own, and with no dependencies, because it belongs to the lifetime of
+   * this panel and nothing else. Sharing the effect above meant it also ran
+   * whenever onClose arrived as a new function - which is every render of the
+   * dashboard behind it, four seconds after the last touch among them. Playing
+   * the day would drop back to the current hour partway through.
+   */
+  useEffect(
+    () => () => {
+      previewHour.value = null;
+    },
+    [],
+  );
 
   return (
     <div
