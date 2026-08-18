@@ -65,7 +65,8 @@ export function Dashboard() {
         )}
       </div>
 
-      {showDebug && <DebugOverlay />}
+      {/* Hidden while the settings are open: it would cover the rows behind it */}
+      {showDebug && !settingsOpen && <DebugOverlay />}
 
       {settingsOpen ? (
         <SettingsOverlay onClose={() => setSettingsOpen(false)} />
