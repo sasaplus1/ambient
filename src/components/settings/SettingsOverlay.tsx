@@ -26,6 +26,7 @@ import {
   type ThemeMode,
 } from '../../types';
 
+import { AboutRow } from './AboutRow';
 import { BackgroundRow } from './BackgroundRow';
 import { LocationRow } from './LocationRow';
 import { OptionRow, type Option } from './OptionRow';
@@ -376,6 +377,13 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                 </button>
               </>
             )}
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.about')}</h2>
+          <div class="settings-section__items">
+            <AboutRow />
           </div>
         </section>
       </div>

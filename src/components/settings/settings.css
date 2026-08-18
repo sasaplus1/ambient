@@ -395,3 +395,9 @@
 .setting-actions--inline {
   padding: 0.5rem 0 0;
 }
+
+/* Link rows carry the row styling but should not read as accent-coloured text */
+a.setting-row {
+  color: inherit;
+  text-decoration: none;
+}

@@ -53,6 +53,7 @@ const DICTIONARY = {
   'section.weather': { ja: '天気', en: 'Weather' },
   'section.background': { ja: '背景', en: 'Background' },
   'section.debug': { ja: 'デバッグ', en: 'Debug' },
+  'section.about': { ja: 'この時計について', en: 'About' },
   'section.theme': { ja: 'テーマ', en: 'Theme' },
   'section.language': { ja: '言語', en: 'Language' },
 
@@ -161,6 +162,13 @@ const DICTIONARY = {
   'logLevel.info': { ja: 'INFO', en: 'INFO' },
   'logLevel.warn': { ja: 'WARN', en: 'WARN' },
   'logLevel.error': { ja: 'ERROR', en: 'ERROR' },
+
+  'about.repository': { ja: 'リポジトリ', en: 'Repository' },
+  'about.site': { ja: '公開先', en: 'Live site' },
+  'about.build': { ja: 'ビルド', en: 'Build' },
+  'about.weatherData': { ja: '天気データ', en: 'Weather data' },
+  'about.weatherLicence': { ja: '天気データの利用条件', en: 'Weather data licence' },
+  'about.licence': { ja: 'ライセンス', en: 'Licence' },
 
   'ambient.start': { ja: '常時表示モードを開始', en: 'Start always-on mode' },
   'ambient.stop': { ja: '常時表示モードを終了', en: 'Stop always-on mode' },
