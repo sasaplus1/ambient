@@ -2,8 +2,10 @@ import { useEffect } from 'preact/hooks';
 
 import {
   ADJACENT_DAYS,
+  DAY_NUMERALS,
   WEEK_STARTS,
   type AdjacentDays,
+  type DayNumerals,
   type WeekStart,
 } from '../../lib/calendar';
 import {
@@ -14,6 +16,10 @@ import {
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
 import { TIME_BANDS, bandStartHour, type TimeBand } from '../../lib/schedule';
+import {
+  TEMPERATURE_UNITS,
+  type TemperatureUnitSetting,
+} from '../../lib/temperature';
 import { THEMES } from '../../lib/theme';
 import { locale, t } from '../../state/locale';
 import { previewHour } from '../../state/theme';
@@ -62,7 +68,15 @@ function numeralsOptions(): readonly Option<AnalogNumerals>[] {
     { value: 'ticks', label: t('numerals.ticks') },
     { value: 'arabic', label: t('numerals.arabic') },
     { value: 'roman', label: t('numerals.roman') },
+    { value: 'kanji', label: t('numerals.kanji') },
   ];
+}
+
+function dayNumeralsOptions(): readonly Option<DayNumerals>[] {
+  return DAY_NUMERALS.map((value) => ({
+    value,
+    label: t(`dayNumerals.${value}`),
+  }));
 }
 
 /**
@@ -138,6 +152,13 @@ function ThemeGrid({
 
 function bandLabel(band: TimeBand): string {
   return `${t(`timeBand.${band}`)} ${bandStartHour(band)}:00-`;
+}
+
+function temperatureUnitOptions(): readonly Option<TemperatureUnitSetting>[] {
+  return TEMPERATURE_UNITS.map((value) => ({
+    value,
+    label: t(`temperatureUnit.${value}`),
+  }));
 }
 
 function logLevelOptions(): readonly Option<LogLevel>[] {
@@ -288,6 +309,12 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
           onVisibleChange={(showWeather) => updateSettings({ showWeather })}
         >
           <LocationRow />
+          <OptionRow
+            label={t('weather.unit')}
+            options={temperatureUnitOptions()}
+            selected={current.temperatureUnit}
+            onChange={(temperatureUnit) => updateSettings({ temperatureUnit })}
+          />
         </WidgetSection>
 
         <WidgetSection
@@ -301,6 +328,12 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             options={weekStartOptions()}
             selected={current.weekStart}
             onChange={(weekStart) => updateSettings({ weekStart })}
+          />
+          <OptionRow
+            label={t('calendar.dayNumerals')}
+            options={dayNumeralsOptions()}
+            selected={current.dayNumerals}
+            onChange={(dayNumerals) => updateSettings({ dayNumerals })}
           />
           <OptionRow
             label={t('calendar.adjacentDays')}

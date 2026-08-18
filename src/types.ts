@@ -1,7 +1,8 @@
-import type { AdjacentDays, WeekStart } from './lib/calendar';
+import type { AdjacentDays, DayNumerals, WeekStart } from './lib/calendar';
 import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
 import type { LogLevel } from './lib/logger';
+import type { TemperatureUnitSetting } from './lib/temperature';
 import type { TimeBand } from './lib/schedule';
 import type { FontFamily, FontTarget, TextScale } from './lib/typography';
 
@@ -11,7 +12,13 @@ export type ClockType = (typeof CLOCK_TYPES)[number];
 export const SECOND_HANDS = ['none', 'step', 'sweep'] as const;
 export type SecondHand = (typeof SECOND_HANDS)[number];
 
-export const ANALOG_NUMERALS = ['none', 'ticks', 'arabic', 'roman'] as const;
+export const ANALOG_NUMERALS = [
+  'none',
+  'ticks',
+  'arabic',
+  'roman',
+  'kanji',
+] as const;
 export type AnalogNumerals = (typeof ANALOG_NUMERALS)[number];
 
 export const BACKGROUND_FITS = ['cover', 'contain', 'fill'] as const;
@@ -33,12 +40,16 @@ export type Settings = {
   dateFormat: DateFormat;
 
   showWeather: boolean;
+  /** 'auto' follows the browser's region */
+  temperatureUnit: TemperatureUnitSetting;
 
   showCalendar: boolean;
   /** Which day the calendar's week begins on */
   weekStart: WeekStart;
   /** Whether the days either side of the month are dimmed or hidden */
   adjacentDays: AdjacentDays;
+  /** Which numerals the calendar's days are written in */
+  dayNumerals: DayNumerals;
 
   clockType: ClockType;
 

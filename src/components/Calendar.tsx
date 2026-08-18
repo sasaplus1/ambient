@@ -1,5 +1,6 @@
 import { useNow } from '../hooks/useNow';
 import { monthGrid, weekdayLabels } from '../lib/calendar';
+import { kanjiNumber } from '../lib/kanjiNumber';
 import { fontClass, scaleStyle } from '../state/typography';
 import { locale } from '../state/locale';
 import { settings } from '../state/settings';
@@ -11,13 +12,17 @@ export function Calendar() {
   // every second like the clock does.
   const today = useNow('day');
 
-  const { weekStart, adjacentDays } = settings.value;
+  const { weekStart, adjacentDays, dayNumerals } = settings.value;
   const tag = locale.value;
 
   const cells = monthGrid(today, weekStart);
 
   return (
-    <div class={`calendar ${fontClass('calendar')}`} style={scaleStyle('calendar')}>
+    <div
+      class={`calendar ${fontClass('calendar')}`}
+      style={scaleStyle('calendar')}
+      data-numerals={dayNumerals}
+    >
       {/*
         No month heading: the grid is only ever the current month, and the date
         widget already says which one it is.
@@ -39,7 +44,7 @@ export function Calendar() {
             data-hidden={!cell.inMonth && adjacentDays === 'hidden'}
             aria-current={cell.isToday ? 'date' : undefined}
           >
-            {cell.day}
+            {dayNumerals === 'kanji' ? kanjiNumber(cell.day) : cell.day}
           </div>
         ))}
       </div>
