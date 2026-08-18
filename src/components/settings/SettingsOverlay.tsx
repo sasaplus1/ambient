@@ -2,10 +2,8 @@ import { useEffect } from 'preact/hooks';
 
 import {
   ADJACENT_DAYS,
-  DAY_NUMERALS,
   WEEK_STARTS,
   type AdjacentDays,
-  type DayNumerals,
   type WeekStart,
 } from '../../lib/calendar';
 import {
@@ -68,15 +66,7 @@ function numeralsOptions(): readonly Option<AnalogNumerals>[] {
     { value: 'ticks', label: t('numerals.ticks') },
     { value: 'arabic', label: t('numerals.arabic') },
     { value: 'roman', label: t('numerals.roman') },
-    { value: 'kanji', label: t('numerals.kanji') },
   ];
-}
-
-function dayNumeralsOptions(): readonly Option<DayNumerals>[] {
-  return DAY_NUMERALS.map((value) => ({
-    value,
-    label: t(`dayNumerals.${value}`),
-  }));
 }
 
 /**
@@ -328,12 +318,6 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             options={weekStartOptions()}
             selected={current.weekStart}
             onChange={(weekStart) => updateSettings({ weekStart })}
-          />
-          <OptionRow
-            label={t('calendar.dayNumerals')}
-            options={dayNumeralsOptions()}
-            selected={current.dayNumerals}
-            onChange={(dayNumerals) => updateSettings({ dayNumerals })}
           />
           <OptionRow
             label={t('calendar.adjacentDays')}

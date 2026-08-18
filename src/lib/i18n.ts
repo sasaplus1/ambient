@@ -62,9 +62,6 @@ const DICTIONARY = {
   'calendar.weekStart': { ja: '週の始まり', en: 'Week starts on' },
   'weekStart.sunday': { ja: '日曜', en: 'Sunday' },
   'weekStart.monday': { ja: '月曜', en: 'Monday' },
-  'calendar.dayNumerals': { ja: '日付の表記', en: 'Day numerals' },
-  'dayNumerals.arabic': { ja: '数字', en: 'Numbers' },
-  'dayNumerals.kanji': { ja: '大字', en: 'Kanji' },
   'calendar.adjacentDays': { ja: '前後の月', en: 'Adjacent months' },
   'adjacentDays.hidden': { ja: '非表示', en: 'Hidden' },
   'adjacentDays.dimmed': { ja: '薄く表示', en: 'Dimmed' },
@@ -86,7 +83,6 @@ const DICTIONARY = {
   'numerals.ticks': { ja: '目盛り', en: 'Ticks' },
   'numerals.arabic': { ja: '数字', en: 'Numbers' },
   'numerals.roman': { ja: 'ローマ数字', en: 'Roman' },
-  'numerals.kanji': { ja: '大字', en: 'Kanji' },
 
   'theme.mode': { ja: '決め方', en: 'Chosen by' },
   'themeMode.fixed': { ja: '固定', en: 'Fixed' },

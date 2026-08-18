@@ -1,4 +1,3 @@
-import { kanjiNumber } from '../../lib/kanjiNumber';
 import type { AnalogNumerals, SecondHand } from '../../types';
 
 export type ClockColors = {
@@ -72,7 +71,7 @@ function drawNumerals(
   center: number,
   radius: number,
   colors: ClockColors,
-  script: 'arabic' | 'roman' | 'kanji',
+  roman: boolean,
   fontFamily: string,
 ): void {
   ctx.fillStyle = colors.fgSecondary;
@@ -83,13 +82,9 @@ function drawNumerals(
   for (let hour = 0; hour < 12; hour += 1) {
     const angle = angleOf(hour, 12);
     const distance = radius * 0.8;
-    const value = hour === 0 ? 12 : hour;
-    const label =
-      script === 'roman'
-        ? (ROMAN_NUMERALS[hour] ?? '')
-        : script === 'kanji'
-          ? kanjiNumber(value)
-          : String(value);
+    const label = roman
+      ? (ROMAN_NUMERALS[hour] ?? '')
+      : String(hour === 0 ? 12 : hour);
 
     ctx.fillText(
       label,
@@ -144,13 +139,9 @@ export function drawAnalogClock(
 
   if (numerals === 'ticks') {
     drawTicks(ctx, center, radius, colors, 'long');
-  } else if (
-    numerals === 'arabic' ||
-    numerals === 'roman' ||
-    numerals === 'kanji'
-  ) {
+  } else if (numerals === 'arabic' || numerals === 'roman') {
     drawTicks(ctx, center, radius, colors, 'thick');
-    drawNumerals(ctx, center, radius, colors, numerals, fontFamily);
+    drawNumerals(ctx, center, radius, colors, numerals === 'roman', fontFamily);
   }
 
   // Only a sweeping second hand needs sub-second precision

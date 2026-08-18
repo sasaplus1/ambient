@@ -4,15 +4,6 @@ export type WeekStart = (typeof WEEK_STARTS)[number];
 export const ADJACENT_DAYS = ['hidden', 'dimmed'] as const;
 export type AdjacentDays = (typeof ADJACENT_DAYS)[number];
 
-export const DAY_NUMERALS = ['arabic', 'kanji'] as const;
-export type DayNumerals = (typeof DAY_NUMERALS)[number];
-
-export function isDayNumerals(value: unknown): value is DayNumerals {
-  return (
-    typeof value === 'string' && (DAY_NUMERALS as readonly string[]).includes(value)
-  );
-}
-
 export function isWeekStart(value: unknown): value is WeekStart {
   return (
     typeof value === 'string' && (WEEK_STARTS as readonly string[]).includes(value)

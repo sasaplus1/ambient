@@ -61,13 +61,3 @@
   font-weight: 600;
 }
 
-/*
- * 二十六 is three characters where 26 is two, and they run into the next cell.
- * Squeezing them horizontally keeps each day inside its own column while the
- * grid, the circle and the row rhythm all stay put.
- */
-.calendar[data-numerals='kanji'] .calendar__day {
-  font-size: 0.66em;
-  transform: scaleX(0.78);
-  white-space: nowrap;
-}
