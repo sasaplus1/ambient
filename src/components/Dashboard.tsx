@@ -15,8 +15,10 @@ export function Dashboard() {
   return (
     <div class="dashboard">
       <div class="dashboard__widgets">
-        {showClock && <Clock />}
-        {showDate && <DateDisplay />}
+        <div class="dashboard__primary">
+          {showClock && <Clock />}
+          {showDate && <DateDisplay />}
+        </div>
       </div>
 
       {settingsOpen ? (

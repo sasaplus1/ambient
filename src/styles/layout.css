@@ -38,6 +38,17 @@ body {
   gap: clamp(0.5rem, 3vmin, 2rem);
 }
 
+/*
+ * The clock and date form one block, stacked regardless of orientation.
+ * Putting the date beside the clock blurs which of the two leads.
+ */
+.dashboard__primary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(0.25rem, 1.5vmin, 1rem);
+}
+
 @media (orientation: portrait) {
   .dashboard__widgets {
     flex-direction: column;
