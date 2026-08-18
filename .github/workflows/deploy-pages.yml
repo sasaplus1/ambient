@@ -1,0 +1,60 @@
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+# A deploy in flight is left to finish: cancelling one can leave the site
+# serving a half-published build.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+defaults:
+  run:
+    shell: bash
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      # The build stamps in the commit it came from, which needs the git dir
+      - uses: actions/checkout@v7
+
+      # Third party, so pinned to a commit. It reads the version to install
+      # from packageManager in package.json.
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: |
+          set -euo pipefail
+          pnpm install --frozen-lockfile
+          pnpm typecheck
+          pnpm build
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    needs:
+      - build
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v5
