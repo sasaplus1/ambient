@@ -31,6 +31,20 @@
 
   border-radius: 50%;
   font-variant-numeric: tabular-nums;
+
+  /*
+   * Centre the digits by their own shape rather than by the line box.
+   *
+   * A line box is centred on the font's ascent and descent, not on the ink, and
+   * digits have no descender - so the number lands off centre by however much
+   * those metrics disagree. That amount differs per font, which is why it looks
+   * one way here and another on a device using Roboto.
+   *
+   * Trimming to cap height and baseline removes the empty space entirely, so
+   * the circle sits around the number in any font. Browsers without it fall
+   * back to line-box centring, off by well under a pixel.
+   */
+  text-box: trim-both cap alphabetic;
 }
 
 .calendar__day[data-in-month='false'] {
