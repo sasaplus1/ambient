@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'preact/hooks';
 import { applyThemeTo, DEFAULT_THEME, findTheme } from '../../lib/theme';
 import { t } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
+import { Background } from '../Background';
 import { Calendar } from '../Calendar';
 import { Clock } from '../clock/Clock';
 import { DateDisplay } from '../DateDisplay';
@@ -73,6 +74,13 @@ export function SettingsPreview() {
           <div class="settings-preview__stage" ref={stageRef}>
             <div class="dashboard">
               <ThemeBackdrop themeId={themeId} />
+              {/*
+                The scaled stage is the containing block for both backdrops, so
+                the picture lands inside the miniature the same way the theme
+                does - and choosing a fit or a dim can be judged where the
+                choice is being made.
+              */}
+              <Background />
               <div class="dashboard__widgets">
                 {clockType === 'analog' ? (
                   <>
