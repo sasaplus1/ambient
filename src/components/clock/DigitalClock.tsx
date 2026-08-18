@@ -1,4 +1,5 @@
 import { useNow } from '../../hooks/useNow';
+import { fontClass } from '../../state/fonts';
 
 import './DigitalClock.css';
 
@@ -33,7 +34,7 @@ export function DigitalClock({ hour12, showSeconds }: DigitalClockProps) {
   const hours = now.getHours();
 
   return (
-    <div class="digital-clock">
+    <div class={`digital-clock ${fontClass('clock')}`}>
       <span class="digital-clock__time">
         {formatHours(hours, hour12)}
         <Colon />

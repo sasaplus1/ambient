@@ -2,6 +2,7 @@ import type { AdjacentDays, WeekStart } from './lib/calendar';
 import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
 import type { LogLevel } from './lib/logger';
+import type { FontFamily, FontTarget, TextScale } from './lib/typography';
 import type { Theme } from './lib/theme';
 
 export const CLOCK_TYPES = ['digital', 'analog'] as const;
@@ -48,6 +49,11 @@ export type Settings = {
   analogNumerals: AnalogNumerals;
 
   theme: Theme;
+
+  /** Multiplier applied to every widget's type size */
+  textScale: TextScale;
+  /** Typeface per widget, so the clock can differ from the rest */
+  fonts: Record<FontTarget, FontFamily>;
 
   /** How the background image fills the screen */
   backgroundFit: BackgroundFit;

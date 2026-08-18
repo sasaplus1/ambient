@@ -5,7 +5,7 @@
   gap: 0.4em;
 
   color: var(--fg-secondary);
-  font-size: clamp(0.875rem, 4vmin, 2rem);
+  font-size: calc(clamp(1.125rem, 5vmin, 2.75rem) * var(--text-scale, 1));
   line-height: 1;
 }
 
@@ -26,5 +26,5 @@
 
 .weather__placeholder {
   color: var(--fg-tertiary);
-  font-size: clamp(0.75rem, 3vmin, 1.25rem);
+  font-size: calc(clamp(0.875rem, 3.5vmin, 1.5rem) * var(--text-scale, 1));
 }

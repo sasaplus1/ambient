@@ -1,0 +1,46 @@
+/*
+ * Faces come from the device: nothing is downloaded, so the display is right
+ * from the first frame and stays right with no network.
+ *
+ * Each stack names the Apple face, then the Android/LineageOS one, then a
+ * Japanese fallback, then the generic family. Any device resolves at least the
+ * last of these.
+ */
+:root {
+  --font-sans:
+    system-ui, -apple-system, 'Roboto', 'Hiragino Kaku Gothic ProN',
+    'Noto Sans JP', sans-serif;
+
+  --font-serif:
+    ui-serif, 'Times New Roman', 'Noto Serif', 'Hiragino Mincho ProN',
+    'Noto Serif JP', serif;
+
+  --font-mono:
+    ui-monospace, SFMono-Regular, Menlo, 'Roboto Mono', 'Noto Sans Mono',
+    monospace;
+
+  /* Narrower, so a long date or a wide clock keeps more room around it */
+  --font-condensed:
+    'Roboto Condensed', 'Avenir Next Condensed', 'Helvetica Neue Condensed',
+    ui-sans-serif, sans-serif;
+}
+
+/*
+ * Set on each widget from its own setting. The fallback keeps a widget
+ * readable even if the value is somehow missing.
+ */
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+.font-condensed {
+  font-family: var(--font-condensed);
+}

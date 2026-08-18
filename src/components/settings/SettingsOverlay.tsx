@@ -14,6 +14,13 @@ import {
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
 import { THEMES, themeLabel, type Theme } from '../../lib/theme';
+import {
+  FONT_FAMILIES,
+  FONT_TARGETS,
+  TEXT_SCALES,
+  type FontFamily,
+  type TextScale,
+} from '../../lib/typography';
 import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
@@ -82,6 +89,20 @@ function adjacentDaysOptions(): readonly Option<AdjacentDays>[] {
 
 function themeOptions(): readonly Option<Theme>[] {
   return THEMES.map((theme) => ({ value: theme, label: themeLabel(theme) }));
+}
+
+function textScaleOptions(): readonly Option<TextScale>[] {
+  return TEXT_SCALES.map((value) => ({
+    value,
+    label: t(`textScale.${value}`),
+  }));
+}
+
+function fontOptions(): readonly Option<FontFamily>[] {
+  return FONT_FAMILIES.map((value) => ({
+    value,
+    label: t(`font.${value}`),
+  }));
 }
 
 function logLevelOptions(): readonly Option<LogLevel>[] {
@@ -254,6 +275,31 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   selected={current.theme}
                   onChange={(theme) => updateSettings({ theme })}
                 />
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2 class="settings-section__title">{t('section.typography')}</h2>
+              <div class="settings-section__items">
+                <OptionRow
+                  label={t('type.scale')}
+                  options={textScaleOptions()}
+                  selected={current.textScale}
+                  onChange={(textScale) => updateSettings({ textScale })}
+                />
+                {FONT_TARGETS.map((target) => (
+                  <OptionRow
+                    key={target}
+                    label={t(`type.font.${target}`)}
+                    options={fontOptions()}
+                    selected={current.fonts[target]}
+                    onChange={(family) =>
+                      updateSettings({
+                        fonts: { ...current.fonts, [target]: family },
+                      })
+                    }
+                  />
+                ))}
               </div>
             </section>
 

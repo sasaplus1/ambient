@@ -1,5 +1,6 @@
 import { useNow } from '../hooks/useNow';
 import { monthGrid, monthTitle, weekdayLabels } from '../lib/calendar';
+import { fontClass } from '../state/fonts';
 import { locale } from '../state/locale';
 import { settings } from '../state/settings';
 
@@ -16,7 +17,7 @@ export function Calendar() {
   const cells = monthGrid(today, weekStart);
 
   return (
-    <div class="calendar">
+    <div class={`calendar ${fontClass('calendar')}`}>
       <div class="calendar__title">{monthTitle(tag, today)}</div>
 
       <div class="calendar__grid" role="grid">

@@ -4,6 +4,14 @@ import { isAdjacentDays, isWeekStart } from '../lib/calendar';
 import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
 import { isLogLevel } from '../lib/logger';
+import {
+  FONT_TARGETS,
+  isFontFamily,
+  isTextScale,
+  scaleFactor,
+  type FontFamily,
+  type FontTarget,
+} from '../lib/typography';
 import { loadRecord, saveRecord } from '../lib/storage';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
 import {
@@ -41,6 +49,13 @@ export const DEFAULT_SETTINGS: Settings = {
   secondHand: 'sweep',
   analogNumerals: 'ticks',
   theme: DEFAULT_THEME,
+  textScale: 'm',
+  fonts: {
+    clock: 'sans',
+    date: 'sans',
+    weather: 'sans',
+    calendar: 'sans',
+  },
   backgroundFit: 'cover',
   backgroundOpacity: 100,
   locale: 'auto',
@@ -86,6 +101,24 @@ function pickUnion<T extends string>(
     (allowed as readonly string[]).includes(value)
     ? (value as T)
     : fallback;
+}
+
+/** Per-widget, so one bad entry does not cost the others their setting. */
+function pickFonts(raw: Record<string, unknown>): Record<FontTarget, FontFamily> {
+  const stored = raw['fonts'];
+  const record =
+    typeof stored === 'object' && stored !== null
+      ? (stored as Record<string, unknown>)
+      : {};
+
+  return Object.fromEntries(
+    FONT_TARGETS.map((target) => [
+      target,
+      isFontFamily(record[target])
+        ? record[target]
+        : DEFAULT_SETTINGS.fonts[target],
+    ]),
+  ) as Record<FontTarget, FontFamily>;
 }
 
 /**
@@ -136,6 +169,10 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
       DEFAULT_SETTINGS.analogNumerals,
     ),
     theme: isTheme(raw['theme']) ? raw['theme'] : DEFAULT_SETTINGS.theme,
+    textScale: isTextScale(raw['textScale'])
+      ? raw['textScale']
+      : DEFAULT_SETTINGS.textScale,
+    fonts: pickFonts(raw),
     backgroundFit: pickUnion<BackgroundFit>(
       raw,
       'backgroundFit',
@@ -174,6 +211,8 @@ export function resetSettings(): void {
 /** Derived value watching only the theme, so other changes do not reapply it. */
 const theme = computed(() => settings.value.theme);
 
+const textScale = computed(() => settings.value.textScale);
+
 /**
  * Start persisting settings and applying the theme. Call once at startup.
  */
@@ -184,5 +223,13 @@ export function startSettingsSync(): void {
 
   effect(() => {
     applyTheme(theme.value);
+  });
+
+  // One custom property the widgets multiply their clamp() sizes by
+  effect(() => {
+    document.documentElement.style.setProperty(
+      '--text-scale',
+      String(scaleFactor(textScale.value)),
+    );
   });
 }

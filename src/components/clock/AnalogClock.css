@@ -3,7 +3,9 @@
   align-items: center;
   justify-content: center;
 
-  width: clamp(8rem, 58vmin, 28rem);
+  /* Follows the text scale so the whole dashboard grows together */
+  width: calc(clamp(9rem, 62vmin, 32rem) * var(--text-scale, 1));
+  max-width: 100%;
   aspect-ratio: 1;
 }
 

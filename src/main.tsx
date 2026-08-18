@@ -9,6 +9,7 @@ import { startWeatherSync } from './state/weather';
 
 import './styles/reset.css';
 import './styles/themes.css';
+import './styles/fonts.css';
 import './styles/layout.css';
 
 const root = document.getElementById('app');
