@@ -1,8 +1,8 @@
 {
   "name": "Ambient Dashboard",
   "short_name": "Ambient",
-  "description": "時計を中心に、必要な情報だけを静かに常時表示するダッシュボード",
-  "lang": "ja",
+  "description": "my ambient dashboard for small display devices",
+  "lang": "en",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
