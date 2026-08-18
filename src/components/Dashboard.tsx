@@ -22,12 +22,13 @@ export function Dashboard() {
       <Background />
 
       <div class="dashboard__widgets">
-        <div class="dashboard__primary">
-          {showClock && <Clock />}
+        {showClock && <Clock />}
+
+        <div class="dashboard__secondary">
           {showDate && <DateDisplay />}
           {showWeather && <Weather />}
+          {showCalendar && <Calendar />}
         </div>
-        {showCalendar && <Calendar />}
       </div>
 
       {showDebug && <DebugOverlay />}

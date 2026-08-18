@@ -29,35 +29,54 @@ body {
 }
 
 /*
- * Widget arrangement: stacked in portrait, side by side in landscape.
+ * The clock leads; everything else is secondary and gathered into one place.
+ *
+ * In landscape the secondary column sits beside the clock. A square analog face
+ * already eats the width, and stacking the rest underneath stretches the whole
+ * block vertically and pushes the clock off centre - while the space to either
+ * side goes unused.
+ *
+ * In portrait there is no width to spare, so the same two groups stack.
  */
 .dashboard__widgets {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.5rem, 3vmin, 2rem);
+  gap: clamp(0.75rem, 4vmin, 3rem);
 }
 
-/*
- * The clock and date form one block, stacked regardless of orientation.
- * Putting the date beside the clock blurs which of the two leads.
- */
-.dashboard__primary {
+.dashboard__secondary {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: clamp(0.25rem, 1.5vmin, 1rem);
+  gap: clamp(0.35rem, 2vmin, 1.25rem);
 }
 
 @media (orientation: portrait) {
   .dashboard__widgets {
     flex-direction: column;
   }
+
+  /* Centred under the clock, since there is nothing to align against */
+  .dashboard__secondary {
+    align-items: center;
+  }
 }
 
 @media (orientation: landscape) {
   .dashboard__widgets {
     flex-direction: row;
-    flex-wrap: wrap;
   }
+
+  /*
+   * Left-aligned so the date, the temperature and the calendar share an edge
+   * rather than each centring on its own width.
+   */
+  .dashboard__secondary {
+    align-items: flex-start;
+  }
+}
+
+/* Nothing secondary to show, so let the clock have the whole frame */
+.dashboard__secondary:empty {
+  display: none;
 }
