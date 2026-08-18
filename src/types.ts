@@ -1,3 +1,4 @@
+import type { AdjacentDays, WeekStart } from './lib/calendar';
 import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
 import type { Theme } from './lib/theme';
@@ -21,6 +22,12 @@ export type Settings = {
 
   /** How the date is written out; see lib/dateFormat for the presets */
   dateFormat: DateFormat;
+
+  showCalendar: boolean;
+  /** Which day the calendar's week begins on */
+  weekStart: WeekStart;
+  /** Whether the days either side of the month are dimmed or hidden */
+  adjacentDays: AdjacentDays;
 
   clockType: ClockType;
 

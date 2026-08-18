@@ -3,13 +3,14 @@ import { useState } from 'preact/hooks';
 import { settings } from '../state/settings';
 
 import { AmbientModeButton } from './AmbientModeButton';
+import { Calendar } from './Calendar';
 import { Clock } from './clock/Clock';
 import { DateDisplay } from './DateDisplay';
 import { SettingsButton } from './settings/SettingsButton';
 import { SettingsOverlay } from './settings/SettingsOverlay';
 
 export function Dashboard() {
-  const { showClock, showDate } = settings.value;
+  const { showClock, showDate, showCalendar } = settings.value;
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
@@ -19,6 +20,7 @@ export function Dashboard() {
           {showClock && <Clock />}
           {showDate && <DateDisplay />}
         </div>
+        {showCalendar && <Calendar />}
       </div>
 
       {settingsOpen ? (

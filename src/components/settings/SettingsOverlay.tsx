@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'preact/hooks';
 
 import {
+  ADJACENT_DAYS,
+  WEEK_STARTS,
+  type AdjacentDays,
+  type WeekStart,
+} from '../../lib/calendar';
+import {
   DATE_FORMATS,
   formatDate,
   type DateFormat,
@@ -54,6 +60,20 @@ function dateFormatOptions(today: Date): readonly Option<DateFormat>[] {
   return DATE_FORMATS.map((value) => ({
     value,
     label: formatDate(locale.value, value, today),
+  }));
+}
+
+function weekStartOptions(): readonly Option<WeekStart>[] {
+  return WEEK_STARTS.map((value) => ({
+    value,
+    label: t(`weekStart.${value}`),
+  }));
+}
+
+function adjacentDaysOptions(): readonly Option<AdjacentDays>[] {
+  return ADJACENT_DAYS.map((value) => ({
+    value,
+    label: t(`adjacentDays.${value}`),
   }));
 }
 
@@ -141,6 +161,11 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   checked={current.showDate}
                   onChange={(showDate) => updateSettings({ showDate })}
                 />
+                <ToggleRow
+                  label={t('widget.calendar')}
+                  checked={current.showCalendar}
+                  onChange={(showCalendar) => updateSettings({ showCalendar })}
+                />
               </div>
             </section>
 
@@ -176,6 +201,24 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   options={dateFormatOptions(new Date())}
                   selected={current.dateFormat}
                   onChange={(dateFormat) => updateSettings({ dateFormat })}
+                />
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2 class="settings-section__title">{t('section.calendar')}</h2>
+              <div class="settings-section__items">
+                <OptionRow
+                  label={t('calendar.weekStart')}
+                  options={weekStartOptions()}
+                  selected={current.weekStart}
+                  onChange={(weekStart) => updateSettings({ weekStart })}
+                />
+                <OptionRow
+                  label={t('calendar.adjacentDays')}
+                  options={adjacentDaysOptions()}
+                  selected={current.adjacentDays}
+                  onChange={(adjacentDays) => updateSettings({ adjacentDays })}
                 />
               </div>
             </section>

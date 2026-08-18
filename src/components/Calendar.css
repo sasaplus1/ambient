@@ -1,0 +1,55 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
+
+  font-size: clamp(0.625rem, 2.4vmin, 1.25rem);
+  line-height: 1;
+}
+
+/* The month is context, not a heading to be read first */
+.calendar__title {
+  color: var(--fg-secondary);
+  font-size: 1.15em;
+  font-weight: 500;
+  text-align: center;
+}
+
+.calendar__grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.35em 0.15em;
+}
+
+.calendar__weekday {
+  color: var(--fg-tertiary);
+  font-size: 0.85em;
+  font-weight: 500;
+  text-align: center;
+}
+
+.calendar__day {
+  display: grid;
+  place-items: center;
+
+  /* Square cells keep the highlight a circle rather than a pill */
+  aspect-ratio: 1;
+  min-width: 1.9em;
+
+  border-radius: 50%;
+  font-variant-numeric: tabular-nums;
+}
+
+.calendar__day[data-in-month='false'] {
+  color: var(--fg-tertiary);
+}
+
+.calendar__day[data-hidden='true'] {
+  visibility: hidden;
+}
+
+.calendar__day[data-today='true'] {
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+}

@@ -49,6 +49,7 @@ const DICTIONARY = {
   'section.display': { ja: '表示', en: 'Display' },
   'section.clock': { ja: '時計', en: 'Clock' },
   'section.date': { ja: '日付', en: 'Date' },
+  'section.calendar': { ja: 'カレンダー', en: 'Calendar' },
   'section.theme': { ja: 'テーマ', en: 'Theme' },
   'section.language': { ja: '言語', en: 'Language' },
   'section.digitalClock': { ja: 'デジタル時計', en: 'Digital clock' },
@@ -61,6 +62,14 @@ const DICTIONARY = {
   'widget.date': { ja: '日付', en: 'Date' },
 
   'date.format': { ja: '表記', en: 'Format' },
+
+  'widget.calendar': { ja: 'カレンダー', en: 'Calendar' },
+  'calendar.weekStart': { ja: '週の始まり', en: 'Week starts on' },
+  'weekStart.sunday': { ja: '日曜', en: 'Sunday' },
+  'weekStart.monday': { ja: '月曜', en: 'Monday' },
+  'calendar.adjacentDays': { ja: '前後の月', en: 'Adjacent months' },
+  'adjacentDays.hidden': { ja: '非表示', en: 'Hidden' },
+  'adjacentDays.dimmed': { ja: '薄く表示', en: 'Dimmed' },
 
   'clock.type': { ja: '種類', en: 'Type' },
   'clock.digital': { ja: 'デジタル', en: 'Digital' },

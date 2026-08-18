@@ -1,5 +1,6 @@
 import { computed, effect, signal } from '@preact/signals';
 
+import { isAdjacentDays, isWeekStart } from '../lib/calendar';
 import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
 import { loadRecord, saveRecord } from '../lib/storage';
@@ -27,6 +28,9 @@ export const DEFAULT_SETTINGS: Settings = {
   showClock: true,
   showDate: true,
   dateFormat: DEFAULT_DATE_FORMAT,
+  showCalendar: false,
+  weekStart: 'sunday',
+  adjacentDays: 'dimmed',
   clockType: 'analog',
   hour12: false,
   showSeconds: false,
@@ -75,6 +79,17 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
     dateFormat: isDateFormat(raw['dateFormat'])
       ? raw['dateFormat']
       : DEFAULT_SETTINGS.dateFormat,
+    showCalendar: pickBoolean(
+      raw,
+      'showCalendar',
+      DEFAULT_SETTINGS.showCalendar,
+    ),
+    weekStart: isWeekStart(raw['weekStart'])
+      ? raw['weekStart']
+      : DEFAULT_SETTINGS.weekStart,
+    adjacentDays: isAdjacentDays(raw['adjacentDays'])
+      ? raw['adjacentDays']
+      : DEFAULT_SETTINGS.adjacentDays,
     clockType: pickUnion<ClockType>(
       raw,
       'clockType',
