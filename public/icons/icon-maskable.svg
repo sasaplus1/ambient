@@ -1,10 +1,10 @@
 <!-- Maskable: content sits within the central 60% so nothing is lost when cropped. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" fill="#121214"/>
-  <circle cx="256" cy="256" r="112" fill="none" stroke="#5a5a5f" stroke-width="8"/>
-  <g stroke="#ececf0" stroke-linecap="round">
+  <rect width="512" height="512" fill="#05070d"/>
+  <circle cx="256" cy="256" r="112" fill="none" stroke="#525c70" stroke-width="8"/>
+  <g stroke="#e9edf6" stroke-linecap="round">
     <path d="M256 256v-68" stroke-width="17"/>
     <path d="M256 256h48" stroke-width="12"/>
   </g>
-  <circle cx="256" cy="256" r="10" fill="#0a84ff"/>
+  <circle cx="256" cy="256" r="10" fill="#5aa9ff"/>
 </svg>
