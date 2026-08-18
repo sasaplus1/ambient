@@ -29,28 +29,32 @@ function angleOf(value: number, total: number): number {
   return (value / total) * TAU - Math.PI / 2;
 }
 
-function drawMinuteTicks(
+/**
+ * How the hour ticks are drawn.
+ * Long ticks collide with the numerals, so when numerals are shown the hour
+ * ticks keep the minute length and differ only in weight.
+ */
+type HourTickStyle = 'long' | 'thick';
+
+function drawTicks(
   ctx: CanvasRenderingContext2D,
   center: number,
   radius: number,
   colors: ClockColors,
-  withHourTicks: boolean,
+  hourStyle: HourTickStyle,
 ): void {
   ctx.lineCap = 'round';
 
   for (let index = 0; index < 60; index += 1) {
     const isHour = index % 5 === 0;
-
-    if (isHour && !withHourTicks) {
-      continue;
-    }
+    const isLong = isHour && hourStyle === 'long';
 
     const angle = angleOf(index, 60);
-    const inner = radius - radius * (isHour ? 0.1 : 0.045);
+    const inner = radius - radius * (isLong ? 0.1 : 0.045);
 
     ctx.beginPath();
     ctx.lineWidth = isHour
-      ? Math.max(radius * 0.022, 1.5)
+      ? Math.max(radius * (hourStyle === 'long' ? 0.022 : 0.018), 1.5)
       : Math.max(radius * 0.008, 0.75);
     ctx.strokeStyle = isHour ? colors.fgSecondary : colors.fgTertiary;
     ctx.moveTo(center + Math.cos(angle) * inner, center + Math.sin(angle) * inner);
@@ -131,9 +135,9 @@ export function drawAnalogClock(
   ctx.clearRect(0, 0, size, size);
 
   if (numerals === 'ticks') {
-    drawMinuteTicks(ctx, center, radius, colors, true);
+    drawTicks(ctx, center, radius, colors, 'long');
   } else if (numerals === 'arabic' || numerals === 'roman') {
-    drawMinuteTicks(ctx, center, radius, colors, false);
+    drawTicks(ctx, center, radius, colors, 'thick');
     drawNumerals(ctx, center, radius, colors, numerals === 'roman');
   }
 
