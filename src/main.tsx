@@ -1,7 +1,7 @@
 import { render } from 'preact';
 
 import { App } from './app';
-import { applyTheme, DEFAULT_THEME } from './lib/theme';
+import { startSettingsSync } from './state/settings';
 
 import './styles/reset.css';
 import './styles/themes.css';
@@ -13,6 +13,6 @@ if (!root) {
   throw new Error('#app not found');
 }
 
-applyTheme(DEFAULT_THEME);
+startSettingsSync();
 
 render(<App />, root);
