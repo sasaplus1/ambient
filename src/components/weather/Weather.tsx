@@ -1,5 +1,5 @@
 import { conditionFor, iconFor } from '../../lib/weather';
-import { fontClass } from '../../state/fonts';
+import { fontClass, scaleStyle } from '../../state/typography';
 import { locale, t } from '../../state/locale';
 import { location, weather, weatherStatus } from '../../state/weather';
 
@@ -32,6 +32,7 @@ export function Weather() {
   return (
     <div
       class={`weather ${fontClass('weather')}`}
+      style={scaleStyle('weather')}
       data-stale={stale}
       title={condition}
     >

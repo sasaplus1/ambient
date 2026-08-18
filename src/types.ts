@@ -50,8 +50,10 @@ export type Settings = {
 
   theme: Theme;
 
-  /** Multiplier applied to every widget's type size */
+  /** Master multiplier, for fitting the whole dashboard to a screen */
   textScale: TextScale;
+  /** Multiplier per widget, for balancing them against each other */
+  scales: Record<FontTarget, TextScale>;
   /** Typeface per widget, so the clock can differ from the rest */
   fonts: Record<FontTarget, FontFamily>;
 

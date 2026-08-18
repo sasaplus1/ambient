@@ -3,7 +3,7 @@
   flex-direction: column;
   gap: 0.5em;
 
-  font-size: calc(clamp(0.75rem, 3vmin, 1.625rem) * var(--text-scale, 1));
+  font-size: calc(clamp(0.75rem, 3vmin, 1.625rem) * var(--text-scale, 1) * var(--widget-scale, 1));
   line-height: 1;
 }
 

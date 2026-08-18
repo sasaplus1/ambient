@@ -11,6 +11,7 @@ import {
   scaleFactor,
   type FontFamily,
   type FontTarget,
+  type TextScale,
 } from '../lib/typography';
 import { loadRecord, saveRecord } from '../lib/storage';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
@@ -50,6 +51,12 @@ export const DEFAULT_SETTINGS: Settings = {
   analogNumerals: 'ticks',
   theme: DEFAULT_THEME,
   textScale: 'm',
+  scales: {
+    clock: 'm',
+    date: 'm',
+    weather: 'm',
+    calendar: 'm',
+  },
   fonts: {
     clock: 'sans',
     date: 'sans',
@@ -103,13 +110,20 @@ function pickUnion<T extends string>(
     : fallback;
 }
 
+function widgetRecord(
+  raw: Record<string, unknown>,
+  key: string,
+): Record<string, unknown> {
+  const stored = raw[key];
+
+  return typeof stored === 'object' && stored !== null
+    ? (stored as Record<string, unknown>)
+    : {};
+}
+
 /** Per-widget, so one bad entry does not cost the others their setting. */
 function pickFonts(raw: Record<string, unknown>): Record<FontTarget, FontFamily> {
-  const stored = raw['fonts'];
-  const record =
-    typeof stored === 'object' && stored !== null
-      ? (stored as Record<string, unknown>)
-      : {};
+  const record = widgetRecord(raw, 'fonts');
 
   return Object.fromEntries(
     FONT_TARGETS.map((target) => [
@@ -119,6 +133,19 @@ function pickFonts(raw: Record<string, unknown>): Record<FontTarget, FontFamily>
         : DEFAULT_SETTINGS.fonts[target],
     ]),
   ) as Record<FontTarget, FontFamily>;
+}
+
+function pickScales(raw: Record<string, unknown>): Record<FontTarget, TextScale> {
+  const record = widgetRecord(raw, 'scales');
+
+  return Object.fromEntries(
+    FONT_TARGETS.map((target) => [
+      target,
+      isTextScale(record[target])
+        ? record[target]
+        : DEFAULT_SETTINGS.scales[target],
+    ]),
+  ) as Record<FontTarget, TextScale>;
 }
 
 /**
@@ -172,6 +199,7 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
     textScale: isTextScale(raw['textScale'])
       ? raw['textScale']
       : DEFAULT_SETTINGS.textScale,
+    scales: pickScales(raw),
     fonts: pickFonts(raw),
     backgroundFit: pickUnion<BackgroundFit>(
       raw,

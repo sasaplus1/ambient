@@ -11,7 +11,7 @@
 }
 
 .digital-clock__time {
-  font-size: calc(clamp(3.5rem, 26vmin, 18rem) * var(--text-scale, 1));
+  font-size: calc(clamp(3.5rem, 26vmin, 18rem) * var(--text-scale, 1) * var(--widget-scale, 1));
   font-weight: 300;
   letter-spacing: -0.02em;
 }
@@ -28,6 +28,6 @@
 
 .digital-clock__period {
   color: var(--fg-secondary);
-  font-size: calc(clamp(1.125rem, 5vmin, 2.5rem) * var(--text-scale, 1));
+  font-size: calc(clamp(1.125rem, 5vmin, 2.5rem) * var(--text-scale, 1) * var(--widget-scale, 1));
   font-weight: 400;
 }

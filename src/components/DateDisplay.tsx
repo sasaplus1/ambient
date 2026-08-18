@@ -1,6 +1,6 @@
 import { useNow } from '../hooks/useNow';
 import { formatDate } from '../lib/dateFormat';
-import { fontClass } from '../state/fonts';
+import { fontClass, scaleStyle } from '../state/typography';
 import { locale } from '../state/locale';
 import { settings } from '../state/settings';
 
@@ -19,7 +19,11 @@ export function DateDisplay() {
   const now = useNow('day');
 
   return (
-    <time class={`date-display ${fontClass('date')}`} dateTime={toIsoDate(now)}>
+    <time
+      class={`date-display ${fontClass('date')}`}
+      style={scaleStyle('date')}
+      dateTime={toIsoDate(now)}
+    >
       {formatDate(locale.value, settings.value.dateFormat, now)}
     </time>
   );

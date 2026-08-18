@@ -1,7 +1,7 @@
 /* Placed as weaker information than the clock */
 .date-display {
   color: var(--fg-secondary);
-  font-size: calc(clamp(1.125rem, 5.5vmin, 3rem) * var(--text-scale, 1));
+  font-size: calc(clamp(1.125rem, 5.5vmin, 3rem) * var(--text-scale, 1) * var(--widget-scale, 1));
   font-weight: 400;
   letter-spacing: 0.02em;
   text-align: center;

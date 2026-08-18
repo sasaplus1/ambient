@@ -133,7 +133,11 @@ const DICTIONARY = {
   'backgroundFit.contain': { ja: '全体を入れる', en: 'Contain' },
   'backgroundFit.fill': { ja: '引き伸ばす', en: 'Stretch' },
 
-  'type.scale': { ja: '大きさ', en: 'Size' },
+  'type.scale': { ja: '全体の大きさ', en: 'Overall size' },
+  'type.scale.clock': { ja: '時計の大きさ', en: 'Clock size' },
+  'type.scale.date': { ja: '日付の大きさ', en: 'Date size' },
+  'type.scale.weather': { ja: '天気の大きさ', en: 'Weather size' },
+  'type.scale.calendar': { ja: 'カレンダーの大きさ', en: 'Calendar size' },
   'textScale.s': { ja: '小', en: 'S' },
   'textScale.m': { ja: '中', en: 'M' },
   'textScale.l': { ja: '大', en: 'L' },

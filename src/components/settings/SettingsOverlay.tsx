@@ -299,7 +299,20 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             />
             {FONT_TARGETS.map((target) => (
               <OptionRow
-                key={target}
+                key={`scale-${target}`}
+                label={t(`type.scale.${target}`)}
+                options={textScaleOptions()}
+                selected={current.scales[target]}
+                onChange={(scale) =>
+                  updateSettings({
+                    scales: { ...current.scales, [target]: scale },
+                  })
+                }
+              />
+            ))}
+            {FONT_TARGETS.map((target) => (
+              <OptionRow
+                key={`font-${target}`}
                 label={t(`type.font.${target}`)}
                 options={fontOptions()}
                 selected={current.fonts[target]}

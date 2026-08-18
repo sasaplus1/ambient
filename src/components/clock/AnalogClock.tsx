@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'preact/hooks';
 
 import { useElementSize } from '../../hooks/useElementSize';
 import { readCssVar, type Theme } from '../../lib/theme';
+import { scaleStyle } from '../../state/typography';
 import type { AnalogNumerals, SecondHand } from '../../types';
 
 import { drawAnalogClock, type ClockColors } from './drawAnalogClock';
@@ -111,7 +112,7 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
   }, [size, numerals, secondHand, theme]);
 
   return (
-    <div class="analog-clock" ref={containerRef}>
+    <div class="analog-clock" ref={containerRef} style={scaleStyle('clock')}>
       <canvas class="analog-clock__canvas" ref={canvasRef} />
     </div>
   );

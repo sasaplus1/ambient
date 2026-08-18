@@ -1,6 +1,6 @@
 import { useNow } from '../hooks/useNow';
 import { monthGrid, weekdayLabels } from '../lib/calendar';
-import { fontClass } from '../state/fonts';
+import { fontClass, scaleStyle } from '../state/typography';
 import { locale } from '../state/locale';
 import { settings } from '../state/settings';
 
@@ -17,7 +17,7 @@ export function Calendar() {
   const cells = monthGrid(today, weekStart);
 
   return (
-    <div class={`calendar ${fontClass('calendar')}`}>
+    <div class={`calendar ${fontClass('calendar')}`} style={scaleStyle('calendar')}>
       {/*
         No month heading: the grid is only ever the current month, and the date
         widget already says which one it is.
