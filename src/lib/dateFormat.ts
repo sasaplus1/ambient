@@ -46,21 +46,29 @@ export function isDateFormat(value: unknown): value is DateFormat {
 // formats every preset at once to label its options.
 const formatters = new Map<string, Intl.DateTimeFormat>();
 
+/**
+ * Intl writes the Japanese weekday in ASCII parentheses, which sit on the
+ * baseline and drop the glyph inside them low against the surrounding kanji.
+ * The fullwidth pair is centred on the em, so the line stays level.
+ */
+function fullwidthParentheses(text: string): string {
+  return text.replace(/\(/g, '（').replace(/\)/g, '）');
+}
+
 export function formatDate(
   locale: Locale,
   format: DateFormat,
   date: Date,
 ): string {
   const key = `${locale}:${format}`;
-  const existing = formatters.get(key);
+  let formatter = formatters.get(key);
 
-  if (existing) {
-    return existing.format(date);
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat(locale, OPTIONS[format]);
+    formatters.set(key, formatter);
   }
 
-  const created = new Intl.DateTimeFormat(locale, OPTIONS[format]);
+  const text = formatter.format(date);
 
-  formatters.set(key, created);
-
-  return created.format(date);
+  return locale === 'ja' ? fullwidthParentheses(text) : text;
 }
