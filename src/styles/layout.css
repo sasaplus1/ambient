@@ -85,3 +85,16 @@ body {
     justify-content: space-evenly;
   }
 }
+
+/*
+ * The corner controls. They rest faint so they do not compete with the clock,
+ * and come up when someone reaches for them - or stay up until first use, so
+ * a visitor can find them at all.
+ */
+.dashboard__controls {
+  --control-opacity: 0.25;
+}
+
+.dashboard__controls[data-visible='true'] {
+  --control-opacity: 1;
+}

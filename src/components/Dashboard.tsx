@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
 
-import { settings } from '../state/settings';
+import { useRecentActivity } from '../hooks/useRecentActivity';
+import { settings, updateSettings } from '../state/settings';
 
 import { AmbientModeButton } from './AmbientModeButton';
 import { Background } from './Background';
@@ -13,10 +14,29 @@ import { SettingsOverlay } from './settings/SettingsOverlay';
 import { ThemeBackdrop } from './ThemeBackdrop';
 import { Weather } from './weather/Weather';
 
+/** How long the controls stay up after the screen is touched. */
+const CONTROLS_IDLE_MS = 4_000;
+
 export function Dashboard() {
-  const { showClock, showDate, showWeather, showCalendar, showDebug, clockType } =
-    settings.value;
+  const {
+    showClock,
+    showDate,
+    showWeather,
+    showCalendar,
+    showDebug,
+    clockType,
+    controlsSeen,
+  } = settings.value;
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  /*
+   * The corner controls rest almost invisible, which suits a screen that is
+   * looked at rather than used - but a first visitor would never find them. So
+   * they stay up until they have been used once, and after that only come back
+   * when someone reaches for them.
+   */
+  const recentlyTouched = useRecentActivity(CONTROLS_IDLE_MS);
+  const controlsVisible = !controlsSeen || recentlyTouched;
 
   const date = showDate && <DateDisplay />;
   const weather = showWeather && <Weather />;
@@ -71,10 +91,15 @@ export function Dashboard() {
       {settingsOpen ? (
         <SettingsOverlay onClose={() => setSettingsOpen(false)} />
       ) : (
-        <>
+        <div class="dashboard__controls" data-visible={controlsVisible}>
           <AmbientModeButton />
-          <SettingsButton onClick={() => setSettingsOpen(true)} />
-        </>
+          <SettingsButton
+            onClick={() => {
+              setSettingsOpen(true);
+              updateSettings({ controlsSeen: true });
+            }}
+          />
+        </div>
       )}
     </div>
   );

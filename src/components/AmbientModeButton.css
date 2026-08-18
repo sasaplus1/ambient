@@ -12,8 +12,8 @@
 
   border-radius: 50%;
   color: var(--fg-secondary);
-  opacity: 0.25;
-  transition: opacity 200ms ease;
+  opacity: var(--control-opacity, 0.25);
+  transition: opacity 400ms ease;
 }
 
 .ambient-button:hover,

@@ -75,6 +75,12 @@ export type Settings = {
   /** 'auto' follows the browser's language settings */
   locale: LocaleSetting;
 
+  /**
+   * Whether the corner controls have been used yet. Until they have, they stay
+   * fully visible so a first visitor cannot miss them.
+   */
+  controlsSeen: boolean;
+
   /** Whether the settings screen shows its live miniature */
   previewOpen: boolean;
 

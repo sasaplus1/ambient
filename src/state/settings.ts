@@ -75,6 +75,7 @@ export const DEFAULT_SETTINGS: Settings = {
   backgroundFit: 'cover',
   backgroundDim: 30,
   locale: 'auto',
+  controlsSeen: false,
   previewOpen: true,
   showDebug: false,
   debugLevel: 'info',
@@ -242,6 +243,11 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
     locale: isLocaleSetting(raw['locale'])
       ? raw['locale']
       : DEFAULT_SETTINGS.locale,
+    controlsSeen: pickBoolean(
+      raw,
+      'controlsSeen',
+      DEFAULT_SETTINGS.controlsSeen,
+    ),
     previewOpen: pickBoolean(raw, 'previewOpen', DEFAULT_SETTINGS.previewOpen),
     showDebug: pickBoolean(raw, 'showDebug', DEFAULT_SETTINGS.showDebug),
     debugLevel: isLogLevel(raw['debugLevel'])
