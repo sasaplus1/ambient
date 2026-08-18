@@ -1,0 +1,52 @@
+/*
+ * Orientation is handled in CSS alone; never branch on it in JavaScript.
+ * Heights use dvh so the layout follows the mobile browser's collapsing UI.
+ */
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family:
+    system-ui,
+    -apple-system,
+    'Hiragino Kaku Gothic ProN',
+    'Noto Sans JP',
+    sans-serif;
+  transition: background-color 200ms ease;
+}
+
+.dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  min-height: 100dvh;
+
+  padding: clamp(0.75rem, 3vmin, 2.5rem);
+  padding-top: max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-top));
+  padding-bottom: max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-bottom));
+}
+
+/*
+ * Widget arrangement: stacked in portrait, side by side in landscape.
+ */
+.dashboard__widgets {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.5rem, 3vmin, 2rem);
+}
+
+@media (orientation: portrait) {
+  .dashboard__widgets {
+    flex-direction: column;
+  }
+}
+
+@media (orientation: landscape) {
+  .dashboard__widgets {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}

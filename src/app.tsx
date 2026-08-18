@@ -1,3 +1,7 @@
 export function App() {
-  return <div>Ambient Dashboard</div>;
+  return (
+    <div class="dashboard">
+      <div class="dashboard__widgets">Ambient Dashboard</div>
+    </div>
+  );
 }

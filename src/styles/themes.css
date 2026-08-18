@@ -1,0 +1,69 @@
+/*
+ * Themes switch via the data-theme attribute and every colour resolves through
+ * a CSS Custom Property. Never set styles on individual elements from
+ * JavaScript.
+ *
+ * --fg           the leading information, such as the clock
+ * --fg-secondary supporting information, such as the date; weaker than --fg
+ * --fg-tertiary  weaker still: ticks, or days from an adjacent month
+ * --accent       the single accent colour, such as highlighting today
+ */
+
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: #121214;
+  --fg: #ececf0;
+  --fg-secondary: #8e8e93;
+  --fg-tertiary: #5a5a5f;
+  --accent: #0a84ff;
+
+  --surface: #1e1e21;
+  --surface-border: rgb(255 255 255 / 0.12);
+  --scrim: rgb(0 0 0 / 0.6);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f5f5f7;
+  --fg: #1c1c1e;
+  --fg-secondary: #6b6b70;
+  --fg-tertiary: #a8a8ad;
+  --accent: #0a84ff;
+
+  --surface: #ffffff;
+  --surface-border: rgb(0 0 0 / 0.1);
+  --scrim: rgb(0 0 0 / 0.35);
+}
+
+/* For OLED panels: pure black, foreground dimmed so it is not harsh in the dark */
+:root[data-theme='oled'] {
+  color-scheme: dark;
+
+  --bg: #000000;
+  --fg: #d8d8dc;
+  --fg-secondary: #77777c;
+  --fg-tertiary: #3f3f44;
+  --accent: #4a9eff;
+
+  --surface: #0a0a0a;
+  --surface-border: rgb(255 255 255 / 0.14);
+  --scrim: rgb(0 0 0 / 0.75);
+}
+
+/* For use late in the evening: less blue */
+:root[data-theme='warm'] {
+  color-scheme: dark;
+
+  --bg: #1a1410;
+  --fg: #f0e0cc;
+  --fg-secondary: #a08e78;
+  --fg-tertiary: #6b5c4a;
+  --accent: #ff9f43;
+
+  --surface: #241c16;
+  --surface-border: rgb(240 224 204 / 0.14);
+  --scrim: rgb(0 0 0 / 0.6);
+}
