@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'preact/hooks';
 
 import { useElementSize } from '../../hooks/useElementSize';
 import { readCssVar } from '../../lib/theme';
-import { scaleStyle } from '../../state/typography';
+import { fontClass, fontFamilyOf, scaleStyle } from '../../state/typography';
 import type { AnalogNumerals, SecondHand } from '../../types';
 
 import { drawAnalogClock, type ClockColors } from './drawAnalogClock';
@@ -56,6 +56,8 @@ function readColors(from: Element): ClockColors {
  */
 export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
   const [containerRef, { width, height }] = useElementSize<HTMLDivElement>();
+  // Only a dependency: the face itself is read off the canvas below
+  const fontSetting = fontFamilyOf('clock');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Match the shorter side so the dial stays a true circle
@@ -84,6 +86,8 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
     let colors = readColors(canvas);
+    // A canvas has no stylesheet of its own, so the face has to be looked up
+    const fontFamily = getComputedStyle(canvas).fontFamily;
 
     /*
      * Themes cross-fade, and the canvas cannot inherit that: it holds whatever
@@ -98,7 +102,15 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
         colors = readColors(canvas);
       }
 
-      drawAnalogClock(ctx, size, colors, numerals, secondHand, new Date());
+      drawAnalogClock(
+        ctx,
+        size,
+        colors,
+        numerals,
+        secondHand,
+        new Date(),
+        fontFamily,
+      );
     };
 
     let frameId = 0;
@@ -152,10 +164,14 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
       window.clearTimeout(timerId);
       document.removeEventListener('visibilitychange', repaintOnVisible);
     };
-  }, [size, numerals, secondHand, theme]);
+  }, [size, numerals, secondHand, theme, fontSetting]);
 
   return (
-    <div class="analog-clock" ref={containerRef} style={scaleStyle('clock')}>
+    <div
+      class={`analog-clock ${fontClass('clock')}`}
+      ref={containerRef}
+      style={scaleStyle('clock')}
+    >
       <canvas class="analog-clock__canvas" ref={canvasRef} />
     </div>
   );

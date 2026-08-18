@@ -12,6 +12,11 @@ export function fontClass(target: FontTarget): string {
   return `font-${settings.value.fonts[target]}`;
 }
 
+/** The family chosen for a widget, as the setting's own value. */
+export function fontFamilyOf(target: FontTarget): string {
+  return settings.value.fonts[target];
+}
+
 /**
  * Inline custom property the widget's own sizes multiply by.
  *

@@ -1,3 +1,4 @@
+import { kanjiNumber } from '../../lib/kanjiNumber';
 import type { AnalogNumerals, SecondHand } from '../../types';
 
 export type ClockColors = {
@@ -71,19 +72,24 @@ function drawNumerals(
   center: number,
   radius: number,
   colors: ClockColors,
-  roman: boolean,
+  script: 'arabic' | 'roman' | 'kanji',
+  fontFamily: string,
 ): void {
   ctx.fillStyle = colors.fgSecondary;
-  ctx.font = `500 ${radius * 0.16}px system-ui, sans-serif`;
+  ctx.font = `500 ${radius * 0.16}px ${fontFamily}`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
 
   for (let hour = 0; hour < 12; hour += 1) {
     const angle = angleOf(hour, 12);
     const distance = radius * 0.8;
-    const label = roman
-      ? (ROMAN_NUMERALS[hour] ?? '')
-      : String(hour === 0 ? 12 : hour);
+    const value = hour === 0 ? 12 : hour;
+    const label =
+      script === 'roman'
+        ? (ROMAN_NUMERALS[hour] ?? '')
+        : script === 'kanji'
+          ? kanjiNumber(value)
+          : String(value);
 
     ctx.fillText(
       label,
@@ -128,6 +134,8 @@ export function drawAnalogClock(
   numerals: AnalogNumerals,
   secondHand: SecondHand,
   now: Date,
+  /** A canvas has no stylesheet, so the chosen face has to be handed to it. */
+  fontFamily: string,
 ): void {
   const center = size / 2;
   const radius = center * 0.94;
@@ -136,9 +144,13 @@ export function drawAnalogClock(
 
   if (numerals === 'ticks') {
     drawTicks(ctx, center, radius, colors, 'long');
-  } else if (numerals === 'arabic' || numerals === 'roman') {
+  } else if (
+    numerals === 'arabic' ||
+    numerals === 'roman' ||
+    numerals === 'kanji'
+  ) {
     drawTicks(ctx, center, radius, colors, 'thick');
-    drawNumerals(ctx, center, radius, colors, numerals === 'roman');
+    drawNumerals(ctx, center, radius, colors, numerals, fontFamily);
   }
 
   // Only a sweeping second hand needs sub-second precision
