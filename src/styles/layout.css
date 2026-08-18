@@ -36,6 +36,22 @@ body {
 }
 
 /*
+ * The layer the pixel shift moves, kept apart from the dashboard for the
+ * reasons given where it is rendered.
+ *
+ * The dashboard's own padding is never less than 0.75rem, which is wider than
+ * the largest shift, so the widgets cannot be pushed off the screen and there
+ * is nothing here to clip.
+ */
+.pixel-shift {
+  width: 100%;
+  transform: translate(var(--pixel-shift-x, 0px), var(--pixel-shift-y, 0px));
+
+  /* Slow enough that the move is not read as something happening */
+  transition: transform 1s ease;
+}
+
+/*
  * The layout is built around the clock, in two blocks side by side.
  *
  * One block is a column reading top to bottom - what day it is, the thing in

@@ -4,6 +4,7 @@ import { App } from './app';
 import { startBackgroundSync } from './state/background';
 import { startDiagnostics } from './state/diagnostics';
 import { startLocaleSync } from './state/locale';
+import { startPixelShift } from './state/pixelShift';
 import { startSettingsSync } from './state/settings';
 import { startThemeSync } from './state/theme';
 import { startWeatherSync } from './state/weather';
@@ -24,6 +25,7 @@ startDiagnostics();
 
 startSettingsSync();
 startThemeSync();
+startPixelShift();
 startLocaleSync();
 startWeatherSync();
 startBackgroundSync();

@@ -71,18 +71,27 @@ export function Dashboard() {
       <ThemeBackdrop />
       <Background />
 
-      <div class="dashboard__widgets">
-        {clockType === 'analog' ? (
-          <>
-            {clock}
-            {stack}
-          </>
-        ) : (
-          <>
-            {stack}
-            {calendar}
-          </>
-        )}
+      {/*
+        The pixel shift moves a layer of its own rather than .dashboard itself.
+        The backdrops behind it are fixed, and a transform on their ancestor
+        would make them the thing that moves - taking the edge of the screen
+        with them. A layer of its own also leaves the transform free for a
+        future rotation to take, without the two overwriting each other.
+      */}
+      <div class="pixel-shift">
+        <div class="dashboard__widgets">
+          {clockType === 'analog' ? (
+            <>
+              {clock}
+              {stack}
+            </>
+          ) : (
+            <>
+              {stack}
+              {calendar}
+            </>
+          )}
+        </div>
       </div>
 
       {/* Hidden while the settings are open: it would cover the rows behind it */}

@@ -160,6 +160,19 @@ const DICTIONARY = {
   'font.mono': { ja: '等幅', en: 'Mono' },
   'font.condensed': { ja: '長体', en: 'Condensed' },
 
+  'section.burnIn': { ja: '焼き付き対策', en: 'Burn-in protection' },
+  'burnIn.pixelShift': { ja: 'ピクセルシフト', en: 'Pixel shift' },
+  'burnIn.hint': {
+    ja: '表示位置をときどき数ピクセルだけ動かし、有機 EL で時計やカレンダーが焼き付くのを防ぎます。液晶では不要です。',
+    en: 'Nudges the display a few pixels now and then, so the clock does not burn into an OLED panel. An LCD does not need it.',
+  },
+  'burnIn.distance': { ja: '動かす幅', en: 'Distance' },
+  'pixelShiftStrength.low': { ja: '小', en: 'Low' },
+  'pixelShiftStrength.medium': { ja: '中', en: 'Medium' },
+  'pixelShiftStrength.high': { ja: '大', en: 'High' },
+  'burnIn.interval': { ja: '動かす間隔', en: 'Interval' },
+  'burnIn.minutes': { ja: '分', en: 'min' },
+
   'debug.overlay': { ja: 'ログを重ねて表示', en: 'Overlay the log' },
   'debug.level': { ja: '表示レベル', en: 'Level' },
   'debug.clear': { ja: 'ログを消す', en: 'Clear log' },

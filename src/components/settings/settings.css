@@ -283,6 +283,15 @@
   font-size: 0.8125rem;
 }
 
+/*
+ * A note belongs to the row above it, so the rule goes below the pair rather
+ * than between them - which is where the row's own rule would have put it.
+ */
+.setting-message + .setting-options,
+.setting-message + .setting-row {
+  border-top: 1px solid var(--surface-border);
+}
+
 .setting-slider {
   padding: 0.75rem 1rem;
 }

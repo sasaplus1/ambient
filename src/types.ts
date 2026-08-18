@@ -2,6 +2,10 @@ import type { AdjacentDays, WeekStart } from './lib/calendar';
 import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
 import type { LogLevel } from './lib/logger';
+import type {
+  PixelShiftInterval,
+  PixelShiftStrength,
+} from './lib/pixelShift';
 import type { TemperatureUnitSetting } from './lib/temperature';
 import type { TimeBand } from './lib/schedule';
 import type { FontFamily, FontTarget, TextScale } from './lib/typography';
@@ -74,6 +78,17 @@ export type Settings = {
    * A busy photo can swallow the clock; this is what wins it back.
    */
   backgroundDim: number;
+
+  /**
+   * Nudges the dashboard a few pixels every so often, so that a clock left on
+   * for days does not burn into an OLED panel. Off by default: the panels these
+   * devices usually have are LCD, which does not need it.
+   */
+  pixelShift: boolean;
+  /** How far the dashboard travels; see lib/pixelShift for the distances */
+  pixelShiftStrength: PixelShiftStrength;
+  /** Minutes between moves */
+  pixelShiftInterval: PixelShiftInterval;
 
   /** 'auto' follows the browser's language settings */
   locale: LocaleSetting;

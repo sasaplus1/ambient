@@ -13,6 +13,13 @@ import {
 } from '../../lib/dateFormat';
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
+import {
+  PIXEL_SHIFT_INTERVALS,
+  PIXEL_SHIFT_RANGE,
+  PIXEL_SHIFT_STRENGTHS,
+  type PixelShiftInterval,
+  type PixelShiftStrength,
+} from '../../lib/pixelShift';
 import { TIME_BANDS, bandStartHour, type TimeBand } from '../../lib/schedule';
 import {
   TEMPERATURE_UNITS,
@@ -148,6 +155,24 @@ function temperatureUnitOptions(): readonly Option<TemperatureUnitSetting>[] {
   return TEMPERATURE_UNITS.map((value) => ({
     value,
     label: t(`temperatureUnit.${value}`),
+  }));
+}
+
+/**
+ * Labelled with the distance as well as the word: 'Medium' says nothing on its
+ * own, and the whole point is that the number should be a small one.
+ */
+function pixelShiftStrengthOptions(): readonly Option<PixelShiftStrength>[] {
+  return PIXEL_SHIFT_STRENGTHS.map((value) => ({
+    value,
+    label: `${t(`pixelShiftStrength.${value}`)} ±${PIXEL_SHIFT_RANGE[value]}px`,
+  }));
+}
+
+function pixelShiftIntervalOptions(): readonly Option<PixelShiftInterval>[] {
+  return PIXEL_SHIFT_INTERVALS.map((value) => ({
+    value,
+    label: `${value} ${t('burnIn.minutes')}`,
   }));
 }
 
@@ -366,6 +391,44 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
           <h2 class="settings-section__title">{t('section.background')}</h2>
           <div class="settings-section__items">
             <BackgroundRow />
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.burnIn')}</h2>
+          <div class="settings-section__items">
+            <ToggleRow
+              label={t('burnIn.pixelShift')}
+              checked={current.pixelShift}
+              onChange={(pixelShift) => updateSettings({ pixelShift })}
+            />
+
+            {/*
+              The one setting on this page whose name gives away nothing about
+              what it is for, or who would want it.
+            */}
+            <p class="setting-message">{t('burnIn.hint')}</p>
+
+            {current.pixelShift && (
+              <>
+                <OptionRow
+                  label={t('burnIn.distance')}
+                  options={pixelShiftStrengthOptions()}
+                  selected={current.pixelShiftStrength}
+                  onChange={(pixelShiftStrength) =>
+                    updateSettings({ pixelShiftStrength })
+                  }
+                />
+                <OptionRow
+                  label={t('burnIn.interval')}
+                  options={pixelShiftIntervalOptions()}
+                  selected={current.pixelShiftInterval}
+                  onChange={(pixelShiftInterval) =>
+                    updateSettings({ pixelShiftInterval })
+                  }
+                />
+              </>
+            )}
           </div>
         </section>
 

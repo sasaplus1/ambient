@@ -4,6 +4,10 @@ import { isAdjacentDays, isWeekStart } from '../lib/calendar';
 import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
 import { isLogLevel } from '../lib/logger';
+import {
+  isPixelShiftInterval,
+  isPixelShiftStrength,
+} from '../lib/pixelShift';
 import { TIME_BANDS, type TimeBand } from '../lib/schedule';
 import { isTemperatureUnitSetting } from '../lib/temperature';
 import {
@@ -76,6 +80,9 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   backgroundFit: 'cover',
   backgroundDim: 30,
+  pixelShift: false,
+  pixelShiftStrength: 'medium',
+  pixelShiftInterval: 30,
   locale: 'auto',
   controlsSeen: false,
   previewOpen: true,
@@ -245,6 +252,13 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
       0,
       90,
     ),
+    pixelShift: pickBoolean(raw, 'pixelShift', DEFAULT_SETTINGS.pixelShift),
+    pixelShiftStrength: isPixelShiftStrength(raw['pixelShiftStrength'])
+      ? raw['pixelShiftStrength']
+      : DEFAULT_SETTINGS.pixelShiftStrength,
+    pixelShiftInterval: isPixelShiftInterval(raw['pixelShiftInterval'])
+      ? raw['pixelShiftInterval']
+      : DEFAULT_SETTINGS.pixelShiftInterval,
     locale: isLocaleSetting(raw['locale'])
       ? raw['locale']
       : DEFAULT_SETTINGS.locale,

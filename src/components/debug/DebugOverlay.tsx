@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'preact/hooks';
 
 import { atLeast, errorCount, formatTime, logs } from '../../lib/logger';
+import { formatShift } from '../../lib/pixelShift';
 import { formatUptime, online, startedAt } from '../../state/diagnostics';
+import { shift } from '../../state/pixelShift';
 import { settings } from '../../state/settings';
 import { weather, weatherStatus } from '../../state/weather';
 
@@ -37,15 +39,23 @@ export function DebugOverlay() {
   const minimum = settings.value.debugLevel;
   const reading = weather.value;
 
-  const status = [
+  const parts = [
     `UP ${formatUptime(now, startedAt.value)}`,
     `NET ${online.value ? 'OK' : 'OFF'}`,
     reading
       ? `WX ${ageInMinutes(reading.fetchedAt, now)}m`
       : `WX ${weatherStatus.value}`,
     `ERR ${errorCount.value}`,
-    __COMMIT_SHA__,
-  ].join(' | ');
+  ];
+
+  // Only while it is moving. Left in, it would read +0,+0 for good
+  if (settings.value.pixelShift) {
+    parts.push(`SHIFT ${formatShift(shift.value)}`);
+  }
+
+  parts.push(__COMMIT_SHA__);
+
+  const status = parts.join(' | ');
 
   const visible = logs.value
     .filter((entry) => atLeast(entry.level, minimum))
