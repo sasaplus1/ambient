@@ -3,6 +3,7 @@ import { useState } from 'preact/hooks';
 import { settings } from '../state/settings';
 
 import { AmbientModeButton } from './AmbientModeButton';
+import { Background } from './Background';
 import { Calendar } from './Calendar';
 import { Clock } from './clock/Clock';
 import { DateDisplay } from './DateDisplay';
@@ -16,6 +17,8 @@ export function Dashboard() {
 
   return (
     <div class="dashboard">
+      <Background />
+
       <div class="dashboard__widgets">
         <div class="dashboard__primary">
           {showClock && <Clock />}

@@ -12,6 +12,9 @@ export type SecondHand = (typeof SECOND_HANDS)[number];
 export const ANALOG_NUMERALS = ['none', 'ticks', 'arabic', 'roman'] as const;
 export type AnalogNumerals = (typeof ANALOG_NUMERALS)[number];
 
+export const BACKGROUND_FITS = ['cover', 'contain', 'fill'] as const;
+export type BackgroundFit = (typeof BACKGROUND_FITS)[number];
+
 /**
  * Per-device display settings, persisted to localStorage as a whole.
  * Weather, calendar and background image extend this type with more fields.
@@ -44,6 +47,11 @@ export type Settings = {
   analogNumerals: AnalogNumerals;
 
   theme: Theme;
+
+  /** How the background image fills the screen */
+  backgroundFit: BackgroundFit;
+  /** Background image opacity, 0-100. Lower it to keep the clock readable. */
+  backgroundOpacity: number;
 
   /** 'auto' follows the browser's language settings */
   locale: LocaleSetting;

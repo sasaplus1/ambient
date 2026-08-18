@@ -257,3 +257,8 @@
   opacity: 0.4;
   cursor: default;
 }
+
+.background__slider {
+  width: 100%;
+  accent-color: var(--accent);
+}

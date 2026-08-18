@@ -17,6 +17,7 @@ import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
 
+import { BackgroundRow } from './BackgroundRow';
 import { LocationRow } from './LocationRow';
 import { OptionRow, type Option } from './OptionRow';
 import { ToggleRow } from './ToggleRow';
@@ -245,6 +246,13 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   selected={current.theme}
                   onChange={(theme) => updateSettings({ theme })}
                 />
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2 class="settings-section__title">{t('section.background')}</h2>
+              <div class="settings-section__items">
+                <BackgroundRow />
               </div>
             </section>
 

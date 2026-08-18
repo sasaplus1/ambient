@@ -1,6 +1,7 @@
 import { render } from 'preact';
 
 import { App } from './app';
+import { startBackgroundSync } from './state/background';
 import { startLocaleSync } from './state/locale';
 import { startSettingsSync } from './state/settings';
 import { startWeatherSync } from './state/weather';
@@ -18,5 +19,6 @@ if (!root) {
 startSettingsSync();
 startLocaleSync();
 startWeatherSync();
+startBackgroundSync();
 
 render(<App />, root);

@@ -7,9 +7,11 @@ import { loadRecord, saveRecord } from '../lib/storage';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
 import {
   ANALOG_NUMERALS,
+  BACKGROUND_FITS,
   CLOCK_TYPES,
   SECOND_HANDS,
   type AnalogNumerals,
+  type BackgroundFit,
   type ClockType,
   type SecondHand,
   type Settings,
@@ -38,8 +40,26 @@ export const DEFAULT_SETTINGS: Settings = {
   secondHand: 'sweep',
   analogNumerals: 'ticks',
   theme: DEFAULT_THEME,
+  backgroundFit: 'cover',
+  backgroundOpacity: 100,
   locale: 'auto',
 };
+
+function pickNumber(
+  raw: Record<string, unknown>,
+  key: string,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
+  const value = raw[key];
+
+  if (typeof value !== 'number' || !Number.isFinite(value)) {
+    return fallback;
+  }
+
+  return Math.min(Math.max(Math.round(value), min), max);
+}
 
 function pickBoolean(
   raw: Record<string, unknown>,
@@ -113,6 +133,19 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
       DEFAULT_SETTINGS.analogNumerals,
     ),
     theme: isTheme(raw['theme']) ? raw['theme'] : DEFAULT_SETTINGS.theme,
+    backgroundFit: pickUnion<BackgroundFit>(
+      raw,
+      'backgroundFit',
+      BACKGROUND_FITS,
+      DEFAULT_SETTINGS.backgroundFit,
+    ),
+    backgroundOpacity: pickNumber(
+      raw,
+      'backgroundOpacity',
+      DEFAULT_SETTINGS.backgroundOpacity,
+      10,
+      100,
+    ),
     locale: isLocaleSetting(raw['locale'])
       ? raw['locale']
       : DEFAULT_SETTINGS.locale,

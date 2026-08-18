@@ -1,0 +1,21 @@
+/*
+ * Sits behind everything, outside the flow, so it never affects layout.
+ * The dashboard keeps its own background colour underneath, which shows through
+ * wherever the image does not reach.
+ */
+.background {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+
+  pointer-events: none;
+}
+
+.background__image {
+  width: 100%;
+  height: 100%;
+
+  /* Set from the settings so the value stays in one place */
+  object-fit: var(--background-fit, cover);
+  opacity: var(--background-opacity, 1);
+}
