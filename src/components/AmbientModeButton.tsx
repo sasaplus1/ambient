@@ -2,6 +2,7 @@ import { useEffect } from 'preact/hooks';
 
 import { useFullscreen } from '../hooks/useFullscreen';
 import { useWakeLock } from '../hooks/useWakeLock';
+import { t } from '../state/locale';
 
 import './AmbientModeButton.css';
 
@@ -55,7 +56,7 @@ export function AmbientModeButton() {
     <button
       type="button"
       class="ambient-button"
-      aria-label={active ? '常時表示モードを終了' : '常時表示モードを開始'}
+      aria-label={active ? t('ambient.stop') : t('ambient.start')}
       aria-pressed={active}
       onClick={toggle}
     >

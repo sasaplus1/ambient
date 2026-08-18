@@ -1,5 +1,6 @@
 import { computed, effect, signal } from '@preact/signals';
 
+import { isLocaleSetting } from '../lib/i18n';
 import { loadRecord, saveRecord } from '../lib/storage';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
 import {
@@ -15,7 +16,7 @@ import {
 const STORAGE_KEY = 'ambient:settings';
 
 /** Bump when the shape of Settings changes; stored values are then discarded. */
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 export const DEFAULT_SETTINGS: Settings = {
   showClock: true,
@@ -26,6 +27,7 @@ export const DEFAULT_SETTINGS: Settings = {
   secondHand: 'sweep',
   analogNumerals: 'ticks',
   theme: DEFAULT_THEME,
+  locale: 'auto',
 };
 
 function pickBoolean(
@@ -85,6 +87,9 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
       DEFAULT_SETTINGS.analogNumerals,
     ),
     theme: isTheme(raw['theme']) ? raw['theme'] : DEFAULT_SETTINGS.theme,
+    locale: isLocaleSetting(raw['locale'])
+      ? raw['locale']
+      : DEFAULT_SETTINGS.locale,
   };
 }
 

@@ -1,24 +1,28 @@
 import { useNow } from '../hooks/useNow';
+import type { Locale } from '../lib/i18n';
+import { locale } from '../state/locale';
 
 import './DateDisplay.css';
 
-// Follows the device locale.
-const dateFormat = new Intl.DateTimeFormat(undefined, {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-});
+const formatters = new Map<Locale, Intl.DateTimeFormat>();
 
-export function DateDisplay() {
-  // The date only needs to change at midnight
-  const now = useNow('day');
+function dateFormatter(tag: Locale): Intl.DateTimeFormat {
+  const existing = formatters.get(tag);
 
-  return (
-    <time class="date-display" dateTime={toIsoDate(now)}>
-      {dateFormat.format(now)}
-    </time>
-  );
+  if (existing) {
+    return existing;
+  }
+
+  const created = new Intl.DateTimeFormat(tag, {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  });
+
+  formatters.set(tag, created);
+
+  return created;
 }
 
 function toIsoDate(date: Date): string {
@@ -27,4 +31,15 @@ function toIsoDate(date: Date): string {
   const day = date.getDate().toString().padStart(2, '0');
 
   return `${year}-${month}-${day}`;
+}
+
+export function DateDisplay() {
+  // The date only needs to change at midnight
+  const now = useNow('day');
+
+  return (
+    <time class="date-display" dateTime={toIsoDate(now)}>
+      {dateFormatter(locale.value).format(now)}
+    </time>
+  );
 }

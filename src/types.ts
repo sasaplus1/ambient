@@ -1,3 +1,4 @@
+import type { LocaleSetting } from './lib/i18n';
 import type { Theme } from './lib/theme';
 
 export const CLOCK_TYPES = ['digital', 'analog'] as const;
@@ -30,4 +31,7 @@ export type Settings = {
   analogNumerals: AnalogNumerals;
 
   theme: Theme;
+
+  /** 'auto' follows the browser's language settings */
+  locale: LocaleSetting;
 };

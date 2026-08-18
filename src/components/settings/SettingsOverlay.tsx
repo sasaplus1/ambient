@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'preact/hooks';
 
+import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { THEMES, themeLabel, type Theme } from '../../lib/theme';
+import { t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
 
@@ -11,28 +13,44 @@ import './settings.css';
 
 type Page = 'main' | 'clock';
 
-const CLOCK_TYPE_OPTIONS: readonly Option<ClockType>[] = [
-  { value: 'digital', label: 'デジタル' },
-  { value: 'analog', label: 'アナログ' },
-];
+/**
+ * Option lists are built per render rather than hoisted, because their labels
+ * depend on the locale in effect.
+ */
+function clockTypeOptions(): readonly Option<ClockType>[] {
+  return [
+    { value: 'digital', label: t('clock.digital') },
+    { value: 'analog', label: t('clock.analog') },
+  ];
+}
 
-const SECOND_HAND_OPTIONS: readonly Option<SecondHand>[] = [
-  { value: 'none', label: 'なし' },
-  { value: 'step', label: 'ステップ' },
-  { value: 'sweep', label: 'スイープ' },
-];
+function secondHandOptions(): readonly Option<SecondHand>[] {
+  return [
+    { value: 'none', label: t('secondHand.none') },
+    { value: 'step', label: t('secondHand.step') },
+    { value: 'sweep', label: t('secondHand.sweep') },
+  ];
+}
 
-const NUMERALS_OPTIONS: readonly Option<AnalogNumerals>[] = [
-  { value: 'none', label: 'なし' },
-  { value: 'ticks', label: '目盛り' },
-  { value: 'arabic', label: '数字' },
-  { value: 'roman', label: 'ローマ数字' },
-];
+function numeralsOptions(): readonly Option<AnalogNumerals>[] {
+  return [
+    { value: 'none', label: t('numerals.none') },
+    { value: 'ticks', label: t('numerals.ticks') },
+    { value: 'arabic', label: t('numerals.arabic') },
+    { value: 'roman', label: t('numerals.roman') },
+  ];
+}
 
-const THEME_OPTIONS: readonly Option<Theme>[] = THEMES.map((theme) => ({
-  value: theme,
-  label: themeLabel(theme),
-}));
+function themeOptions(): readonly Option<Theme>[] {
+  return THEMES.map((theme) => ({ value: theme, label: themeLabel(theme) }));
+}
+
+function localeOptions(): readonly Option<LocaleSetting>[] {
+  return LOCALE_SETTINGS.map((value) => ({
+    value,
+    label: t(`language.${value}`),
+  }));
+}
 
 type SettingsOverlayProps = {
   onClose: () => void;
@@ -57,7 +75,12 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
   }, [onClose]);
 
   return (
-    <div class="settings-overlay" role="dialog" aria-modal="true" aria-label="設定">
+    <div
+      class="settings-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={t('settings.title')}
+    >
       <header class="settings-overlay__header">
         {page === 'main' ? (
           <button
@@ -65,7 +88,7 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             class="settings-overlay__action"
             onClick={() => resetSettings()}
           >
-            初期化
+            {t('settings.reset')}
           </button>
         ) : (
           <button
@@ -73,16 +96,16 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             class="settings-overlay__action"
             onClick={() => setPage('main')}
           >
-            ← 戻る
+            {`← ${t('settings.back')}`}
           </button>
         )}
 
         <h1 class="settings-overlay__title">
-          {page === 'main' ? '設定' : '時計の詳細'}
+          {page === 'main' ? t('settings.title') : t('clock.details')}
         </h1>
 
         <button type="button" class="settings-overlay__action" onClick={onClose}>
-          閉じる
+          {t('settings.close')}
         </button>
       </header>
 
@@ -90,15 +113,15 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
         {page === 'main' ? (
           <>
             <section class="settings-section">
-              <h2 class="settings-section__title">表示</h2>
+              <h2 class="settings-section__title">{t('section.display')}</h2>
               <div class="settings-section__items">
                 <ToggleRow
-                  label="時計"
+                  label={t('widget.clock')}
                   checked={current.showClock}
                   onChange={(showClock) => updateSettings({ showClock })}
                 />
                 <ToggleRow
-                  label="日付"
+                  label={t('widget.date')}
                   checked={current.showDate}
                   onChange={(showDate) => updateSettings({ showDate })}
                 />
@@ -106,11 +129,11 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             </section>
 
             <section class="settings-section">
-              <h2 class="settings-section__title">時計</h2>
+              <h2 class="settings-section__title">{t('section.clock')}</h2>
               <div class="settings-section__items">
                 <OptionRow
-                  label="種類"
-                  options={CLOCK_TYPE_OPTIONS}
+                  label={t('clock.type')}
+                  options={clockTypeOptions()}
                   selected={current.clockType}
                   onChange={(clockType) => updateSettings({ clockType })}
                 />
@@ -119,7 +142,9 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   class="setting-row"
                   onClick={() => setPage('clock')}
                 >
-                  <span class="setting-row__label">詳細設定</span>
+                  <span class="setting-row__label">
+                    {t('clock.detailsRow')}
+                  </span>
                   <span class="setting-row__value" aria-hidden="true">
                     ›
                   </span>
@@ -128,13 +153,25 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             </section>
 
             <section class="settings-section">
-              <h2 class="settings-section__title">テーマ</h2>
+              <h2 class="settings-section__title">{t('section.theme')}</h2>
               <div class="settings-section__items">
                 <OptionRow
-                  label="配色"
-                  options={THEME_OPTIONS}
+                  label={t('theme.palette')}
+                  options={themeOptions()}
                   selected={current.theme}
                   onChange={(theme) => updateSettings({ theme })}
+                />
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2 class="settings-section__title">{t('section.language')}</h2>
+              <div class="settings-section__items">
+                <OptionRow
+                  label={t('language.label')}
+                  options={localeOptions()}
+                  selected={current.locale}
+                  onChange={(locale) => updateSettings({ locale })}
                 />
               </div>
             </section>
@@ -142,15 +179,17 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
         ) : (
           <>
             <section class="settings-section">
-              <h2 class="settings-section__title">デジタル時計</h2>
+              <h2 class="settings-section__title">
+                {t('section.digitalClock')}
+              </h2>
               <div class="settings-section__items">
                 <ToggleRow
-                  label="12 時間表記"
+                  label={t('clock.hour12')}
                   checked={current.hour12}
                   onChange={(hour12) => updateSettings({ hour12 })}
                 />
                 <ToggleRow
-                  label="秒を表示"
+                  label={t('clock.showSeconds')}
                   checked={current.showSeconds}
                   onChange={(showSeconds) => updateSettings({ showSeconds })}
                 />
@@ -158,17 +197,19 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
             </section>
 
             <section class="settings-section">
-              <h2 class="settings-section__title">アナログ時計</h2>
+              <h2 class="settings-section__title">
+                {t('section.analogClock')}
+              </h2>
               <div class="settings-section__items">
                 <OptionRow
-                  label="秒針"
-                  options={SECOND_HAND_OPTIONS}
+                  label={t('clock.secondHand')}
+                  options={secondHandOptions()}
                   selected={current.secondHand}
                   onChange={(secondHand) => updateSettings({ secondHand })}
                 />
                 <OptionRow
-                  label="文字盤"
-                  options={NUMERALS_OPTIONS}
+                  label={t('clock.dial')}
+                  options={numeralsOptions()}
                   selected={current.analogNumerals}
                   onChange={(analogNumerals) =>
                     updateSettings({ analogNumerals })

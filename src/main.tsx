@@ -1,6 +1,7 @@
 import { render } from 'preact';
 
 import { App } from './app';
+import { startLocaleSync } from './state/locale';
 import { startSettingsSync } from './state/settings';
 
 import './styles/reset.css';
@@ -14,5 +15,6 @@ if (!root) {
 }
 
 startSettingsSync();
+startLocaleSync();
 
 render(<App />, root);

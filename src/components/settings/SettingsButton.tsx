@@ -1,3 +1,5 @@
+import { t } from '../../state/locale';
+
 type SettingsButtonProps = {
   onClick: () => void;
 };
@@ -7,7 +9,7 @@ export function SettingsButton({ onClick }: SettingsButtonProps) {
     <button
       type="button"
       class="settings-button"
-      aria-label="設定を開く"
+      aria-label={t('settings.open')}
       onClick={onClick}
     >
       <svg
