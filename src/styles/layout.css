@@ -37,12 +37,13 @@ body {
 }
 
 /*
- * The layout is built around the clock.
+ * The layout is built around the clock, in two blocks side by side.
  *
- * The date sits above it and the weather below, so the three read top to bottom
- * as one block: what day, what time, what it is like outside. The calendar is
- * the one thing that is not about now, so it is pushed to the far side rather
- * than crowded against them.
+ * One block is a column reading top to bottom - what day it is, the thing in
+ * the middle, what it is like outside. What sits in that middle depends on the
+ * clock: a digital one is type and belongs in the column, while an analog face
+ * is a drawing that stands on its own, leaving the calendar to take the middle.
+ * Dashboard decides which; the styles are the same either way.
  */
 .dashboard__widgets {
   display: flex;
@@ -53,11 +54,16 @@ body {
   gap: var(--widget-gap);
 }
 
-.dashboard__clock-group {
+.dashboard__stack {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: clamp(0.35rem, 2vmin, 1.25rem);
+}
+
+/* Nothing left in the column, so it should not claim a gap of its own */
+.dashboard__stack:empty {
+  display: none;
 }
 
 @media (orientation: portrait) {

@@ -13,22 +13,54 @@ import { SettingsOverlay } from './settings/SettingsOverlay';
 import { Weather } from './weather/Weather';
 
 export function Dashboard() {
-  const { showClock, showDate, showWeather, showCalendar, showDebug } =
+  const { showClock, showDate, showWeather, showCalendar, showDebug, clockType } =
     settings.value;
   const [settingsOpen, setSettingsOpen] = useState(false);
+
+  const date = showDate && <DateDisplay />;
+  const weather = showWeather && <Weather />;
+  const calendar = showCalendar && <Calendar />;
+  const clock = showClock && <Clock />;
+
+  /*
+   * Which block the clock belongs to depends on what kind of clock it is.
+   *
+   * A digital clock is type, so it reads as one column with the date above and
+   * the weather below. An analog face is a drawing, and putting text either side
+   * of it only competes with it - so it stands on its own and the calendar takes
+   * the middle of the text column instead.
+   */
+  const stack =
+    clockType === 'analog' ? (
+      <div class="dashboard__stack">
+        {date}
+        {calendar}
+        {weather}
+      </div>
+    ) : (
+      <div class="dashboard__stack">
+        {date}
+        {clock}
+        {weather}
+      </div>
+    );
 
   return (
     <div class="dashboard">
       <Background />
 
       <div class="dashboard__widgets">
-        <div class="dashboard__clock-group">
-          {showDate && <DateDisplay />}
-          {showClock && <Clock />}
-          {showWeather && <Weather />}
-        </div>
-
-        {showCalendar && <Calendar />}
+        {clockType === 'analog' ? (
+          <>
+            {clock}
+            {stack}
+          </>
+        ) : (
+          <>
+            {stack}
+            {calendar}
+          </>
+        )}
       </div>
 
       {showDebug && <DebugOverlay />}
