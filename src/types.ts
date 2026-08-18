@@ -1,3 +1,4 @@
+import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
 import type { Theme } from './lib/theme';
 
@@ -17,6 +18,9 @@ export type AnalogNumerals = (typeof ANALOG_NUMERALS)[number];
 export type Settings = {
   showClock: boolean;
   showDate: boolean;
+
+  /** How the date is written out; see lib/dateFormat for the presets */
+  dateFormat: DateFormat;
 
   clockType: ClockType;
 

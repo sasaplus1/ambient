@@ -48,6 +48,7 @@ const DICTIONARY = {
 
   'section.display': { ja: '表示', en: 'Display' },
   'section.clock': { ja: '時計', en: 'Clock' },
+  'section.date': { ja: '日付', en: 'Date' },
   'section.theme': { ja: 'テーマ', en: 'Theme' },
   'section.language': { ja: '言語', en: 'Language' },
   'section.digitalClock': { ja: 'デジタル時計', en: 'Digital clock' },
@@ -58,6 +59,8 @@ const DICTIONARY = {
 
   'widget.clock': { ja: '時計', en: 'Clock' },
   'widget.date': { ja: '日付', en: 'Date' },
+
+  'date.format': { ja: '表記', en: 'Format' },
 
   'clock.type': { ja: '種類', en: 'Type' },
   'clock.digital': { ja: 'デジタル', en: 'Digital' },

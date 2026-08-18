@@ -1,5 +1,6 @@
 import { computed, effect, signal } from '@preact/signals';
 
+import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
 import { loadRecord, saveRecord } from '../lib/storage';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
@@ -15,12 +16,17 @@ import {
 
 const STORAGE_KEY = 'ambient:settings';
 
-/** Bump when the shape of Settings changes; stored values are then discarded. */
+/**
+ * Bump only when an existing field changes meaning, which discards everything
+ * stored. Adding a field needs no bump: parseSettings validates field by field
+ * and supplies the default for anything absent.
+ */
 const SCHEMA_VERSION = 2;
 
 export const DEFAULT_SETTINGS: Settings = {
   showClock: true,
   showDate: true,
+  dateFormat: DEFAULT_DATE_FORMAT,
   clockType: 'analog',
   hour12: false,
   showSeconds: false,
@@ -66,6 +72,9 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
   return {
     showClock: pickBoolean(raw, 'showClock', DEFAULT_SETTINGS.showClock),
     showDate: pickBoolean(raw, 'showDate', DEFAULT_SETTINGS.showDate),
+    dateFormat: isDateFormat(raw['dateFormat'])
+      ? raw['dateFormat']
+      : DEFAULT_SETTINGS.dateFormat,
     clockType: pickUnion<ClockType>(
       raw,
       'clockType',

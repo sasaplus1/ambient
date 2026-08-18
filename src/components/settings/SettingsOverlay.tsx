@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'preact/hooks';
 
+import {
+  DATE_FORMATS,
+  formatDate,
+  type DateFormat,
+} from '../../lib/dateFormat';
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { THEMES, themeLabel, type Theme } from '../../lib/theme';
-import { t } from '../../state/locale';
+import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
 
@@ -39,6 +44,17 @@ function numeralsOptions(): readonly Option<AnalogNumerals>[] {
     { value: 'arabic', label: t('numerals.arabic') },
     { value: 'roman', label: t('numerals.roman') },
   ];
+}
+
+/**
+ * Each preset is labelled with today's date as it would actually appear, which
+ * says more than a name for the format ever could.
+ */
+function dateFormatOptions(today: Date): readonly Option<DateFormat>[] {
+  return DATE_FORMATS.map((value) => ({
+    value,
+    label: formatDate(locale.value, value, today),
+  }));
 }
 
 function themeOptions(): readonly Option<Theme>[] {
@@ -149,6 +165,18 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                     ›
                   </span>
                 </button>
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2 class="settings-section__title">{t('section.date')}</h2>
+              <div class="settings-section__items">
+                <OptionRow
+                  label={t('date.format')}
+                  options={dateFormatOptions(new Date())}
+                  selected={current.dateFormat}
+                  onChange={(dateFormat) => updateSettings({ dateFormat })}
+                />
               </div>
             </section>
 
