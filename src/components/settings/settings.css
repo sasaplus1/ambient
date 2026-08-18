@@ -22,6 +22,24 @@
   opacity: 1;
 }
 
+/*
+ * Short enough to be felt rather than watched. The panel covers the whole
+ * dashboard, and arriving as a hard cut reads as the screen having changed to
+ * something else; a moment of the clock showing through says it is still there
+ * underneath. Reduced motion drops it, as it drops every other transition.
+ */
+@keyframes settings-overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes settings-overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+
 .settings-overlay {
   position: fixed;
   inset: 0;
@@ -32,6 +50,15 @@
 
   background: var(--scrim);
   backdrop-filter: blur(12px);
+  animation: settings-overlay-in 120ms ease-out;
+}
+
+.settings-overlay[data-closing='true'] {
+  /* forwards, so it holds at nothing for the frame before it is taken away */
+  animation: settings-overlay-out 120ms ease-in forwards;
+
+  /* On the way out it is only a picture; a tap belongs to what is behind it */
+  pointer-events: none;
 }
 
 .settings-overlay__header {

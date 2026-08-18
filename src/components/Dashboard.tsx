@@ -17,6 +17,13 @@ import { Weather } from './weather/Weather';
 /** How long the controls stay up after the screen is touched. */
 const CONTROLS_IDLE_MS = 4_000;
 
+/**
+ * Three states rather than a flag, because on the way out the settings are
+ * still on screen. The panel reports when its fade has finished, and only then
+ * is it taken away.
+ */
+type SettingsState = 'closed' | 'open' | 'closing';
+
 export function Dashboard() {
   const {
     showClock,
@@ -27,7 +34,7 @@ export function Dashboard() {
     clockType,
     controlsSeen,
   } = settings.value;
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settingsState, setSettingsState] = useState<SettingsState>('closed');
 
   /*
    * The corner controls rest almost invisible, which suits a screen that is
@@ -94,17 +101,28 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Hidden while the settings are open: it would cover the rows behind it */}
-      {showDebug && !settingsOpen && <DebugOverlay />}
+      {/*
+        Hidden while the settings are open: it would cover the rows behind it.
+        It sits above the panel, so it waits out the fade rather than arriving
+        on top of one.
+      */}
+      {showDebug && settingsState === 'closed' && <DebugOverlay />}
 
-      {settingsOpen ? (
-        <SettingsOverlay onClose={() => setSettingsOpen(false)} />
-      ) : (
+      {settingsState !== 'closed' && (
+        <SettingsOverlay
+          closing={settingsState === 'closing'}
+          onClose={() => setSettingsState('closing')}
+          onClosed={() => setSettingsState('closed')}
+        />
+      )}
+
+      {/* Back underneath the panel as it fades, rather than after it has gone */}
+      {settingsState !== 'open' && (
         <div class="dashboard__controls" data-visible={controlsVisible}>
           <AmbientModeButton />
           <SettingsButton
             onClick={() => {
-              setSettingsOpen(true);
+              setSettingsState('open');
               updateSettings({ controlsSeen: true });
             }}
           />

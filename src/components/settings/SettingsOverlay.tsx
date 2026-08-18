@@ -191,7 +191,11 @@ function localeOptions(): readonly Option<LocaleSetting>[] {
 }
 
 type SettingsOverlayProps = {
+  /** Fading out. It is still on screen, and is about to report that it is not */
+  closing: boolean;
   onClose: () => void;
+  /** The fade has finished and there is nothing left to keep on screen */
+  onClosed: () => void;
 };
 
 /**
@@ -201,7 +205,11 @@ type SettingsOverlayProps = {
  * how its type looks - so there is one place to go per widget rather than the
  * same widget appearing under several headings.
  */
-export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
+export function SettingsOverlay({
+  closing,
+  onClose,
+  onClosed,
+}: SettingsOverlayProps) {
   const current = settings.value;
 
   useEffect(() => {
@@ -226,6 +234,18 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
       role="dialog"
       aria-modal="true"
       aria-label={t('settings.title')}
+      data-closing={closing}
+      /*
+       * By name, because the panel holds plenty of other things that animate
+       * and every one of them ends here as well. Reduced motion cuts the
+       * duration to nothing rather than removing the animation, so this still
+       * arrives - immediately, which is the point.
+       */
+      onAnimationEnd={(event) => {
+        if (event.animationName === 'settings-overlay-out') {
+          onClosed();
+        }
+      }}
     >
       <header class="settings-overlay__header">
         <button
