@@ -40,10 +40,10 @@ const SCHEMA_VERSION = 2;
 
 export const DEFAULT_SETTINGS: Settings = {
   showClock: true,
-  showDate: true,
+  showDate: false,
   dateFormat: DEFAULT_DATE_FORMAT,
   showWeather: false,
-  showCalendar: false,
+  showCalendar: true,
   weekStart: 'sunday',
   adjacentDays: 'dimmed',
   clockType: 'analog',
@@ -62,9 +62,9 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   scales: {
     clock: 'm',
-    date: 'm',
+    date: 's',
     weather: 'm',
-    calendar: 'm',
+    calendar: 'l',
   },
   fonts: {
     clock: 'sans',
