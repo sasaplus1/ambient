@@ -2,6 +2,7 @@ import { useState } from 'preact/hooks';
 
 import { settings } from '../state/settings';
 
+import { AmbientModeButton } from './AmbientModeButton';
 import { Clock } from './clock/Clock';
 import { DateDisplay } from './DateDisplay';
 import { SettingsButton } from './settings/SettingsButton';
@@ -21,7 +22,10 @@ export function Dashboard() {
       {settingsOpen ? (
         <SettingsOverlay onClose={() => setSettingsOpen(false)} />
       ) : (
-        <SettingsButton onClick={() => setSettingsOpen(true)} />
+        <>
+          <AmbientModeButton />
+          <SettingsButton onClick={() => setSettingsOpen(true)} />
+        </>
       )}
     </div>
   );
