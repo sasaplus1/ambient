@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect } from 'preact/hooks';
 
 import {
   ADJACENT_DAYS,
@@ -31,8 +31,6 @@ import { OptionRow, type Option } from './OptionRow';
 import { ToggleRow } from './ToggleRow';
 
 import './settings.css';
-
-type Page = 'main' | 'clock';
 
 /**
  * Option lists are built per render rather than hoisted, because their labels
@@ -123,8 +121,14 @@ type SettingsOverlayProps = {
   onClose: () => void;
 };
 
+/**
+ * Every setting sits on one scrolling page.
+ *
+ * Options that only apply to the clock you are not using are left out rather
+ * than shown inert, which keeps the list about as short as a second level would
+ * have without hiding anything behind a tap.
+ */
 export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
-  const [page, setPage] = useState<Page>('main');
   const current = settings.value;
 
   useEffect(() => {
@@ -149,27 +153,15 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
       aria-label={t('settings.title')}
     >
       <header class="settings-overlay__header">
-        {page === 'main' ? (
-          <button
-            type="button"
-            class="settings-overlay__action"
-            onClick={() => resetSettings()}
-          >
-            {t('settings.reset')}
-          </button>
-        ) : (
-          <button
-            type="button"
-            class="settings-overlay__action"
-            onClick={() => setPage('main')}
-          >
-            {`← ${t('settings.back')}`}
-          </button>
-        )}
+        <button
+          type="button"
+          class="settings-overlay__action"
+          onClick={() => resetSettings()}
+        >
+          {t('settings.reset')}
+        </button>
 
-        <h1 class="settings-overlay__title">
-          {page === 'main' ? t('settings.title') : t('clock.details')}
-        </h1>
+        <h1 class="settings-overlay__title">{t('settings.title')}</h1>
 
         <button type="button" class="settings-overlay__action" onClick={onClose}>
           {t('settings.close')}
@@ -177,186 +169,44 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
       </header>
 
       <div class="settings-overlay__body">
-        {page === 'main' ? (
-          <>
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.display')}</h2>
-              <div class="settings-section__items">
-                <ToggleRow
-                  label={t('widget.clock')}
-                  checked={current.showClock}
-                  onChange={(showClock) => updateSettings({ showClock })}
-                />
-                <ToggleRow
-                  label={t('widget.date')}
-                  checked={current.showDate}
-                  onChange={(showDate) => updateSettings({ showDate })}
-                />
-                <ToggleRow
-                  label={t('widget.weather')}
-                  checked={current.showWeather}
-                  onChange={(showWeather) => updateSettings({ showWeather })}
-                />
-                <ToggleRow
-                  label={t('widget.calendar')}
-                  checked={current.showCalendar}
-                  onChange={(showCalendar) => updateSettings({ showCalendar })}
-                />
-              </div>
-            </section>
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.display')}</h2>
+          <div class="settings-section__items">
+            <ToggleRow
+              label={t('widget.clock')}
+              checked={current.showClock}
+              onChange={(showClock) => updateSettings({ showClock })}
+            />
+            <ToggleRow
+              label={t('widget.date')}
+              checked={current.showDate}
+              onChange={(showDate) => updateSettings({ showDate })}
+            />
+            <ToggleRow
+              label={t('widget.weather')}
+              checked={current.showWeather}
+              onChange={(showWeather) => updateSettings({ showWeather })}
+            />
+            <ToggleRow
+              label={t('widget.calendar')}
+              checked={current.showCalendar}
+              onChange={(showCalendar) => updateSettings({ showCalendar })}
+            />
+          </div>
+        </section>
 
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.clock')}</h2>
-              <div class="settings-section__items">
-                <OptionRow
-                  label={t('clock.type')}
-                  options={clockTypeOptions()}
-                  selected={current.clockType}
-                  onChange={(clockType) => updateSettings({ clockType })}
-                />
-                <button
-                  type="button"
-                  class="setting-row"
-                  onClick={() => setPage('clock')}
-                >
-                  <span class="setting-row__label">
-                    {t('clock.detailsRow')}
-                  </span>
-                  <span class="setting-row__value" aria-hidden="true">
-                    ›
-                  </span>
-                </button>
-              </div>
-            </section>
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.clock')}</h2>
+          <div class="settings-section__items">
+            <OptionRow
+              label={t('clock.type')}
+              options={clockTypeOptions()}
+              selected={current.clockType}
+              onChange={(clockType) => updateSettings({ clockType })}
+            />
 
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.date')}</h2>
-              <div class="settings-section__items">
-                <OptionRow
-                  label={t('date.format')}
-                  options={dateFormatOptions(new Date())}
-                  selected={current.dateFormat}
-                  onChange={(dateFormat) => updateSettings({ dateFormat })}
-                />
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.weather')}</h2>
-              <div class="settings-section__items">
-                <LocationRow />
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.calendar')}</h2>
-              <div class="settings-section__items">
-                <OptionRow
-                  label={t('calendar.weekStart')}
-                  options={weekStartOptions()}
-                  selected={current.weekStart}
-                  onChange={(weekStart) => updateSettings({ weekStart })}
-                />
-                <OptionRow
-                  label={t('calendar.adjacentDays')}
-                  options={adjacentDaysOptions()}
-                  selected={current.adjacentDays}
-                  onChange={(adjacentDays) => updateSettings({ adjacentDays })}
-                />
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.theme')}</h2>
-              <div class="settings-section__items">
-                <OptionRow
-                  label={t('theme.palette')}
-                  options={themeOptions()}
-                  selected={current.theme}
-                  onChange={(theme) => updateSettings({ theme })}
-                />
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.typography')}</h2>
-              <div class="settings-section__items">
-                <OptionRow
-                  label={t('type.scale')}
-                  options={textScaleOptions()}
-                  selected={current.textScale}
-                  onChange={(textScale) => updateSettings({ textScale })}
-                />
-                {FONT_TARGETS.map((target) => (
-                  <OptionRow
-                    key={target}
-                    label={t(`type.font.${target}`)}
-                    options={fontOptions()}
-                    selected={current.fonts[target]}
-                    onChange={(family) =>
-                      updateSettings({
-                        fonts: { ...current.fonts, [target]: family },
-                      })
-                    }
-                  />
-                ))}
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.background')}</h2>
-              <div class="settings-section__items">
-                <BackgroundRow />
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.language')}</h2>
-              <div class="settings-section__items">
-                <OptionRow
-                  label={t('language.label')}
-                  options={localeOptions()}
-                  selected={current.locale}
-                  onChange={(locale) => updateSettings({ locale })}
-                />
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">{t('section.debug')}</h2>
-              <div class="settings-section__items">
-                <ToggleRow
-                  label={t('debug.overlay')}
-                  checked={current.showDebug}
-                  onChange={(showDebug) => updateSettings({ showDebug })}
-                />
-                {current.showDebug && (
-                  <>
-                    <OptionRow
-                      label={t('debug.level')}
-                      options={logLevelOptions()}
-                      selected={current.debugLevel}
-                      onChange={(debugLevel) => updateSettings({ debugLevel })}
-                    />
-                    <button
-                      type="button"
-                      class="setting-row"
-                      onClick={() => clearLogs()}
-                    >
-                      <span class="setting-row__label">{t('debug.clear')}</span>
-                    </button>
-                  </>
-                )}
-              </div>
-            </section>
-          </>
-        ) : (
-          <>
-            <section class="settings-section">
-              <h2 class="settings-section__title">
-                {t('section.digitalClock')}
-              </h2>
-              <div class="settings-section__items">
+            {current.clockType === 'digital' ? (
+              <>
                 <ToggleRow
                   label={t('clock.hour12')}
                   checked={current.hour12}
@@ -367,14 +217,9 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   checked={current.showSeconds}
                   onChange={(showSeconds) => updateSettings({ showSeconds })}
                 />
-              </div>
-            </section>
-
-            <section class="settings-section">
-              <h2 class="settings-section__title">
-                {t('section.analogClock')}
-              </h2>
-              <div class="settings-section__items">
+              </>
+            ) : (
+              <>
                 <OptionRow
                   label={t('clock.secondHand')}
                   options={secondHandOptions()}
@@ -389,10 +234,131 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                     updateSettings({ analogNumerals })
                   }
                 />
-              </div>
-            </section>
-          </>
-        )}
+              </>
+            )}
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.date')}</h2>
+          <div class="settings-section__items">
+            <OptionRow
+              label={t('date.format')}
+              options={dateFormatOptions(new Date())}
+              selected={current.dateFormat}
+              onChange={(dateFormat) => updateSettings({ dateFormat })}
+            />
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.weather')}</h2>
+          <div class="settings-section__items">
+            <LocationRow />
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.calendar')}</h2>
+          <div class="settings-section__items">
+            <OptionRow
+              label={t('calendar.weekStart')}
+              options={weekStartOptions()}
+              selected={current.weekStart}
+              onChange={(weekStart) => updateSettings({ weekStart })}
+            />
+            <OptionRow
+              label={t('calendar.adjacentDays')}
+              options={adjacentDaysOptions()}
+              selected={current.adjacentDays}
+              onChange={(adjacentDays) => updateSettings({ adjacentDays })}
+            />
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.theme')}</h2>
+          <div class="settings-section__items">
+            <OptionRow
+              label={t('theme.palette')}
+              options={themeOptions()}
+              selected={current.theme}
+              onChange={(theme) => updateSettings({ theme })}
+            />
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.typography')}</h2>
+          <div class="settings-section__items">
+            <OptionRow
+              label={t('type.scale')}
+              options={textScaleOptions()}
+              selected={current.textScale}
+              onChange={(textScale) => updateSettings({ textScale })}
+            />
+            {FONT_TARGETS.map((target) => (
+              <OptionRow
+                key={target}
+                label={t(`type.font.${target}`)}
+                options={fontOptions()}
+                selected={current.fonts[target]}
+                onChange={(family) =>
+                  updateSettings({
+                    fonts: { ...current.fonts, [target]: family },
+                  })
+                }
+              />
+            ))}
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.background')}</h2>
+          <div class="settings-section__items">
+            <BackgroundRow />
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.language')}</h2>
+          <div class="settings-section__items">
+            <OptionRow
+              label={t('language.label')}
+              options={localeOptions()}
+              selected={current.locale}
+              onChange={(locale) => updateSettings({ locale })}
+            />
+          </div>
+        </section>
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.debug')}</h2>
+          <div class="settings-section__items">
+            <ToggleRow
+              label={t('debug.overlay')}
+              checked={current.showDebug}
+              onChange={(showDebug) => updateSettings({ showDebug })}
+            />
+            {current.showDebug && (
+              <>
+                <OptionRow
+                  label={t('debug.level')}
+                  options={logLevelOptions()}
+                  selected={current.debugLevel}
+                  onChange={(debugLevel) => updateSettings({ debugLevel })}
+                />
+                <button
+                  type="button"
+                  class="setting-row"
+                  onClick={() => clearLogs()}
+                >
+                  <span class="setting-row__label">{t('debug.clear')}</span>
+                </button>
+              </>
+            )}
+          </div>
+        </section>
       </div>
     </div>
   );

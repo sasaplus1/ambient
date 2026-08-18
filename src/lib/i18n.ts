@@ -43,7 +43,6 @@ const DICTIONARY = {
   'settings.title': { ja: '設定', en: 'Settings' },
   'settings.open': { ja: '設定を開く', en: 'Open settings' },
   'settings.close': { ja: '閉じる', en: 'Close' },
-  'settings.back': { ja: '戻る', en: 'Back' },
   'settings.reset': { ja: '初期化', en: 'Reset' },
 
   'section.display': { ja: '表示', en: 'Display' },
@@ -56,11 +55,6 @@ const DICTIONARY = {
   'section.typography': { ja: '文字', en: 'Type' },
   'section.theme': { ja: 'テーマ', en: 'Theme' },
   'section.language': { ja: '言語', en: 'Language' },
-  'section.digitalClock': { ja: 'デジタル時計', en: 'Digital clock' },
-  'section.analogClock': { ja: 'アナログ時計', en: 'Analog clock' },
-
-  'clock.details': { ja: '時計の詳細', en: 'Clock details' },
-  'clock.detailsRow': { ja: '詳細設定', en: 'More options' },
 
   'widget.clock': { ja: '時計', en: 'Clock' },
   'widget.date': { ja: '日付', en: 'Date' },
