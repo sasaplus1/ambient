@@ -1,6 +1,7 @@
 import { computed, effect, signal } from '@preact/signals';
 
 import { isAdjacentDays, isWeekStart } from '../lib/calendar';
+import { DEFAULT_GRADIENT, isGradientId } from '../lib/gradients';
 import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
 import { isLogLevel } from '../lib/logger';
@@ -18,10 +19,12 @@ import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
 import {
   ANALOG_NUMERALS,
   BACKGROUND_FITS,
+  BACKGROUND_KINDS,
   CLOCK_TYPES,
   SECOND_HANDS,
   type AnalogNumerals,
   type BackgroundFit,
+  type BackgroundKind,
   type ClockType,
   type SecondHand,
   type Settings,
@@ -63,8 +66,10 @@ export const DEFAULT_SETTINGS: Settings = {
     weather: 'sans',
     calendar: 'sans',
   },
+  backgroundKind: 'none',
+  backgroundGradient: DEFAULT_GRADIENT,
   backgroundFit: 'cover',
-  backgroundOpacity: 100,
+  backgroundDim: 30,
   locale: 'auto',
   showDebug: false,
   debugLevel: 'info',
@@ -201,18 +206,27 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
       : DEFAULT_SETTINGS.textScale,
     scales: pickScales(raw),
     fonts: pickFonts(raw),
+    backgroundKind: pickUnion<BackgroundKind>(
+      raw,
+      'backgroundKind',
+      BACKGROUND_KINDS,
+      DEFAULT_SETTINGS.backgroundKind,
+    ),
+    backgroundGradient: isGradientId(raw['backgroundGradient'])
+      ? raw['backgroundGradient']
+      : DEFAULT_SETTINGS.backgroundGradient,
     backgroundFit: pickUnion<BackgroundFit>(
       raw,
       'backgroundFit',
       BACKGROUND_FITS,
       DEFAULT_SETTINGS.backgroundFit,
     ),
-    backgroundOpacity: pickNumber(
+    backgroundDim: pickNumber(
       raw,
-      'backgroundOpacity',
-      DEFAULT_SETTINGS.backgroundOpacity,
-      10,
-      100,
+      'backgroundDim',
+      DEFAULT_SETTINGS.backgroundDim,
+      0,
+      90,
     ),
     locale: isLocaleSetting(raw['locale'])
       ? raw['locale']

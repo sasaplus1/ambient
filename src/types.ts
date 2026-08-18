@@ -17,6 +17,9 @@ export type AnalogNumerals = (typeof ANALOG_NUMERALS)[number];
 export const BACKGROUND_FITS = ['cover', 'contain', 'fill'] as const;
 export type BackgroundFit = (typeof BACKGROUND_FITS)[number];
 
+export const BACKGROUND_KINDS = ['none', 'gradient', 'image'] as const;
+export type BackgroundKind = (typeof BACKGROUND_KINDS)[number];
+
 /**
  * Per-device display settings, persisted to localStorage as a whole.
  * Weather, calendar and background image extend this type with more fields.
@@ -57,10 +60,17 @@ export type Settings = {
   /** Typeface per widget, so the clock can differ from the rest */
   fonts: Record<FontTarget, FontFamily>;
 
+  /** What the background is, if anything */
+  backgroundKind: BackgroundKind;
+  /** Which gradient, when the background is one */
+  backgroundGradient: string;
   /** How the background image fills the screen */
   backgroundFit: BackgroundFit;
-  /** Background image opacity, 0-100. Lower it to keep the clock readable. */
-  backgroundOpacity: number;
+  /**
+   * How far the background is dimmed towards the theme colour, 0-90.
+   * A busy photo can swallow the clock; this is what wins it back.
+   */
+  backgroundDim: number;
 
   /** 'auto' follows the browser's language settings */
   locale: LocaleSetting;

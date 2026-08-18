@@ -11,11 +11,29 @@
   pointer-events: none;
 }
 
-.background__image {
+.background__image,
+.background__gradient {
+  position: absolute;
+  inset: 0;
+
   width: 100%;
   height: 100%;
+}
 
+.background__image {
   /* Set from the settings so the value stays in one place */
   object-fit: var(--background-fit, cover);
-  opacity: var(--background-opacity, 1);
+}
+
+/*
+ * The theme's own background colour, laid over the picture. Fading towards it
+ * restores the contrast the theme was designed around, which a plain black
+ * overlay would not do under a light theme.
+ */
+.background__scrim {
+  position: absolute;
+  inset: 0;
+
+  background-color: var(--bg);
+  transition: opacity 200ms ease;
 }
