@@ -1,0 +1,8 @@
+/* Placed as weaker information than the clock */
+.date-display {
+  color: var(--fg-secondary);
+  font-size: clamp(0.875rem, 4.5vmin, 2.25rem);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
