@@ -1,7 +1,6 @@
 import { computed, effect, signal } from '@preact/signals';
 
 import { isAdjacentDays, isWeekStart } from '../lib/calendar';
-import { DEFAULT_GRADIENT, isGradientId } from '../lib/gradients';
 import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
 import { isLogLevel } from '../lib/logger';
@@ -9,22 +8,19 @@ import {
   FONT_TARGETS,
   isFontFamily,
   isTextScale,
-  scaleFactor,
   type FontFamily,
   type FontTarget,
   type TextScale,
 } from '../lib/typography';
 import { loadRecord, saveRecord } from '../lib/storage';
-import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
+import { applyTheme, DEFAULT_THEME, isThemeId } from '../lib/theme';
 import {
   ANALOG_NUMERALS,
   BACKGROUND_FITS,
-  BACKGROUND_KINDS,
   CLOCK_TYPES,
   SECOND_HANDS,
   type AnalogNumerals,
   type BackgroundFit,
-  type BackgroundKind,
   type ClockType,
   type SecondHand,
   type Settings,
@@ -53,7 +49,6 @@ export const DEFAULT_SETTINGS: Settings = {
   secondHand: 'sweep',
   analogNumerals: 'ticks',
   theme: DEFAULT_THEME,
-  textScale: 'm',
   scales: {
     clock: 'm',
     date: 'm',
@@ -66,8 +61,6 @@ export const DEFAULT_SETTINGS: Settings = {
     weather: 'sans',
     calendar: 'sans',
   },
-  backgroundKind: 'none',
-  backgroundGradient: DEFAULT_GRADIENT,
   backgroundFit: 'cover',
   backgroundDim: 30,
   locale: 'auto',
@@ -200,21 +193,9 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
       ANALOG_NUMERALS,
       DEFAULT_SETTINGS.analogNumerals,
     ),
-    theme: isTheme(raw['theme']) ? raw['theme'] : DEFAULT_SETTINGS.theme,
-    textScale: isTextScale(raw['textScale'])
-      ? raw['textScale']
-      : DEFAULT_SETTINGS.textScale,
+    theme: isThemeId(raw['theme']) ? raw['theme'] : DEFAULT_SETTINGS.theme,
     scales: pickScales(raw),
     fonts: pickFonts(raw),
-    backgroundKind: pickUnion<BackgroundKind>(
-      raw,
-      'backgroundKind',
-      BACKGROUND_KINDS,
-      DEFAULT_SETTINGS.backgroundKind,
-    ),
-    backgroundGradient: isGradientId(raw['backgroundGradient'])
-      ? raw['backgroundGradient']
-      : DEFAULT_SETTINGS.backgroundGradient,
     backgroundFit: pickUnion<BackgroundFit>(
       raw,
       'backgroundFit',
@@ -253,8 +234,6 @@ export function resetSettings(): void {
 /** Derived value watching only the theme, so other changes do not reapply it. */
 const theme = computed(() => settings.value.theme);
 
-const textScale = computed(() => settings.value.textScale);
-
 /**
  * Start persisting settings and applying the theme. Call once at startup.
  */
@@ -265,13 +244,5 @@ export function startSettingsSync(): void {
 
   effect(() => {
     applyTheme(theme.value);
-  });
-
-  // One custom property the widgets multiply their clamp() sizes by
-  effect(() => {
-    document.documentElement.style.setProperty(
-      '--text-scale',
-      String(scaleFactor(textScale.value)),
-    );
   });
 }

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'preact/hooks';
 
 import { useElementSize } from '../../hooks/useElementSize';
-import { readCssVar, type Theme } from '../../lib/theme';
+import { readCssVar } from '../../lib/theme';
 import { scaleStyle } from '../../state/typography';
 import type { AnalogNumerals, SecondHand } from '../../types';
 
@@ -16,7 +16,7 @@ type AnalogClockProps = {
    * Not used for drawing. It is a dependency that signals a theme change, so
    * the CSS Custom Properties get read again.
    */
-  theme: Theme;
+  theme: string;
 };
 
 function readColors(): ClockColors {

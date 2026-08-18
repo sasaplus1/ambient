@@ -200,7 +200,6 @@
   gap: 0.75rem;
 }
 
-.location__actions,
 .location__search {
   display: flex;
   flex-wrap: wrap;
@@ -232,10 +231,6 @@
   font-size: 0.9375rem;
 }
 
-.location__message {
-  color: var(--fg-secondary);
-  font-size: 0.8125rem;
-}
 
 .location__results {
   list-style: none;
@@ -258,26 +253,68 @@
   cursor: default;
 }
 
-.background__slider {
+
+
+
+
+/* Buttons that act on a whole section rather than setting a single value */
+.setting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+
+  padding: 0.75rem 1rem;
+}
+
+.setting-message {
+  padding: 0 1rem 0.75rem;
+  color: var(--fg-secondary);
+  font-size: 0.8125rem;
+}
+
+.setting-slider {
+  padding: 0.75rem 1rem;
+}
+
+.setting-slider__field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.setting-slider__label {
+  font-size: 0.9375rem;
+}
+
+.setting-slider__input {
+  display: block;
   width: 100%;
   accent-color: var(--accent);
 }
 
-.gradient-grid {
+/* Theme swatches show the actual background and its text colour together */
+.theme-grid {
   display: grid;
   flex: 1 0 100%;
-  grid-template-columns: repeat(auto-fill, minmax(3.25rem, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
   gap: 0.375rem;
 }
 
-.gradient-swatch {
+.theme-swatch {
+  display: grid;
+  place-items: center;
+
   aspect-ratio: 16 / 10;
+  padding: 0.25rem;
 
   border: 1px solid var(--surface-border);
   border-radius: 0.5rem;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  text-align: center;
 }
 
-.gradient-swatch[aria-pressed='true'] {
+.theme-swatch[aria-pressed='true'] {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }

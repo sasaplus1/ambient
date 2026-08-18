@@ -80,7 +80,7 @@ export function LocationRow() {
         </span>
       </div>
 
-      <div class="location__actions">
+      <div class="setting-actions">
         <button
           type="button"
           class="setting-options__choice"
@@ -126,7 +126,7 @@ export function LocationRow() {
         </button>
       </form>
 
-      {message && <p class="location__message">{message}</p>}
+      {message && <p class="setting-message">{message}</p>}
 
       {results && results.length > 0 && (
         <ul class="location__results">

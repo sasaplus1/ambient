@@ -1,37 +1,30 @@
-import { gradientCss } from '../lib/gradients';
 import { backgroundUrl } from '../state/background';
 import { settings } from '../state/settings';
 
 import './Background.css';
 
+/**
+ * The picture the user supplied, if there is one.
+ *
+ * A theme's own gradient is not drawn here: that belongs to the theme and is
+ * painted on the body, alongside the colours it was balanced against.
+ */
 export function Background() {
-  const { backgroundKind, backgroundGradient, backgroundFit, backgroundDim } =
-    settings.value;
-
-  if (backgroundKind === 'none') {
-    return null;
-  }
-
   const url = backgroundUrl.value;
-  const gradient = gradientCss(backgroundGradient);
+  const { backgroundFit, backgroundDim } = settings.value;
 
-  // Nothing chosen yet, so fall through to the plain theme colour
-  if (backgroundKind === 'image' && !url) {
+  if (!url) {
     return null;
   }
 
   return (
     <div class="background">
-      {backgroundKind === 'image' && url ? (
-        <img
-          class="background__image"
-          style={{ '--background-fit': backgroundFit }}
-          src={url}
-          alt=""
-        />
-      ) : (
-        <div class="background__gradient" style={{ backgroundImage: gradient }} />
-      )}
+      <img
+        class="background__image"
+        style={{ '--background-fit': backgroundFit }}
+        src={url}
+        alt=""
+      />
 
       {/*
         Dimmed towards the theme's own background colour, so the contrast the

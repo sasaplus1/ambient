@@ -13,8 +13,7 @@ import {
 } from '../../lib/dateFormat';
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
-import { THEMES, themeLabel, type Theme } from '../../lib/theme';
-import { TEXT_SCALES, type TextScale } from '../../lib/typography';
+import { THEMES } from '../../lib/theme';
 import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
@@ -77,17 +76,6 @@ function adjacentDaysOptions(): readonly Option<AdjacentDays>[] {
   return ADJACENT_DAYS.map((value) => ({
     value,
     label: t(`adjacentDays.${value}`),
-  }));
-}
-
-function themeOptions(): readonly Option<Theme>[] {
-  return THEMES.map((theme) => ({ value: theme, label: themeLabel(theme) }));
-}
-
-function textScaleOptions(): readonly Option<TextScale>[] {
-  return TEXT_SCALES.map((value) => ({
-    value,
-    label: t(`textScale.${value}`),
   }));
 }
 
@@ -248,19 +236,35 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
         <section class="settings-section">
           <h2 class="settings-section__title">{t('section.theme')}</h2>
           <div class="settings-section__items">
-            <OptionRow
-              label={t('theme.palette')}
-              options={themeOptions()}
-              selected={current.theme}
-              onChange={(theme) => updateSettings({ theme })}
-            />
-            {/* Scales the whole dashboard; the per-widget sizes stack on top */}
-            <OptionRow
-              label={t('type.scale')}
-              options={textScaleOptions()}
-              selected={current.textScale}
-              onChange={(textScale) => updateSettings({ textScale })}
-            />
+            <div
+              class="setting-options"
+              role="group"
+              aria-label={t('theme.palette')}
+            >
+              <span class="setting-options__label">{t('theme.palette')}</span>
+              {/*
+                Each swatch shows the theme's own background and text together,
+                which is the pairing the theme exists to guarantee.
+              */}
+              <div class="theme-grid">
+                {THEMES.map((theme) => (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    class="theme-swatch"
+                    style={{
+                      backgroundColor: theme.colors.bg,
+                      backgroundImage: theme.colors.gradient ?? 'none',
+                      color: theme.colors.fg,
+                    }}
+                    aria-pressed={theme.id === current.theme}
+                    onClick={() => updateSettings({ theme: theme.id })}
+                  >
+                    {theme.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 

@@ -3,7 +3,6 @@ import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
 import type { LogLevel } from './lib/logger';
 import type { FontFamily, FontTarget, TextScale } from './lib/typography';
-import type { Theme } from './lib/theme';
 
 export const CLOCK_TYPES = ['digital', 'analog'] as const;
 export type ClockType = (typeof CLOCK_TYPES)[number];
@@ -17,8 +16,6 @@ export type AnalogNumerals = (typeof ANALOG_NUMERALS)[number];
 export const BACKGROUND_FITS = ['cover', 'contain', 'fill'] as const;
 export type BackgroundFit = (typeof BACKGROUND_FITS)[number];
 
-export const BACKGROUND_KINDS = ['none', 'gradient', 'image'] as const;
-export type BackgroundKind = (typeof BACKGROUND_KINDS)[number];
 
 /**
  * Per-device display settings, persisted to localStorage as a whole.
@@ -51,19 +48,14 @@ export type Settings = {
   /** Analog clock: ticks and numerals on the dial */
   analogNumerals: AnalogNumerals;
 
-  theme: Theme;
+  /** Theme id; see lib/theme */
+  theme: string;
 
-  /** Master multiplier, for fitting the whole dashboard to a screen */
-  textScale: TextScale;
-  /** Multiplier per widget, for balancing them against each other */
+  /** Size multiplier per widget */
   scales: Record<FontTarget, TextScale>;
   /** Typeface per widget, so the clock can differ from the rest */
   fonts: Record<FontTarget, FontFamily>;
 
-  /** What the background is, if anything */
-  backgroundKind: BackgroundKind;
-  /** Which gradient, when the background is one */
-  backgroundGradient: string;
   /** How the background image fills the screen */
   backgroundFit: BackgroundFit;
   /**
