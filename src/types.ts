@@ -23,6 +23,8 @@ export type Settings = {
   /** How the date is written out; see lib/dateFormat for the presets */
   dateFormat: DateFormat;
 
+  showWeather: boolean;
+
   showCalendar: boolean;
   /** Which day the calendar's week begins on */
   weekStart: WeekStart;

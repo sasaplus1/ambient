@@ -28,6 +28,7 @@ export const DEFAULT_SETTINGS: Settings = {
   showClock: true,
   showDate: true,
   dateFormat: DEFAULT_DATE_FORMAT,
+  showWeather: false,
   showCalendar: false,
   weekStart: 'sunday',
   adjacentDays: 'dimmed',
@@ -79,6 +80,7 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
     dateFormat: isDateFormat(raw['dateFormat'])
       ? raw['dateFormat']
       : DEFAULT_SETTINGS.dateFormat,
+    showWeather: pickBoolean(raw, 'showWeather', DEFAULT_SETTINGS.showWeather),
     showCalendar: pickBoolean(
       raw,
       'showCalendar',

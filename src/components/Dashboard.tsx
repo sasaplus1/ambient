@@ -8,9 +8,10 @@ import { Clock } from './clock/Clock';
 import { DateDisplay } from './DateDisplay';
 import { SettingsButton } from './settings/SettingsButton';
 import { SettingsOverlay } from './settings/SettingsOverlay';
+import { Weather } from './weather/Weather';
 
 export function Dashboard() {
-  const { showClock, showDate, showCalendar } = settings.value;
+  const { showClock, showDate, showWeather, showCalendar } = settings.value;
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
@@ -19,6 +20,7 @@ export function Dashboard() {
         <div class="dashboard__primary">
           {showClock && <Clock />}
           {showDate && <DateDisplay />}
+          {showWeather && <Weather />}
         </div>
         {showCalendar && <Calendar />}
       </div>

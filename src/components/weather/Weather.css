@@ -1,0 +1,30 @@
+.weather {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+
+  color: var(--fg-secondary);
+  font-size: clamp(0.875rem, 4vmin, 2rem);
+  line-height: 1;
+}
+
+.weather__icon {
+  width: 1.5em;
+  height: 1.625em;
+  flex: none;
+}
+
+.weather__temperature {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A reading kept from before a network failure should not read as current */
+.weather[data-stale='true'] {
+  opacity: 0.55;
+}
+
+.weather__placeholder {
+  color: var(--fg-tertiary);
+  font-size: clamp(0.75rem, 3vmin, 1.25rem);
+}

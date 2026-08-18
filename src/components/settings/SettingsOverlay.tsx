@@ -17,6 +17,7 @@ import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
 
+import { LocationRow } from './LocationRow';
 import { OptionRow, type Option } from './OptionRow';
 import { ToggleRow } from './ToggleRow';
 
@@ -162,6 +163,11 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   onChange={(showDate) => updateSettings({ showDate })}
                 />
                 <ToggleRow
+                  label={t('widget.weather')}
+                  checked={current.showWeather}
+                  onChange={(showWeather) => updateSettings({ showWeather })}
+                />
+                <ToggleRow
                   label={t('widget.calendar')}
                   checked={current.showCalendar}
                   onChange={(showCalendar) => updateSettings({ showCalendar })}
@@ -202,6 +208,13 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   selected={current.dateFormat}
                   onChange={(dateFormat) => updateSettings({ dateFormat })}
                 />
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2 class="settings-section__title">{t('section.weather')}</h2>
+              <div class="settings-section__items">
+                <LocationRow />
               </div>
             </section>
 
