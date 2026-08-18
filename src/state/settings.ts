@@ -20,7 +20,7 @@ const SCHEMA_VERSION = 1;
 export const DEFAULT_SETTINGS: Settings = {
   showClock: true,
   showDate: true,
-  clockType: 'digital',
+  clockType: 'analog',
   hour12: false,
   showSeconds: false,
   secondHand: 'sweep',
