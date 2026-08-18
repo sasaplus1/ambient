@@ -21,6 +21,11 @@ function formatHours(hours: number, hour12: boolean): string {
   return String(shortHours === 0 ? 12 : shortHours);
 }
 
+/** The separator is its own element so the colon alone can be nudged. */
+function Colon() {
+  return <span class="digital-clock__colon">:</span>;
+}
+
 export function DigitalClock({ hour12, showSeconds }: DigitalClockProps) {
   // Without seconds, update only once a minute
   const now = useNow(showSeconds ? 'second' : 'minute');
@@ -30,9 +35,14 @@ export function DigitalClock({ hour12, showSeconds }: DigitalClockProps) {
   return (
     <div class="digital-clock">
       <span class="digital-clock__time">
-        {formatHours(hours, hour12)}:{pad2(now.getMinutes())}
+        {formatHours(hours, hour12)}
+        <Colon />
+        {pad2(now.getMinutes())}
         {showSeconds && (
-          <span class="digital-clock__seconds">:{pad2(now.getSeconds())}</span>
+          <>
+            <Colon />
+            {pad2(now.getSeconds())}
+          </>
         )}
       </span>
       {hour12 && (

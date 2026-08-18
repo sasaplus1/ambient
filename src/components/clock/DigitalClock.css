@@ -16,9 +16,14 @@
   letter-spacing: -0.02em;
 }
 
-.digital-clock__seconds {
-  color: var(--fg-secondary);
-  font-size: 0.45em;
+/*
+ * A colon sits around the x-height, which reads as low against lining figures.
+ * Measured against system-ui, its ink centre falls 0.114em below the centre of
+ * a digit, so lift it by roughly that much.
+ */
+.digital-clock__colon {
+  display: inline-block;
+  transform: translateY(-0.11em);
 }
 
 .digital-clock__period {
