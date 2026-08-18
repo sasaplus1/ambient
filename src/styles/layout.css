@@ -16,6 +16,17 @@ body {
 
 .dashboard {
   /*
+   * Its own, rather than the one inherited from the body.
+   *
+   * A colour is inherited as the value it resolved to, not as the var() that
+   * produced it, so anything relying on the body's would carry the theme in
+   * effect at the body - and the settings miniature is a dashboard standing
+   * under a different theme entirely. Widgets that name a property of their
+   * own were always right; these are the ones that name none.
+   */
+  color: var(--fg);
+
+  /*
    * The minimum separation between widgets, and the same value again as the
    * horizontal padding. space-evenly then shares out what is left in equal
    * parts, so the margin at each edge ends up matching the gap in the middle.
