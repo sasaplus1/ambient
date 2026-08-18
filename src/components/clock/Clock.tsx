@@ -4,7 +4,12 @@ import { activeTheme } from '../../state/theme';
 import { AnalogClock } from './AnalogClock';
 import { DigitalClock } from './DigitalClock';
 
-export function Clock() {
+type ClockProps = {
+  /** Theme to render against, when it differs from the one in effect. */
+  themeId?: string;
+};
+
+export function Clock({ themeId }: ClockProps = {}) {
   const {
     clockType,
     hour12,
@@ -18,7 +23,7 @@ export function Clock() {
       <AnalogClock
         secondHand={secondHand}
         numerals={analogNumerals}
-        theme={activeTheme.value}
+        theme={themeId ?? activeTheme.value}
       />
     );
   }

@@ -20,8 +20,8 @@ type AnalogClockProps = {
 };
 
 /** How long a theme change takes, read from the same place the CSS uses. */
-function fadeDuration(): number {
-  const declared = readCssVar('--theme-fade');
+function fadeDuration(from: Element): number {
+  const declared = readCssVar('--theme-fade', from);
   const ms = Number.parseFloat(declared);
 
   if (!Number.isFinite(ms)) {
@@ -31,12 +31,19 @@ function fadeDuration(): number {
   return declared.endsWith('ms') ? ms : ms * 1000;
 }
 
-function readColors(): ClockColors {
+/**
+ * Read from the canvas rather than the root.
+ *
+ * Custom properties inherit, so this picks up the values in effect where the
+ * clock actually sits - which is how the settings preview can stand in a
+ * different theme from the page behind it.
+ */
+function readColors(from: Element): ClockColors {
   return {
-    fg: readCssVar('--fg') || '#ffffff',
-    fgSecondary: readCssVar('--fg-secondary') || '#888888',
-    fgTertiary: readCssVar('--fg-tertiary') || '#555555',
-    accent: readCssVar('--accent') || '#0a84ff',
+    fg: readCssVar('--fg', from) || '#ffffff',
+    fgSecondary: readCssVar('--fg-secondary', from) || '#888888',
+    fgTertiary: readCssVar('--fg-tertiary', from) || '#555555',
+    accent: readCssVar('--accent', from) || '#0a84ff',
   };
 }
 
@@ -76,7 +83,7 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
     canvas.style.height = `${size}px`;
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
-    let colors = readColors();
+    let colors = readColors(canvas);
 
     /*
      * Themes cross-fade, and the canvas cannot inherit that: it holds whatever
@@ -84,11 +91,11 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
      * read again on every paint, and the hands travel with the background
      * instead of snapping at the end of it.
      */
-    const fadeEndsAt = performance.now() + fadeDuration();
+    const fadeEndsAt = performance.now() + fadeDuration(canvas);
 
     const paint = () => {
       if (performance.now() < fadeEndsAt) {
-        colors = readColors();
+        colors = readColors(canvas);
       }
 
       drawAnalogClock(ctx, size, colors, numerals, secondHand, new Date());

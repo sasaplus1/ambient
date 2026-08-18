@@ -48,7 +48,7 @@ export function SettingsPreview() {
   const date = showDate && <DateDisplay />;
   const weather = showWeather && <Weather />;
   const calendar = showCalendar && <Calendar />;
-  const clock = showClock && <Clock />;
+  const clock = showClock && <Clock themeId={themeId} />;
 
   // Mirrors Dashboard: an analog face stands alone, a digital one joins the column
   const stack =
