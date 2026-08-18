@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
+import { logger } from '../lib/logger';
+
 export type WakeLock = {
   supported: boolean;
   active: boolean;
@@ -39,13 +41,16 @@ export function useWakeLock(): WakeLock {
 
       sentinelRef.current = sentinel;
       setActive(true);
+      logger.info('wake-lock', 'acquired');
 
       sentinel.addEventListener('release', () => {
         sentinelRef.current = null;
         setActive(false);
+        logger.warn('wake-lock', 'released by the system');
       });
-    } catch {
+    } catch (error) {
       setActive(false);
+      logger.error('wake-lock', `failed: ${String(error)}`);
     }
   }, [supported]);
 

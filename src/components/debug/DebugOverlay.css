@@ -1,0 +1,58 @@
+/*
+ * Overlaid on the running dashboard rather than a separate screen: the point is
+ * watching the real thing misbehave, not a reconstruction of it.
+ */
+.debug-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  overflow: hidden;
+  max-width: 80vw;
+  max-height: 40dvh;
+  padding: 6px 8px;
+
+  background: rgb(0 0 0 / 0.65);
+  color: #0f0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  line-height: 1.4;
+
+  /* Never swallow a tap meant for the dashboard underneath */
+  pointer-events: none;
+  white-space: pre-wrap;
+}
+
+.debug-overlay__status {
+  color: #9f9;
+  font-weight: 600;
+}
+
+.debug-overlay__log {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.debug-overlay__entry {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.debug-overlay__entry[data-level='warn'] {
+  color: #fd0;
+}
+
+.debug-overlay__entry[data-level='error'] {
+  color: #f66;
+}
+
+.debug-overlay__entry[data-level='debug'] {
+  color: #6c6;
+}

@@ -12,6 +12,7 @@ import {
   type DateFormat,
 } from '../../lib/dateFormat';
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
+import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
 import { THEMES, themeLabel, type Theme } from '../../lib/theme';
 import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
@@ -81,6 +82,13 @@ function adjacentDaysOptions(): readonly Option<AdjacentDays>[] {
 
 function themeOptions(): readonly Option<Theme>[] {
   return THEMES.map((theme) => ({ value: theme, label: themeLabel(theme) }));
+}
+
+function logLevelOptions(): readonly Option<LogLevel>[] {
+  return LOG_LEVELS.map((value) => ({
+    value,
+    label: t(`logLevel.${value}`),
+  }));
 }
 
 function localeOptions(): readonly Option<LocaleSetting>[] {
@@ -265,6 +273,34 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
                   selected={current.locale}
                   onChange={(locale) => updateSettings({ locale })}
                 />
+              </div>
+            </section>
+
+            <section class="settings-section">
+              <h2 class="settings-section__title">{t('section.debug')}</h2>
+              <div class="settings-section__items">
+                <ToggleRow
+                  label={t('debug.overlay')}
+                  checked={current.showDebug}
+                  onChange={(showDebug) => updateSettings({ showDebug })}
+                />
+                {current.showDebug && (
+                  <>
+                    <OptionRow
+                      label={t('debug.level')}
+                      options={logLevelOptions()}
+                      selected={current.debugLevel}
+                      onChange={(debugLevel) => updateSettings({ debugLevel })}
+                    />
+                    <button
+                      type="button"
+                      class="setting-row"
+                      onClick={() => clearLogs()}
+                    >
+                      <span class="setting-row__label">{t('debug.clear')}</span>
+                    </button>
+                  </>
+                )}
               </div>
             </section>
           </>

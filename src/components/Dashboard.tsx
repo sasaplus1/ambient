@@ -7,12 +7,14 @@ import { Background } from './Background';
 import { Calendar } from './Calendar';
 import { Clock } from './clock/Clock';
 import { DateDisplay } from './DateDisplay';
+import { DebugOverlay } from './debug/DebugOverlay';
 import { SettingsButton } from './settings/SettingsButton';
 import { SettingsOverlay } from './settings/SettingsOverlay';
 import { Weather } from './weather/Weather';
 
 export function Dashboard() {
-  const { showClock, showDate, showWeather, showCalendar } = settings.value;
+  const { showClock, showDate, showWeather, showCalendar, showDebug } =
+    settings.value;
   const [settingsOpen, setSettingsOpen] = useState(false);
 
   return (
@@ -27,6 +29,8 @@ export function Dashboard() {
         </div>
         {showCalendar && <Calendar />}
       </div>
+
+      {showDebug && <DebugOverlay />}
 
       {settingsOpen ? (
         <SettingsOverlay onClose={() => setSettingsOpen(false)} />

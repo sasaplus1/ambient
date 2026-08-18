@@ -1,6 +1,7 @@
 import type { AdjacentDays, WeekStart } from './lib/calendar';
 import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
+import type { LogLevel } from './lib/logger';
 import type { Theme } from './lib/theme';
 
 export const CLOCK_TYPES = ['digital', 'analog'] as const;
@@ -55,4 +56,9 @@ export type Settings = {
 
   /** 'auto' follows the browser's language settings */
   locale: LocaleSetting;
+
+  /** Overlays the log HUD on the running dashboard */
+  showDebug: boolean;
+  /** Lowest level the HUD shows */
+  debugLevel: LogLevel;
 };

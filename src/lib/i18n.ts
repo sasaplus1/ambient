@@ -52,6 +52,7 @@ const DICTIONARY = {
   'section.calendar': { ja: 'カレンダー', en: 'Calendar' },
   'section.weather': { ja: '天気', en: 'Weather' },
   'section.background': { ja: '背景', en: 'Background' },
+  'section.debug': { ja: 'デバッグ', en: 'Debug' },
   'section.theme': { ja: 'テーマ', en: 'Theme' },
   'section.language': { ja: '言語', en: 'Language' },
   'section.digitalClock': { ja: 'デジタル時計', en: 'Digital clock' },
@@ -136,6 +137,14 @@ const DICTIONARY = {
   'backgroundFit.cover': { ja: '画面を覆う', en: 'Cover' },
   'backgroundFit.contain': { ja: '全体を入れる', en: 'Contain' },
   'backgroundFit.fill': { ja: '引き伸ばす', en: 'Stretch' },
+
+  'debug.overlay': { ja: 'ログを重ねて表示', en: 'Overlay the log' },
+  'debug.level': { ja: '表示レベル', en: 'Level' },
+  'debug.clear': { ja: 'ログを消す', en: 'Clear log' },
+  'logLevel.debug': { ja: 'DEBUG', en: 'DEBUG' },
+  'logLevel.info': { ja: 'INFO', en: 'INFO' },
+  'logLevel.warn': { ja: 'WARN', en: 'WARN' },
+  'logLevel.error': { ja: 'ERROR', en: 'ERROR' },
 
   'ambient.start': { ja: '常時表示モードを開始', en: 'Start always-on mode' },
   'ambient.stop': { ja: '常時表示モードを終了', en: 'Stop always-on mode' },

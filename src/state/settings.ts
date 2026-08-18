@@ -3,6 +3,7 @@ import { computed, effect, signal } from '@preact/signals';
 import { isAdjacentDays, isWeekStart } from '../lib/calendar';
 import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
+import { isLogLevel } from '../lib/logger';
 import { loadRecord, saveRecord } from '../lib/storage';
 import { applyTheme, DEFAULT_THEME, isTheme } from '../lib/theme';
 import {
@@ -43,6 +44,8 @@ export const DEFAULT_SETTINGS: Settings = {
   backgroundFit: 'cover',
   backgroundOpacity: 100,
   locale: 'auto',
+  showDebug: false,
+  debugLevel: 'info',
 };
 
 function pickNumber(
@@ -149,6 +152,10 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
     locale: isLocaleSetting(raw['locale'])
       ? raw['locale']
       : DEFAULT_SETTINGS.locale,
+    showDebug: pickBoolean(raw, 'showDebug', DEFAULT_SETTINGS.showDebug),
+    debugLevel: isLogLevel(raw['debugLevel'])
+      ? raw['debugLevel']
+      : DEFAULT_SETTINGS.debugLevel,
   };
 }
 

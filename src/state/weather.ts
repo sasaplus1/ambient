@@ -1,5 +1,6 @@
 import { effect, signal } from '@preact/signals';
 
+import { logger } from '../lib/logger';
 import { loadRecord, saveRecord } from '../lib/storage';
 import {
   fetchCurrentWeather,
@@ -130,6 +131,7 @@ export async function refreshWeather(force = false): Promise<void> {
 
     weather.value = reading;
     weatherStatus.value = 'ready';
+    logger.info('weather', `updated ${reading.temperature}C code=${reading.weatherCode}`);
   } catch (error) {
     if (controller.signal.aborted) {
       return;
@@ -137,6 +139,7 @@ export async function refreshWeather(force = false): Promise<void> {
 
     // Keep whatever we last had on screen; only the status reflects the failure
     weatherStatus.value = 'error';
+    logger.error('weather', `fetch failed: ${String(error)}`);
   } finally {
     if (inFlight === controller) {
       inFlight = null;
