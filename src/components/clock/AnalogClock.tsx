@@ -19,6 +19,18 @@ type AnalogClockProps = {
   theme: string;
 };
 
+/** How long a theme change takes, read from the same place the CSS uses. */
+function fadeDuration(): number {
+  const declared = readCssVar('--theme-fade');
+  const ms = Number.parseFloat(declared);
+
+  if (!Number.isFinite(ms)) {
+    return 0;
+  }
+
+  return declared.endsWith('ms') ? ms : ms * 1000;
+}
+
 function readColors(): ClockColors {
   return {
     fg: readCssVar('--fg') || '#ffffff',
@@ -64,9 +76,21 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
     canvas.style.height = `${size}px`;
     ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
 
-    const colors = readColors();
+    let colors = readColors();
+
+    /*
+     * Themes cross-fade, and the canvas cannot inherit that: it holds whatever
+     * colour it was last told. So for as long as the fade runs, the colours are
+     * read again on every paint, and the hands travel with the background
+     * instead of snapping at the end of it.
+     */
+    const fadeEndsAt = performance.now() + fadeDuration();
 
     const paint = () => {
+      if (performance.now() < fadeEndsAt) {
+        colors = readColors();
+      }
+
       drawAnalogClock(ctx, size, colors, numerals, secondHand, new Date());
     };
 
@@ -94,6 +118,18 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
       };
 
       tick();
+
+      // A once-a-second repaint would show the fade as a handful of steps
+      const followFade = () => {
+        if (performance.now() >= fadeEndsAt) {
+          return;
+        }
+
+        paint();
+        frameId = requestAnimationFrame(followFade);
+      };
+
+      followFade();
     }
 
     const repaintOnVisible = () => {

@@ -1,4 +1,5 @@
 import { settings } from '../../state/settings';
+import { activeTheme } from '../../state/theme';
 
 import { AnalogClock } from './AnalogClock';
 import { DigitalClock } from './DigitalClock';
@@ -10,7 +11,6 @@ export function Clock() {
     showSeconds,
     secondHand,
     analogNumerals,
-    theme,
   } = settings.value;
 
   if (clockType === 'analog') {
@@ -18,7 +18,7 @@ export function Clock() {
       <AnalogClock
         secondHand={secondHand}
         numerals={analogNumerals}
-        theme={theme}
+        theme={activeTheme.value}
       />
     );
   }
