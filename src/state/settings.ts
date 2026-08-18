@@ -54,11 +54,11 @@ export const DEFAULT_SETTINGS: Settings = {
   themeMode: 'fixed',
   theme: DEFAULT_THEME,
   schedule: {
-    morning: 'dawn',
+    morning: 'sakura',
     day: 'mist',
-    evening: 'sunset',
+    evening: 'dawn',
     night: 'midnight',
-    lateNight: 'oled',
+    lateNight: 'abyss',
   },
   scales: {
     clock: 'm',
