@@ -1,8 +1,12 @@
+import { useEffect, useRef } from 'preact/hooks';
+
+import { applyThemeTo, DEFAULT_THEME, findTheme } from '../../lib/theme';
 import { t } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
 import { Calendar } from '../Calendar';
 import { Clock } from '../clock/Clock';
 import { DateDisplay } from '../DateDisplay';
+import { previewHour, previewTheme } from '../../state/theme';
 import { ThemeBackdrop } from '../ThemeBackdrop';
 import { Weather } from '../weather/Weather';
 
@@ -26,6 +30,20 @@ export function SettingsPreview() {
     clockType,
     previewOpen,
   } = settings.value;
+
+  const themeId = previewTheme.value;
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  // The colours live on the root, so previewing a different theme means writing
+  // that theme's properties onto the stage to shadow them.
+  useEffect(() => {
+    const stage = stageRef.current;
+    const theme = findTheme(themeId) ?? findTheme(DEFAULT_THEME);
+
+    if (stage && theme) {
+      applyThemeTo(theme, stage);
+    }
+  }, [themeId, previewOpen]);
 
   const date = showDate && <DateDisplay />;
   const weather = showWeather && <Weather />;
@@ -52,9 +70,12 @@ export function SettingsPreview() {
     <div class="settings-preview">
       {previewOpen && (
         <div class="settings-preview__frame" aria-hidden="true">
-          <div class="settings-preview__stage">
+          <div class="settings-preview__stage" ref={stageRef}>
             <div class="dashboard">
-              <ThemeBackdrop />
+              <ThemeBackdrop
+                themeId={themeId}
+                instant={previewHour.value !== null}
+              />
               <div class="dashboard__widgets">
                 {clockType === 'analog' ? (
                   <>

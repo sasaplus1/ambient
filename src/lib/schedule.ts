@@ -33,9 +33,7 @@ export function bandStartHour(band: TimeBand): number {
   return BAND_START_HOUR[band];
 }
 
-export function bandFor(date: Date): TimeBand {
-  const hour = date.getHours();
-
+export function bandForHour(hour: number): TimeBand {
   if (hour >= BAND_START_HOUR.lateNight || hour < BAND_START_HOUR.morning) {
     return 'lateNight';
   }
@@ -53,6 +51,10 @@ export function bandFor(date: Date): TimeBand {
   }
 
   return 'morning';
+}
+
+export function bandFor(date: Date): TimeBand {
+  return bandForHour(date.getHours());
 }
 
 /**

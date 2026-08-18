@@ -1,6 +1,11 @@
 import { computed, effect, signal } from '@preact/signals';
 
-import { bandFor, msUntilNextBand, type TimeBand } from '../lib/schedule';
+import {
+  bandFor,
+  bandForHour,
+  msUntilNextBand,
+  type TimeBand,
+} from '../lib/schedule';
 import { applyTheme } from '../lib/theme';
 
 import { settings } from './settings';
@@ -18,6 +23,26 @@ export const activeTheme = computed(() => {
   const { themeMode, theme, schedule } = settings.value;
 
   return themeMode === 'schedule' ? schedule[currentBand.value] : theme;
+});
+
+/**
+ * Hour the settings preview is standing in, or null for the real one.
+ *
+ * Only the miniature follows it. Moving a slider should not repaint the device
+ * you are looking past it at.
+ */
+export const previewHour = signal<number | null>(null);
+
+/** What the miniature shows: the previewed hour if set, otherwise reality. */
+export const previewTheme = computed(() => {
+  const hour = previewHour.value;
+  const { themeMode, schedule } = settings.value;
+
+  if (hour === null || themeMode !== 'schedule') {
+    return activeTheme.value;
+  }
+
+  return schedule[bandForHour(hour)];
 });
 
 /**

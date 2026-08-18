@@ -16,6 +16,7 @@ import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
 import { TIME_BANDS, bandStartHour, type TimeBand } from '../../lib/schedule';
 import { THEMES } from '../../lib/theme';
 import { locale, t } from '../../state/locale';
+import { previewHour } from '../../state/theme';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import {
   THEME_MODES,
@@ -176,6 +177,8 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
 
     return () => {
       document.removeEventListener('keydown', onKeyDown);
+      // Leave the miniature standing in the present for next time
+      previewHour.value = null;
     };
   }, [onClose]);
 
@@ -314,6 +317,35 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
               selected={current.themeMode}
               onChange={(themeMode) => updateSettings({ themeMode })}
             />
+
+            {current.themeMode === 'schedule' && (
+              /*
+                Stand the miniature at any hour of the day, so the whole cycle
+                can be judged without waiting for it.
+              */
+              <div class="setting-slider">
+                <label class="setting-slider__field">
+                  <span class="setting-slider__label">
+                    {`${t('theme.previewHour')} ${
+                      previewHour.value === null
+                        ? t('theme.previewNow')
+                        : `${previewHour.value}:00`
+                    }`}
+                  </span>
+                  <input
+                    class="setting-slider__input"
+                    type="range"
+                    min={0}
+                    max={23}
+                    step={1}
+                    value={previewHour.value ?? new Date().getHours()}
+                    onInput={(event) => {
+                      previewHour.value = Number(event.currentTarget.value);
+                    }}
+                  />
+                </label>
+              </div>
+            )}
 
             {current.themeMode === 'fixed' ? (
               <ThemeGrid

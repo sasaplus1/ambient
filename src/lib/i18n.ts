@@ -88,6 +88,9 @@ const DICTIONARY = {
   'themeMode.schedule': { ja: '時刻', en: 'Time of day' },
   'theme.palette': { ja: '配色', en: 'Palette' },
 
+  'theme.previewHour': { ja: 'この時刻で見る', en: 'Preview at' },
+  'theme.previewNow': { ja: '現在', en: 'Now' },
+
   'timeBand.morning': { ja: '朝', en: 'Morning' },
   'timeBand.day': { ja: '昼', en: 'Day' },
   'timeBand.evening': { ja: '夕方', en: 'Evening' },
