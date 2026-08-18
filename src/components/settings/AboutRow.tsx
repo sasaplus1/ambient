@@ -41,7 +41,7 @@ export function AboutRow() {
       <LinkRow
         label={t('about.repository')}
         href={REPOSITORY}
-        text="sasaplus1/ambient"
+        text="github.com/sasaplus1/ambient"
       />
       <LinkRow
         label={t('about.site')}
