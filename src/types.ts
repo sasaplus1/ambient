@@ -75,6 +75,9 @@ export type Settings = {
   /** 'auto' follows the browser's language settings */
   locale: LocaleSetting;
 
+  /** Whether the settings screen shows its live miniature */
+  previewOpen: boolean;
+
   /** Overlays the log HUD on the running dashboard */
   showDebug: boolean;
   /** Lowest level the HUD shows */

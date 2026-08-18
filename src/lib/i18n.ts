@@ -44,6 +44,8 @@ const DICTIONARY = {
   'settings.open': { ja: '設定を開く', en: 'Open settings' },
   'settings.close': { ja: '閉じる', en: 'Close' },
   'settings.reset': { ja: '初期化', en: 'Reset' },
+  'settings.previewShow': { ja: 'プレビューを開く', en: 'Show preview' },
+  'settings.previewHide': { ja: 'プレビューを閉じる', en: 'Hide preview' },
 
   'section.clock': { ja: '時計', en: 'Clock' },
   'section.date': { ja: '日付', en: 'Date' },

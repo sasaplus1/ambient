@@ -318,3 +318,69 @@
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
+
+/*
+ * A live miniature of the dashboard, kept in view while the settings scroll.
+ *
+ * The stage is viewport-sized and scaled down, because the widgets are sized in
+ * vmin: rebuilt smaller they would show proportions the screen never has.
+ */
+.settings-preview {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+
+  padding-bottom: 0.5rem;
+
+  /* Sits over the sections scrolling past beneath it */
+  background: var(--scrim);
+  backdrop-filter: blur(12px);
+
+  /* Small enough to leave the settings room on a 5-inch screen */
+  --preview-scale: 0.22;
+}
+
+@media (orientation: portrait) {
+  .settings-preview {
+    --preview-scale: 0.3;
+  }
+}
+
+.settings-preview__frame {
+  overflow: hidden;
+
+  width: calc(100vw * var(--preview-scale));
+  height: calc(100dvh * var(--preview-scale));
+
+  border: 1px solid var(--surface-border);
+  border-radius: 0.5rem;
+
+  /* The dashboard paints its own background on the body, not on itself */
+  background-color: var(--bg);
+  background-image: var(--theme-gradient);
+  background-size: cover;
+}
+
+.settings-preview__stage {
+  width: 100vw;
+  height: 100dvh;
+
+  transform: scale(var(--preview-scale));
+  transform-origin: top left;
+}
+
+/* Nothing in the miniature is meant to be reachable */
+.settings-preview__stage * {
+  pointer-events: none;
+}
+
+.settings-preview__toggle {
+  padding: 0.25rem 0.75rem;
+  color: var(--fg-secondary);
+  font-size: 0.75rem;
+}

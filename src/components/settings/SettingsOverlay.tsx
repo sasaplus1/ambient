@@ -13,14 +13,22 @@ import {
 } from '../../lib/dateFormat';
 import { LOCALE_SETTINGS, type LocaleSetting } from '../../lib/i18n';
 import { clearLogs, LOG_LEVELS, type LogLevel } from '../../lib/logger';
+import { TIME_BANDS, bandStartHour, type TimeBand } from '../../lib/schedule';
 import { THEMES } from '../../lib/theme';
 import { locale, t } from '../../state/locale';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
-import type { AnalogNumerals, ClockType, SecondHand } from '../../types';
+import {
+  THEME_MODES,
+  type AnalogNumerals,
+  type ClockType,
+  type SecondHand,
+  type ThemeMode,
+} from '../../types';
 
 import { BackgroundRow } from './BackgroundRow';
 import { LocationRow } from './LocationRow';
 import { OptionRow, type Option } from './OptionRow';
+import { SettingsPreview } from './SettingsPreview';
 import { ToggleRow } from './ToggleRow';
 import { WidgetSection } from './WidgetSection';
 
@@ -77,6 +85,56 @@ function adjacentDaysOptions(): readonly Option<AdjacentDays>[] {
     value,
     label: t(`adjacentDays.${value}`),
   }));
+}
+
+function themeModeOptions(): readonly Option<ThemeMode>[] {
+  return THEME_MODES.map((value) => ({
+    value,
+    label: t(`themeMode.${value}`),
+  }));
+}
+
+/** Swatch grid of every theme, used for the fixed choice and for each band. */
+function ThemeGrid({
+  label,
+  selected,
+  onChange,
+}: {
+  label: string;
+  selected: string;
+  onChange: (id: string) => void;
+}) {
+  return (
+    <div class="setting-options" role="group" aria-label={label}>
+      <span class="setting-options__label">{label}</span>
+      {/*
+        Each swatch shows the theme's own background and text together, which is
+        the pairing the theme exists to guarantee.
+      */}
+      <div class="theme-grid">
+        {THEMES.map((theme) => (
+          <button
+            key={theme.id}
+            type="button"
+            class="theme-swatch"
+            style={{
+              backgroundColor: theme.colors.bg,
+              backgroundImage: theme.colors.gradient ?? 'none',
+              color: theme.colors.fg,
+            }}
+            aria-pressed={theme.id === selected}
+            onClick={() => onChange(theme.id)}
+          >
+            {theme.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function bandLabel(band: TimeBand): string {
+  return `${t(`timeBand.${band}`)} ${bandStartHour(band)}:00-`;
 }
 
 function logLevelOptions(): readonly Option<LogLevel>[] {
@@ -145,6 +203,20 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
       </header>
 
       <div class="settings-overlay__body">
+        <SettingsPreview />
+
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.language')}</h2>
+          <div class="settings-section__items">
+            <OptionRow
+              label={t('language.label')}
+              options={localeOptions()}
+              selected={current.locale}
+              onChange={(locale) => updateSettings({ locale })}
+            />
+          </div>
+        </section>
+
         <WidgetSection
           target="clock"
           title={t('section.clock')}
@@ -236,35 +308,33 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
         <section class="settings-section">
           <h2 class="settings-section__title">{t('section.theme')}</h2>
           <div class="settings-section__items">
-            <div
-              class="setting-options"
-              role="group"
-              aria-label={t('theme.palette')}
-            >
-              <span class="setting-options__label">{t('theme.palette')}</span>
-              {/*
-                Each swatch shows the theme's own background and text together,
-                which is the pairing the theme exists to guarantee.
-              */}
-              <div class="theme-grid">
-                {THEMES.map((theme) => (
-                  <button
-                    key={theme.id}
-                    type="button"
-                    class="theme-swatch"
-                    style={{
-                      backgroundColor: theme.colors.bg,
-                      backgroundImage: theme.colors.gradient ?? 'none',
-                      color: theme.colors.fg,
-                    }}
-                    aria-pressed={theme.id === current.theme}
-                    onClick={() => updateSettings({ theme: theme.id })}
-                  >
-                    {theme.label}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <OptionRow
+              label={t('theme.mode')}
+              options={themeModeOptions()}
+              selected={current.themeMode}
+              onChange={(themeMode) => updateSettings({ themeMode })}
+            />
+
+            {current.themeMode === 'fixed' ? (
+              <ThemeGrid
+                label={t('theme.palette')}
+                selected={current.theme}
+                onChange={(theme) => updateSettings({ theme })}
+              />
+            ) : (
+              TIME_BANDS.map((band) => (
+                <ThemeGrid
+                  key={band}
+                  label={bandLabel(band)}
+                  selected={current.schedule[band]}
+                  onChange={(id) =>
+                    updateSettings({
+                      schedule: { ...current.schedule, [band]: id },
+                    })
+                  }
+                />
+              ))
+            )}
           </div>
         </section>
 
@@ -272,18 +342,6 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
           <h2 class="settings-section__title">{t('section.background')}</h2>
           <div class="settings-section__items">
             <BackgroundRow />
-          </div>
-        </section>
-
-        <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.language')}</h2>
-          <div class="settings-section__items">
-            <OptionRow
-              label={t('language.label')}
-              options={localeOptions()}
-              selected={current.locale}
-              onChange={(locale) => updateSettings({ locale })}
-            />
           </div>
         </section>
 

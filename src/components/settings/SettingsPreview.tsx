@@ -1,0 +1,84 @@
+import { t } from '../../state/locale';
+import { settings, updateSettings } from '../../state/settings';
+import { Calendar } from '../Calendar';
+import { Clock } from '../clock/Clock';
+import { DateDisplay } from '../DateDisplay';
+import { Weather } from '../weather/Weather';
+
+/**
+ * A live miniature of the dashboard, pinned above the settings.
+ *
+ * The stage is the size of the viewport and scaled down, rather than the
+ * widgets being rebuilt at some smaller size. Everything is sized in vmin, so
+ * only a real-sized stage shows the proportions the screen will actually have -
+ * and it is the real components, so what is shown cannot drift from what ships.
+ *
+ * It can be folded away, because on a 5-inch screen it would otherwise take a
+ * third of the room the settings need. The choice is remembered.
+ */
+export function SettingsPreview() {
+  const {
+    showClock,
+    showDate,
+    showWeather,
+    showCalendar,
+    clockType,
+    previewOpen,
+  } = settings.value;
+
+  const date = showDate && <DateDisplay />;
+  const weather = showWeather && <Weather />;
+  const calendar = showCalendar && <Calendar />;
+  const clock = showClock && <Clock />;
+
+  // Mirrors Dashboard: an analog face stands alone, a digital one joins the column
+  const stack =
+    clockType === 'analog' ? (
+      <div class="dashboard__stack">
+        {date}
+        {calendar}
+        {weather}
+      </div>
+    ) : (
+      <div class="dashboard__stack">
+        {date}
+        {clock}
+        {weather}
+      </div>
+    );
+
+  return (
+    <div class="settings-preview">
+      {previewOpen && (
+        <div class="settings-preview__frame" aria-hidden="true">
+          <div class="settings-preview__stage">
+            <div class="dashboard">
+              <div class="dashboard__widgets">
+                {clockType === 'analog' ? (
+                  <>
+                    {clock}
+                    {stack}
+                  </>
+                ) : (
+                  <>
+                    {stack}
+                    {calendar}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <button
+        type="button"
+        class="settings-preview__toggle"
+        aria-expanded={previewOpen}
+        onClick={() => updateSettings({ previewOpen: !previewOpen })}
+      >
+        {previewOpen ? t('settings.previewHide') : t('settings.previewShow')}
+      </button>
+    </div>
+  );
+}
