@@ -29,6 +29,7 @@ import {
 import { BackgroundRow } from './BackgroundRow';
 import { LocationRow } from './LocationRow';
 import { OptionRow, type Option } from './OptionRow';
+import { SchedulePreviewRow } from './SchedulePreviewRow';
 import { SettingsPreview } from './SettingsPreview';
 import { ToggleRow } from './ToggleRow';
 import { WidgetSection } from './WidgetSection';
@@ -318,34 +319,7 @@ export function SettingsOverlay({ onClose }: SettingsOverlayProps) {
               onChange={(themeMode) => updateSettings({ themeMode })}
             />
 
-            {current.themeMode === 'schedule' && (
-              /*
-                Stand the miniature at any hour of the day, so the whole cycle
-                can be judged without waiting for it.
-              */
-              <div class="setting-slider">
-                <label class="setting-slider__field">
-                  <span class="setting-slider__label">
-                    {`${t('theme.previewHour')} ${
-                      previewHour.value === null
-                        ? t('theme.previewNow')
-                        : `${previewHour.value}:00`
-                    }`}
-                  </span>
-                  <input
-                    class="setting-slider__input"
-                    type="range"
-                    min={0}
-                    max={23}
-                    step={1}
-                    value={previewHour.value ?? new Date().getHours()}
-                    onInput={(event) => {
-                      previewHour.value = Number(event.currentTarget.value);
-                    }}
-                  />
-                </label>
-              </div>
-            )}
+            {current.themeMode === 'schedule' && <SchedulePreviewRow />}
 
             {current.themeMode === 'fixed' ? (
               <ThemeGrid

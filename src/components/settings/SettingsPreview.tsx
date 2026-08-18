@@ -6,7 +6,7 @@ import { settings, updateSettings } from '../../state/settings';
 import { Calendar } from '../Calendar';
 import { Clock } from '../clock/Clock';
 import { DateDisplay } from '../DateDisplay';
-import { previewHour, previewTheme } from '../../state/theme';
+import { previewTheme } from '../../state/theme';
 import { ThemeBackdrop } from '../ThemeBackdrop';
 import { Weather } from '../weather/Weather';
 
@@ -72,10 +72,7 @@ export function SettingsPreview() {
         <div class="settings-preview__frame" aria-hidden="true">
           <div class="settings-preview__stage" ref={stageRef}>
             <div class="dashboard">
-              <ThemeBackdrop
-                themeId={themeId}
-                instant={previewHour.value !== null}
-              />
+              <ThemeBackdrop themeId={themeId} />
               <div class="dashboard__widgets">
                 {clockType === 'analog' ? (
                   <>

@@ -22,8 +22,6 @@ function layerFor(id: string): Layer {
 type ThemeBackdropProps = {
   /** Theme to show instead of the one in effect. Used by the preview. */
   themeId?: string;
-  /** Skip the fade, so dragging a slider tracks without lagging behind. */
-  instant?: boolean;
 };
 
 /**
@@ -39,7 +37,7 @@ type ThemeBackdropProps = {
  * preview's stage is scaled, and a transform makes it the containing block for
  * fixed positioning, so the miniature gets its own backdrop for free.
  */
-export function ThemeBackdrop({ themeId, instant }: ThemeBackdropProps = {}) {
+export function ThemeBackdrop({ themeId }: ThemeBackdropProps = {}) {
   const id = themeId ?? activeTheme.value;
 
   const [layers, setLayers] = useState<[Layer, Layer]>(() => [
@@ -71,11 +69,7 @@ export function ThemeBackdrop({ themeId, instant }: ThemeBackdropProps = {}) {
   }, [id, front]);
 
   return (
-    <div
-      class="theme-backdrop"
-      aria-hidden="true"
-      style={instant ? { '--theme-fade': '0ms' } : undefined}
-    >
+    <div class="theme-backdrop" aria-hidden="true">
       {layers.map((layer, index) => (
         <div
           key={index}

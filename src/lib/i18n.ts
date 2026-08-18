@@ -90,6 +90,8 @@ const DICTIONARY = {
 
   'theme.previewHour': { ja: 'この時刻で見る', en: 'Preview at' },
   'theme.previewNow': { ja: '現在', en: 'Now' },
+  'theme.previewPlay': { ja: '1 日を再生', en: 'Play the day' },
+  'theme.previewStop': { ja: '停止', en: 'Stop' },
 
   'timeBand.morning': { ja: '朝', en: 'Morning' },
   'timeBand.day': { ja: '昼', en: 'Day' },

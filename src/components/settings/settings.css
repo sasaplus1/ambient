@@ -390,3 +390,8 @@
   /* Centre the label on its own shape rather than on the line box */
   text-box: trim-both cap alphabetic;
 }
+
+/* Sits under a slider rather than standing alone as a section's actions */
+.setting-actions--inline {
+  padding: 0.5rem 0 0;
+}
