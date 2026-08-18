@@ -21,14 +21,18 @@ export function Dashboard() {
     <div class="dashboard">
       <Background />
 
-      <div class="dashboard__widgets">
-        {showClock && <Clock />}
-
-        <div class="dashboard__secondary">
+      {/*
+        data-split rather than :has(), which old Android browsers may not
+        support. With only one block there is nothing to spread apart.
+      */}
+      <div class="dashboard__widgets" data-split={showCalendar}>
+        <div class="dashboard__clock-group">
           {showDate && <DateDisplay />}
+          {showClock && <Clock />}
           {showWeather && <Weather />}
-          {showCalendar && <Calendar />}
         </div>
+
+        {showCalendar && <Calendar />}
       </div>
 
       {showDebug && <DebugOverlay />}

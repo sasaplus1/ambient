@@ -29,36 +29,32 @@ body {
 }
 
 /*
- * The clock leads; everything else is secondary and gathered into one place.
+ * The layout is built around the clock.
  *
- * In landscape the secondary column sits beside the clock. A square analog face
- * already eats the width, and stacking the rest underneath stretches the whole
- * block vertically and pushes the clock off centre - while the space to either
- * side goes unused.
- *
- * In portrait there is no width to spare, so the same two groups stack.
+ * The date sits above it and the weather below, so the three read top to bottom
+ * as one block: what day, what time, what it is like outside. The calendar is
+ * the one thing that is not about now, so it is pushed to the far side rather
+ * than crowded against them.
  */
 .dashboard__widgets {
   display: flex;
   align-items: center;
   justify-content: center;
+
+  width: 100%;
   gap: clamp(0.75rem, 4vmin, 3rem);
 }
 
-.dashboard__secondary {
+.dashboard__clock-group {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: clamp(0.35rem, 2vmin, 1.25rem);
 }
 
 @media (orientation: portrait) {
   .dashboard__widgets {
     flex-direction: column;
-  }
-
-  /* Centred under the clock, since there is nothing to align against */
-  .dashboard__secondary {
-    align-items: center;
   }
 }
 
@@ -67,16 +63,8 @@ body {
     flex-direction: row;
   }
 
-  /*
-   * Left-aligned so the date, the temperature and the calendar share an edge
-   * rather than each centring on its own width.
-   */
-  .dashboard__secondary {
-    align-items: flex-start;
+  /* Two blocks, so let them take opposite edges of the screen */
+  .dashboard__widgets[data-split='true'] {
+    justify-content: space-between;
   }
-}
-
-/* Nothing secondary to show, so let the clock have the whole frame */
-.dashboard__secondary:empty {
-  display: none;
 }

@@ -1,5 +1,5 @@
 import { useNow } from '../hooks/useNow';
-import { monthGrid, monthTitle, weekdayLabels } from '../lib/calendar';
+import { monthGrid, weekdayLabels } from '../lib/calendar';
 import { fontClass } from '../state/fonts';
 import { locale } from '../state/locale';
 import { settings } from '../state/settings';
@@ -18,8 +18,10 @@ export function Calendar() {
 
   return (
     <div class={`calendar ${fontClass('calendar')}`}>
-      <div class="calendar__title">{monthTitle(tag, today)}</div>
-
+      {/*
+        No month heading: the grid is only ever the current month, and the date
+        widget already says which one it is.
+      */}
       <div class="calendar__grid" role="grid">
         {weekdayLabels(tag, weekStart).map((label, index) => (
           <div key={`weekday-${index}`} class="calendar__weekday" role="columnheader">

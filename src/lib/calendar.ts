@@ -99,9 +99,3 @@ export function weekdayLabels(locale: string, weekStart: WeekStart): string[] {
   );
 }
 
-export function monthTitle(locale: string, date: Date): string {
-  return new Intl.DateTimeFormat(locale, {
-    year: 'numeric',
-    month: 'long',
-  }).format(date);
-}
