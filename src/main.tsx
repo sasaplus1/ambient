@@ -5,6 +5,7 @@ import { startBackgroundSync } from './state/background';
 import { startDiagnostics } from './state/diagnostics';
 import { startLocaleSync } from './state/locale';
 import { startSettingsSync } from './state/settings';
+import { startThemeSync } from './state/theme';
 import { startWeatherSync } from './state/weather';
 
 import './styles/reset.css';
@@ -22,6 +23,7 @@ if (!root) {
 startDiagnostics();
 
 startSettingsSync();
+startThemeSync();
 startLocaleSync();
 startWeatherSync();
 startBackgroundSync();

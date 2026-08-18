@@ -2,6 +2,7 @@ import type { AdjacentDays, WeekStart } from './lib/calendar';
 import type { DateFormat } from './lib/dateFormat';
 import type { LocaleSetting } from './lib/i18n';
 import type { LogLevel } from './lib/logger';
+import type { TimeBand } from './lib/schedule';
 import type { FontFamily, FontTarget, TextScale } from './lib/typography';
 
 export const CLOCK_TYPES = ['digital', 'analog'] as const;
@@ -15,6 +16,9 @@ export type AnalogNumerals = (typeof ANALOG_NUMERALS)[number];
 
 export const BACKGROUND_FITS = ['cover', 'contain', 'fill'] as const;
 export type BackgroundFit = (typeof BACKGROUND_FITS)[number];
+
+export const THEME_MODES = ['fixed', 'schedule'] as const;
+export type ThemeMode = (typeof THEME_MODES)[number];
 
 
 /**
@@ -48,8 +52,12 @@ export type Settings = {
   /** Analog clock: ticks and numerals on the dial */
   analogNumerals: AnalogNumerals;
 
-  /** Theme id; see lib/theme */
+  /** How the theme is decided */
+  themeMode: ThemeMode;
+  /** Theme id used when themeMode is 'fixed'; see lib/theme */
   theme: string;
+  /** Theme id per part of the day, used when themeMode is 'schedule' */
+  schedule: Record<TimeBand, string>;
 
   /** Size multiplier per widget */
   scales: Record<FontTarget, TextScale>;

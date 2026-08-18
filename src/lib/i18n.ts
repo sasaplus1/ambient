@@ -81,7 +81,16 @@ const DICTIONARY = {
   'numerals.arabic': { ja: '数字', en: 'Numbers' },
   'numerals.roman': { ja: 'ローマ数字', en: 'Roman' },
 
+  'theme.mode': { ja: '決め方', en: 'Chosen by' },
+  'themeMode.fixed': { ja: '固定', en: 'Fixed' },
+  'themeMode.schedule': { ja: '時刻', en: 'Time of day' },
   'theme.palette': { ja: '配色', en: 'Palette' },
+
+  'timeBand.morning': { ja: '朝', en: 'Morning' },
+  'timeBand.day': { ja: '昼', en: 'Day' },
+  'timeBand.evening': { ja: '夕方', en: 'Evening' },
+  'timeBand.night': { ja: '夜', en: 'Night' },
+  'timeBand.lateNight': { ja: '深夜', en: 'Late night' },
 
   'language.label': { ja: '表示言語', en: 'Interface' },
   'language.auto': { ja: '自動', en: 'Auto' },

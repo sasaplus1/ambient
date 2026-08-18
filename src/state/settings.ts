@@ -1,9 +1,10 @@
-import { computed, effect, signal } from '@preact/signals';
+import { effect, signal } from '@preact/signals';
 
 import { isAdjacentDays, isWeekStart } from '../lib/calendar';
 import { DEFAULT_DATE_FORMAT, isDateFormat } from '../lib/dateFormat';
 import { isLocaleSetting } from '../lib/i18n';
 import { isLogLevel } from '../lib/logger';
+import { TIME_BANDS, type TimeBand } from '../lib/schedule';
 import {
   FONT_TARGETS,
   isFontFamily,
@@ -13,16 +14,18 @@ import {
   type TextScale,
 } from '../lib/typography';
 import { loadRecord, saveRecord } from '../lib/storage';
-import { applyTheme, DEFAULT_THEME, isThemeId } from '../lib/theme';
+import { DEFAULT_THEME, isThemeId } from '../lib/theme';
 import {
   ANALOG_NUMERALS,
   BACKGROUND_FITS,
   CLOCK_TYPES,
+  THEME_MODES,
   SECOND_HANDS,
   type AnalogNumerals,
   type BackgroundFit,
   type ClockType,
   type SecondHand,
+  type ThemeMode,
   type Settings,
 } from '../types';
 
@@ -48,7 +51,15 @@ export const DEFAULT_SETTINGS: Settings = {
   showSeconds: false,
   secondHand: 'sweep',
   analogNumerals: 'ticks',
+  themeMode: 'fixed',
   theme: DEFAULT_THEME,
+  schedule: {
+    morning: 'dawn',
+    day: 'mist',
+    evening: 'sunset',
+    night: 'midnight',
+    lateNight: 'oled',
+  },
   scales: {
     clock: 'm',
     date: 'm',
@@ -146,6 +157,17 @@ function pickScales(raw: Record<string, unknown>): Record<FontTarget, TextScale>
   ) as Record<FontTarget, TextScale>;
 }
 
+function pickSchedule(raw: Record<string, unknown>): Record<TimeBand, string> {
+  const record = widgetRecord(raw, 'schedule');
+
+  return Object.fromEntries(
+    TIME_BANDS.map((band) => [
+      band,
+      isThemeId(record[band]) ? record[band] : DEFAULT_SETTINGS.schedule[band],
+    ]),
+  ) as Record<TimeBand, string>;
+}
+
 /**
  * Never trust what was stored. Validate field by field and fall back to the
  * default for anything invalid, so partial corruption keeps the rest usable.
@@ -193,7 +215,14 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
       ANALOG_NUMERALS,
       DEFAULT_SETTINGS.analogNumerals,
     ),
+    themeMode: pickUnion<ThemeMode>(
+      raw,
+      'themeMode',
+      THEME_MODES,
+      DEFAULT_SETTINGS.themeMode,
+    ),
     theme: isThemeId(raw['theme']) ? raw['theme'] : DEFAULT_SETTINGS.theme,
+    schedule: pickSchedule(raw),
     scales: pickScales(raw),
     fonts: pickFonts(raw),
     backgroundFit: pickUnion<BackgroundFit>(
@@ -231,18 +260,11 @@ export function resetSettings(): void {
   settings.value = { ...DEFAULT_SETTINGS };
 }
 
-/** Derived value watching only the theme, so other changes do not reapply it. */
-const theme = computed(() => settings.value.theme);
-
 /**
  * Start persisting settings and applying the theme. Call once at startup.
  */
 export function startSettingsSync(): void {
   effect(() => {
     saveRecord(STORAGE_KEY, SCHEMA_VERSION, settings.value);
-  });
-
-  effect(() => {
-    applyTheme(theme.value);
   });
 }
