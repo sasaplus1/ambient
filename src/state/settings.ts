@@ -184,7 +184,9 @@ function pickSchedule(raw: Record<string, unknown>): Record<TimeBand, string> {
  * Never trust what was stored. Validate field by field and fall back to the
  * default for anything invalid, so partial corruption keeps the rest usable.
  */
-function parseSettings(raw: Record<string, unknown> | undefined): Settings {
+export function parseSettings(
+  raw: Record<string, unknown> | undefined,
+): Settings {
   if (!raw) {
     return { ...DEFAULT_SETTINGS };
   }

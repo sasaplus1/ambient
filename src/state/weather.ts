@@ -32,7 +32,7 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
-function parseLocation(
+export function parseLocation(
   raw: Record<string, unknown> | undefined,
 ): StoredLocation | null {
   if (!raw) {
@@ -61,7 +61,7 @@ function parseLocation(
  * in the middle of the week. There is nothing to lose by it: the next fetch is
  * along within the half hour, and the temperature above the row is unaffected.
  */
-function parseDaily(stored: unknown): DailyForecast[] {
+export function parseStoredDaily(stored: unknown): DailyForecast[] {
   if (!Array.isArray(stored)) {
     return [];
   }
@@ -94,7 +94,7 @@ function parseDaily(stored: unknown): DailyForecast[] {
   return days;
 }
 
-function parseWeather(
+export function parseWeather(
   raw: Record<string, unknown> | undefined,
 ): CurrentWeather | null {
   if (!raw) {
@@ -117,7 +117,7 @@ function parseWeather(
     temperature,
     weatherCode,
     isDay: raw['isDay'] !== false,
-    daily: parseDaily(raw['daily']),
+    daily: parseStoredDaily(raw['daily']),
     fetchedAt,
   };
 }
