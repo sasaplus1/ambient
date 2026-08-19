@@ -365,6 +365,11 @@ export function SettingsOverlay({
             selected={current.temperatureUnit}
             onChange={(temperatureUnit) => updateSettings({ temperatureUnit })}
           />
+          <ToggleRow
+            label={t('weather.forecast')}
+            checked={current.showForecast}
+            onChange={(showForecast) => updateSettings({ showForecast })}
+          />
         </WidgetSection>
 
         <WidgetSection

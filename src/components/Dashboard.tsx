@@ -13,6 +13,7 @@ import { SettingsButton } from './settings/SettingsButton';
 import { SettingsOverlay } from './settings/SettingsOverlay';
 import { ThemeBackdrop } from './ThemeBackdrop';
 import { Footer } from './Footer';
+import { Forecast } from './weather/Forecast';
 import { Weather } from './weather/Weather';
 
 /** How long the controls stay up after the screen is touched. */
@@ -47,7 +48,12 @@ export function Dashboard() {
   const controlsVisible = !controlsSeen || recentlyTouched;
 
   const date = showDate && <DateDisplay />;
-  const weather = showWeather && <Weather />;
+  const weather = showWeather && (
+    <>
+      <Weather />
+      <Forecast />
+    </>
+  );
   const calendar = showCalendar && <Calendar />;
   const clock = showClock && <Clock />;
 

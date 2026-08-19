@@ -113,6 +113,8 @@ const DICTIONARY = {
   'temperatureUnit.celsius': { ja: '摂氏', en: 'Celsius' },
   'temperatureUnit.fahrenheit': { ja: '華氏', en: 'Fahrenheit' },
   'temperatureUnit.both': { ja: '両方', en: 'Both' },
+  'weather.forecast': { ja: '週間予報', en: 'Forecast' },
+  'forecast.today': { ja: '今日', en: 'Today' },
   'weather.location': { ja: '地点', en: 'Location' },
   'weather.useCurrent': { ja: '現在地を使う', en: 'Use my location' },
   'weather.searchLabel': { ja: '地名で検索', en: 'Search by name' },

@@ -5,6 +5,7 @@ import { t } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
 import { Background } from '../Background';
 import { Calendar } from '../Calendar';
+import { Forecast } from '../weather/Forecast';
 import { Clock } from '../clock/Clock';
 import { DateDisplay } from '../DateDisplay';
 import { previewTheme } from '../../state/theme';
@@ -47,7 +48,12 @@ export function SettingsPreview() {
   }, [themeId, previewOpen]);
 
   const date = showDate && <DateDisplay />;
-  const weather = showWeather && <Weather />;
+  const weather = showWeather && (
+    <>
+      <Weather />
+      <Forecast />
+    </>
+  );
   const calendar = showCalendar && <Calendar />;
   const clock = showClock && <Clock themeId={themeId} />;
 

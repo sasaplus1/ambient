@@ -6,6 +6,7 @@ import {
   fetchCurrentWeather,
   type CurrentWeather,
   type Coordinates,
+  type DailyForecast,
 } from '../lib/weather';
 
 const LOCATION_KEY = 'ambient:location';
@@ -51,6 +52,46 @@ function parseLocation(
   };
 }
 
+/**
+ * The stored forecast, distrusted the same way everything else here is.
+ *
+ * A day missing a field takes the whole row with it rather than leaving a gap
+ * in the middle of the week. There is nothing to lose by it: the next fetch is
+ * along within the half hour, and the temperature above the row is unaffected.
+ */
+function parseDaily(stored: unknown): DailyForecast[] {
+  if (!Array.isArray(stored)) {
+    return [];
+  }
+
+  const days: DailyForecast[] = [];
+
+  for (const entry of stored) {
+    if (typeof entry !== 'object' || entry === null) {
+      return [];
+    }
+
+    const record = entry as Record<string, unknown>;
+    const date = record['date'];
+    const weatherCode = record['weatherCode'];
+    const max = record['max'];
+    const min = record['min'];
+
+    if (
+      typeof date !== 'string' ||
+      !isFiniteNumber(weatherCode) ||
+      !isFiniteNumber(max) ||
+      !isFiniteNumber(min)
+    ) {
+      return [];
+    }
+
+    days.push({ date, weatherCode, max, min });
+  }
+
+  return days;
+}
+
 function parseWeather(
   raw: Record<string, unknown> | undefined,
 ): CurrentWeather | null {
@@ -74,6 +115,7 @@ function parseWeather(
     temperature,
     weatherCode,
     isDay: raw['isDay'] !== false,
+    daily: parseDaily(raw['daily']),
     fetchedAt,
   };
 }

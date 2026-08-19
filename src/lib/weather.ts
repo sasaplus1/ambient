@@ -13,10 +13,28 @@ export type WeatherIconName =
   | 'snow'
   | 'thunder';
 
+/** One day ahead, as the forecast row shows it. */
+export type DailyForecast = {
+  /** Local calendar date, `YYYY-MM-DD`, as the API returned it */
+  date: string;
+  weatherCode: number;
+  max: number;
+  min: number;
+};
+
+/** How many days the row shows, today included. */
+export const FORECAST_DAYS = 5;
+
 export type CurrentWeather = {
   temperature: number;
   weatherCode: number;
   isDay: boolean;
+  /**
+   * The days ahead, today first. Empty if the response had nothing usable,
+   * which the row treats as nothing to show rather than as a failure - the
+   * temperature is worth having on its own.
+   */
+  daily: readonly DailyForecast[];
   /** When we fetched it, in epoch milliseconds. Used for the stale check. */
   fetchedAt: number;
 };
@@ -105,6 +123,62 @@ function isFiniteNumber(value: unknown): value is number {
   return typeof value === 'number' && Number.isFinite(value);
 }
 
+/**
+ * The days ahead, out of the same response the temperature came from.
+ *
+ * Open-Meteo answers in parallel arrays rather than a list of days, so the
+ * lengths are the thing to distrust: a short one would pair a Tuesday with
+ * Wednesday's high. Anything that does not line up is dropped entirely, and the
+ * row simply does not appear - a wrong forecast is worse than no forecast.
+ *
+ * timezone=auto means the dates are already the local ones, so there is no
+ * boundary to work out here.
+ */
+function parseDaily(body: Record<string, unknown>): DailyForecast[] {
+  const daily = body['daily'];
+
+  if (typeof daily !== 'object' || daily === null) {
+    return [];
+  }
+
+  const record = daily as Record<string, unknown>;
+  const dates = record['time'];
+  const codes = record['weather_code'];
+  const highs = record['temperature_2m_max'];
+  const lows = record['temperature_2m_min'];
+
+  if (
+    !Array.isArray(dates) ||
+    !Array.isArray(codes) ||
+    !Array.isArray(highs) ||
+    !Array.isArray(lows)
+  ) {
+    return [];
+  }
+
+  const days: DailyForecast[] = [];
+
+  for (let index = 0; index < dates.length; index += 1) {
+    const date = dates[index];
+    const weatherCode = codes[index];
+    const max = highs[index];
+    const min = lows[index];
+
+    if (
+      typeof date !== 'string' ||
+      !isFiniteNumber(weatherCode) ||
+      !isFiniteNumber(max) ||
+      !isFiniteNumber(min)
+    ) {
+      return [];
+    }
+
+    days.push({ date, weatherCode, max, min });
+  }
+
+  return days;
+}
+
 export async function fetchCurrentWeather(
   coordinates: Coordinates,
   signal?: AbortSignal,
@@ -114,6 +188,13 @@ export async function fetchCurrentWeather(
   url.searchParams.set('latitude', coordinates.latitude.toFixed(4));
   url.searchParams.set('longitude', coordinates.longitude.toFixed(4));
   url.searchParams.set('current', 'temperature_2m,weather_code,is_day');
+
+  // Along for the ride: the same request answers both, at no extra call
+  url.searchParams.set(
+    'daily',
+    'weather_code,temperature_2m_max,temperature_2m_min',
+  );
+  url.searchParams.set('forecast_days', String(FORECAST_DAYS));
   url.searchParams.set('timezone', 'auto');
 
   const response = await fetch(url, signal ? { signal } : {});
@@ -123,10 +204,11 @@ export async function fetchCurrentWeather(
   }
 
   const body: unknown = await response.json();
-  const current =
+  const envelope =
     typeof body === 'object' && body !== null
-      ? (body as Record<string, unknown>)['current']
-      : undefined;
+      ? (body as Record<string, unknown>)
+      : {};
+  const current = envelope['current'];
 
   if (typeof current !== 'object' || current === null) {
     throw new Error('weather response had no current block');
@@ -144,6 +226,7 @@ export async function fetchCurrentWeather(
     temperature,
     weatherCode,
     isDay: record['is_day'] !== 0,
+    daily: parseDaily(envelope),
     fetchedAt: Date.now(),
   };
 }
