@@ -25,9 +25,17 @@ export function Calendar() {
         No month heading: the grid is only ever the current month, and the date
         widget already says which one it is.
       */}
-      <div class="calendar__grid" role="grid">
+      {/*
+        No grid roles. They were here, and they were wrong: an ARIA grid is made
+        of rows, and this is a CSS grid of forty-two cells with no rows in it at
+        all. A malformed structure is worse to land in than none, and there is
+        nothing to land on either way - nothing here is interactive. What is
+        left is the reading order, which is the one thing that was ever true,
+        and the marker on today.
+      */}
+      <div class="calendar__grid">
         {weekdayLabels(tag, weekStart).map((label, index) => (
-          <div key={`weekday-${index}`} class="calendar__weekday" role="columnheader">
+          <div key={`weekday-${index}`} class="calendar__weekday">
             {label}
           </div>
         ))}
@@ -36,7 +44,6 @@ export function Calendar() {
           <div
             key={cell.date.getTime()}
             class="calendar__day"
-            role="gridcell"
             data-in-month={cell.inMonth}
             data-today={cell.isToday}
             data-hidden={!cell.inMonth && adjacentDays === 'hidden'}
