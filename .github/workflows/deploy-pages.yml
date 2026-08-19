@@ -19,14 +19,18 @@ jobs:
     permissions:
       contents: read
     steps:
-      # The build stamps in the commit it came from, which needs the git dir
-      - uses: actions/checkout@v7
+      # Every action here is pinned to a commit, the ones under actions/
+      # included. A tag is a name for a commit and can be moved to another;
+      # pinning to what was actually read is the only version that holds still.
+      # pinact keeps them up to date and writes the release alongside.
 
-      # Third party, so pinned to a commit. It reads the version to install
-      # from packageManager in package.json.
+      # The build stamps in the commit it came from, which needs the git dir
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Reads the version to install from packageManager in package.json
       - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
 
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
           cache: pnpm
@@ -37,9 +41,9 @@ jobs:
           pnpm typecheck
           pnpm build
 
-      - uses: actions/configure-pages@v6
+      - uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 
-      - uses: actions/upload-pages-artifact@v5
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: dist
 
@@ -57,4 +61,4 @@ jobs:
       url: ${{ steps.deploy.outputs.page_url }}
     steps:
       - id: deploy
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@cd2ce8fcbc39b97be8ca5fce6e763baed58fa128 # v5.0.0
