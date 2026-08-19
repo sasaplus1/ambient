@@ -17,6 +17,21 @@
 }
 
 /*
+ * On whole pixels where the browser can do the arithmetic. The type this is
+ * sized against is fluid, so 1.5em lands on 54.375 as readily as on 54, and a
+ * box measured in thirds of a pixel is a poor thing to line anything up
+ * against. Rounding each side separately costs nothing: the viewBox is fitted
+ * to whatever box it is given and centred inside it, so the drawing keeps its
+ * proportions and its middle.
+ */
+@supports (width: round(1px, 1px)) {
+  .weather__icon {
+    width: round(1.5em, 1px);
+    height: round(1.625em, 1px);
+  }
+}
+
+/*
  * Centred on the digits rather than on the line box around them. A line box is
  * built from the font's ascent and descent, and these are numbers - no
  * descender, nothing reaching the ascent - so its middle is not theirs.
