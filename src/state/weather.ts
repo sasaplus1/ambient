@@ -1,4 +1,4 @@
-import { effect, signal } from '@preact/signals';
+import { effect, signal, untracked } from '@preact/signals';
 
 import { logger } from '../lib/logger';
 import { loadRecord, saveRecord } from '../lib/storage';
@@ -8,6 +8,8 @@ import {
   type Coordinates,
   type DailyForecast,
 } from '../lib/weather';
+
+import { settings } from './settings';
 
 const LOCATION_KEY = 'ambient:location';
 const WEATHER_KEY = 'ambient:weather';
@@ -208,6 +210,34 @@ export function startWeatherSync(): void {
     if (reading) {
       saveRecord(WEATHER_KEY, SCHEMA_VERSION, { ...reading });
     }
+  });
+
+  /*
+   * Fetch again when the forecast is wanted and the reading we are holding has
+   * none.
+   *
+   * A reading saved before the forecast existed is a perfectly good
+   * temperature, so the staleness check leaves it alone for its full half hour
+   * - during which turning the row on shows nothing and explains nothing.
+   *
+   * Once per session, and no more. If the answer comes back without a forecast
+   * again, that is the answer, and asking every five minutes for the rest of
+   * the day would not change it.
+   */
+  let askedForDaily = false;
+
+  effect(() => {
+    const wanted = settings.value.showForecast;
+    const missing = (weather.value?.daily.length ?? 0) === 0;
+
+    untracked(() => {
+      if (!wanted || !missing || askedForDaily || !location.value) {
+        return;
+      }
+
+      askedForDaily = true;
+      void refreshWeather(true);
+    });
   });
 
   const check = () => {
