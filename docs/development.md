@@ -30,6 +30,14 @@ no trust downgrades, and anything added from here on written down exactly rather
 than with a caret. A dependency added today will not install until it has aged a
 week, which is deliberate.
 
+## Weather data
+
+The code is MIT, but the weather is not the code's to give. Open-Meteo's free
+tier is for non-commercial use, and the browser running this is what calls it -
+so anyone putting a fork behind advertising or a subscription needs a paid plan
+of their own. The credit at the foot of the screen is required by CC BY 4.0 and
+should stay wherever the reading does.
+
 ## Deployment
 
 Pushing to `main` builds and publishes to GitHub Pages. Everything is
