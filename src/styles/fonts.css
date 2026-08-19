@@ -2,7 +2,7 @@
  * Faces come from the device: nothing is downloaded, so the display is right
  * from the first frame and stays right with no network.
  *
- * Each stack names the Apple face, then the Android/LineageOS one, then a
+ * Each stack names the Apple face, then the Android one, then a
  * Japanese fallback, then the generic family. Any device resolves at least the
  * last of these.
  */

@@ -10,9 +10,9 @@ type Phase = 'idle' | 'locating' | 'searching';
  * Picking a place for the weather.
  *
  * Geolocation is offered first, but it is not assumed to work: devices without
- * GPS, a denied permission, or a LineageOS build with no location provider all
- * end up in the same place, so searching by name is a peer of it rather than a
- * hidden fallback.
+ * GPS, a denied permission, or a build with no location provider at all end up
+ * in the same place, so searching by name is a peer of it rather than a hidden
+ * fallback.
  */
 export function LocationRow() {
   const [phase, setPhase] = useState<Phase>('idle');

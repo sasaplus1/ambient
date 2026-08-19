@@ -16,8 +16,8 @@ export type WakeLock = {
  * So whether the lock is wanted is tracked here, and it is re-acquired when
  * visibilitychange brings the page back.
  *
- * On unsupported devices - a LineageOS Echo Show 5, say - this does nothing.
- * The always-on display works without a wake lock.
+ * On devices without support this does nothing, and the always-on display
+ * works without a wake lock.
  */
 export function useWakeLock(): WakeLock {
   const sentinelRef = useRef<WakeLockSentinel | null>(null);
