@@ -49,6 +49,7 @@ export const DEFAULT_SETTINGS: Settings = {
   dateFormat: DEFAULT_DATE_FORMAT,
   showWeather: false,
   temperatureUnit: 'auto',
+  showForecast: false,
   showCalendar: true,
   weekStart: 'sunday',
   adjacentDays: 'dimmed',
@@ -198,6 +199,7 @@ function parseSettings(raw: Record<string, unknown> | undefined): Settings {
     temperatureUnit: isTemperatureUnitSetting(raw['temperatureUnit'])
       ? raw['temperatureUnit']
       : DEFAULT_SETTINGS.temperatureUnit,
+    showForecast: pickBoolean(raw, 'showForecast', DEFAULT_SETTINGS.showForecast),
     showCalendar: pickBoolean(
       raw,
       'showCalendar',

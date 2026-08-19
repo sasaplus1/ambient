@@ -40,6 +40,11 @@ export type Settings = {
   showWeather: boolean;
   /** 'auto' follows the browser's region */
   temperatureUnit: TemperatureUnitSetting;
+  /**
+   * The days ahead, under the current reading. Off by default: it is another
+   * row of type, and a five-inch screen held upright has little to spare.
+   */
+  showForecast: boolean;
 
   showCalendar: boolean;
   /** Which day the calendar's week begins on */

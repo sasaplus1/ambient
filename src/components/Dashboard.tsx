@@ -13,6 +13,7 @@ import { SettingsButton } from './settings/SettingsButton';
 import { SettingsOverlay } from './settings/SettingsOverlay';
 import { ThemeBackdrop } from './ThemeBackdrop';
 import { Footer } from './Footer';
+import { Forecast } from './weather/Forecast';
 import { Weather } from './weather/Weather';
 
 /** How long the controls stay up after the screen is touched. */
@@ -48,6 +49,8 @@ export function Dashboard() {
 
   const date = showDate && <DateDisplay />;
   const weather = showWeather && <Weather />;
+  // Gates itself on the setting, and stands without today's reading beside it
+  const forecast = <Forecast />;
   const calendar = showCalendar && <Calendar />;
   const clock = showClock && <Clock />;
 
@@ -65,12 +68,14 @@ export function Dashboard() {
         {date}
         {calendar}
         {weather}
+        {forecast}
       </div>
     ) : (
       <div class="dashboard__stack">
         {date}
         {clock}
         {weather}
+        {forecast}
       </div>
     );
 

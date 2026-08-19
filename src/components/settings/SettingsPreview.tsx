@@ -5,6 +5,7 @@ import { t } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
 import { Background } from '../Background';
 import { Calendar } from '../Calendar';
+import { Forecast } from '../weather/Forecast';
 import { Clock } from '../clock/Clock';
 import { DateDisplay } from '../DateDisplay';
 import { previewTheme } from '../../state/theme';
@@ -48,6 +49,8 @@ export function SettingsPreview() {
 
   const date = showDate && <DateDisplay />;
   const weather = showWeather && <Weather />;
+  // Gates itself on the setting, and stands without today's reading beside it
+  const forecast = <Forecast />;
   const calendar = showCalendar && <Calendar />;
   const clock = showClock && <Clock themeId={themeId} />;
 
@@ -58,12 +61,14 @@ export function SettingsPreview() {
         {date}
         {calendar}
         {weather}
+        {forecast}
       </div>
     ) : (
       <div class="dashboard__stack">
         {date}
         {clock}
         {weather}
+        {forecast}
       </div>
     );
 

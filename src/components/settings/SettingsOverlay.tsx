@@ -44,6 +44,7 @@ import { OptionRow, type Option } from './OptionRow';
 import { SchedulePreviewRow } from './SchedulePreviewRow';
 import { SettingsPreview } from './SettingsPreview';
 import { ToggleRow } from './ToggleRow';
+import { TypeRows } from './TypeRows';
 import { WidgetSection } from './WidgetSection';
 
 import './settings.css';
@@ -352,20 +353,42 @@ export function SettingsOverlay({
           />
         </WidgetSection>
 
-        <WidgetSection
-          target="weather"
-          title={t('section.weather')}
-          visible={current.showWeather}
-          onVisibleChange={(showWeather) => updateSettings({ showWeather })}
-        >
-          <LocationRow />
-          <OptionRow
-            label={t('weather.unit')}
-            options={temperatureUnitOptions()}
-            selected={current.temperatureUnit}
-            onChange={(temperatureUnit) => updateSettings({ temperatureUnit })}
-          />
-        </WidgetSection>
+        {/*
+          Not a WidgetSection: that one has a single switch and hides everything
+          beneath it, and this has two things to switch. They share a place and
+          a typeface, so they share a section - but either can be shown without
+          the other, and neither may take the other's settings out of reach.
+        */}
+        <section class="settings-section">
+          <h2 class="settings-section__title">{t('section.weather')}</h2>
+          <div class="settings-section__items">
+            <ToggleRow
+              label={t('weather.today')}
+              checked={current.showWeather}
+              onChange={(showWeather) => updateSettings({ showWeather })}
+            />
+            <ToggleRow
+              label={t('weather.forecast')}
+              checked={current.showForecast}
+              onChange={(showForecast) => updateSettings({ showForecast })}
+            />
+
+            {(current.showWeather || current.showForecast) && (
+              <>
+                <LocationRow />
+                <OptionRow
+                  label={t('weather.unit')}
+                  options={temperatureUnitOptions()}
+                  selected={current.temperatureUnit}
+                  onChange={(temperatureUnit) =>
+                    updateSettings({ temperatureUnit })
+                  }
+                />
+                <TypeRows target="weather" />
+              </>
+            )}
+          </div>
+        </section>
 
         <WidgetSection
           target="calendar"

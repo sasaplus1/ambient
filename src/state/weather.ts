@@ -1,4 +1,4 @@
-import { effect, signal } from '@preact/signals';
+import { effect, signal, untracked } from '@preact/signals';
 
 import { logger } from '../lib/logger';
 import { loadRecord, saveRecord } from '../lib/storage';
@@ -6,7 +6,10 @@ import {
   fetchCurrentWeather,
   type CurrentWeather,
   type Coordinates,
+  type DailyForecast,
 } from '../lib/weather';
+
+import { settings } from './settings';
 
 const LOCATION_KEY = 'ambient:location';
 const WEATHER_KEY = 'ambient:weather';
@@ -51,6 +54,46 @@ function parseLocation(
   };
 }
 
+/**
+ * The stored forecast, distrusted the same way everything else here is.
+ *
+ * A day missing a field takes the whole row with it rather than leaving a gap
+ * in the middle of the week. There is nothing to lose by it: the next fetch is
+ * along within the half hour, and the temperature above the row is unaffected.
+ */
+function parseDaily(stored: unknown): DailyForecast[] {
+  if (!Array.isArray(stored)) {
+    return [];
+  }
+
+  const days: DailyForecast[] = [];
+
+  for (const entry of stored) {
+    if (typeof entry !== 'object' || entry === null) {
+      return [];
+    }
+
+    const record = entry as Record<string, unknown>;
+    const date = record['date'];
+    const weatherCode = record['weatherCode'];
+    const max = record['max'];
+    const min = record['min'];
+
+    if (
+      typeof date !== 'string' ||
+      !isFiniteNumber(weatherCode) ||
+      !isFiniteNumber(max) ||
+      !isFiniteNumber(min)
+    ) {
+      return [];
+    }
+
+    days.push({ date, weatherCode, max, min });
+  }
+
+  return days;
+}
+
 function parseWeather(
   raw: Record<string, unknown> | undefined,
 ): CurrentWeather | null {
@@ -74,6 +117,7 @@ function parseWeather(
     temperature,
     weatherCode,
     isDay: raw['isDay'] !== false,
+    daily: parseDaily(raw['daily']),
     fetchedAt,
   };
 }
@@ -166,6 +210,34 @@ export function startWeatherSync(): void {
     if (reading) {
       saveRecord(WEATHER_KEY, SCHEMA_VERSION, { ...reading });
     }
+  });
+
+  /*
+   * Fetch again when the forecast is wanted and the reading we are holding has
+   * none.
+   *
+   * A reading saved before the forecast existed is a perfectly good
+   * temperature, so the staleness check leaves it alone for its full half hour
+   * - during which turning the row on shows nothing and explains nothing.
+   *
+   * Once per session, and no more. If the answer comes back without a forecast
+   * again, that is the answer, and asking every five minutes for the rest of
+   * the day would not change it.
+   */
+  let askedForDaily = false;
+
+  effect(() => {
+    const wanted = settings.value.showForecast;
+    const missing = (weather.value?.daily.length ?? 0) === 0;
+
+    untracked(() => {
+      if (!wanted || !missing || askedForDaily || !location.value) {
+        return;
+      }
+
+      askedForDaily = true;
+      void refreshWeather(true);
+    });
   });
 
   const check = () => {

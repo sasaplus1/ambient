@@ -1,0 +1,52 @@
+/*
+ * Five columns of equal width, so the icons line up down the row whatever the
+ * temperatures are. Sized against the weather widget but smaller than it: the
+ * reading above is the one being read, and these are the days after it.
+ */
+.forecast {
+  display: grid;
+  grid-auto-columns: 1fr;
+  grid-auto-flow: column;
+  gap: 0.5em;
+
+  color: var(--fg-secondary);
+  font-size: calc(clamp(0.6875rem, 2.25vmin, 1.25rem) * var(--text-scale, 1) * var(--widget-scale, 1));
+  line-height: 1;
+}
+
+.forecast__day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.forecast__weekday {
+  color: var(--fg-tertiary);
+
+  /* Centre the label on its own shape rather than on the line box */
+  text-box: trim-both cap alphabetic;
+}
+
+/* Smaller than the widget's own icon; this one is a label, not a headline */
+.forecast .weather__icon {
+  width: 1.75em;
+  height: 1.9em;
+}
+
+.forecast__range {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4em;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* The high leads: it is the number anyone dressing for the day looks at */
+.forecast__max {
+  color: var(--fg);
+}
+
+.forecast__min {
+  color: var(--fg-tertiary);
+}
