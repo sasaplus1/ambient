@@ -12,6 +12,7 @@ import { DebugOverlay } from './debug/DebugOverlay';
 import { SettingsButton } from './settings/SettingsButton';
 import { SettingsOverlay } from './settings/SettingsOverlay';
 import { ThemeBackdrop } from './ThemeBackdrop';
+import { Footer } from './Footer';
 import { Weather } from './weather/Weather';
 
 /** How long the controls stay up after the screen is touched. */
@@ -100,6 +101,8 @@ export function Dashboard() {
           )}
         </div>
       </div>
+
+      <Footer />
 
       {/*
         Hidden while the settings are open: it would cover the rows behind it.

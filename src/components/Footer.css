@@ -1,0 +1,47 @@
+/*
+ * A bar the height of the corner buttons, sharing their offset from the bottom,
+ * so the credit sits on the line they sit on rather than somewhere near it.
+ *
+ * Fixed like they are, and for the same reason: it belongs to the screen rather
+ * than to the arrangement of widgets, and it should not travel when the pixel
+ * shift moves them.
+ */
+.dashboard__footer {
+  position: fixed;
+  bottom: max(0.5rem, env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  z-index: 10;
+
+  display: grid;
+  place-items: center;
+
+  height: 2.75rem;
+
+  /* The buttons own the corners; the credit keeps out of them */
+  padding: 0 3.5rem;
+
+  pointer-events: none;
+}
+
+/*
+ * The quietest thing on the screen, and deliberately still on it. It does not
+ * follow the weather widget's size setting - it is a credit, not a reading -
+ * and it is not tied to the fade the corner controls rest under, which would
+ * leave it invisible almost all of the time.
+ */
+.dashboard__footer a {
+  color: var(--fg-tertiary);
+  font-size: clamp(0.625rem, 2vmin, 1rem);
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+
+  /* The bar ignores taps; the link inside it does not */
+  pointer-events: auto;
+}
+
+.dashboard__footer a:hover,
+.dashboard__footer a:focus-visible {
+  text-decoration: underline;
+}
