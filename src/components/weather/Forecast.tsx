@@ -3,7 +3,12 @@ import {
   detectTemperatureUnit,
   resolveTemperatureUnit,
 } from '../../lib/temperature';
-import { conditionFor, iconFor, type DailyForecast } from '../../lib/weather';
+import {
+  conditionFor,
+  iconFor,
+  localDate,
+  type DailyForecast,
+} from '../../lib/weather';
 import { locale, t } from '../../state/locale';
 import { settings } from '../../state/settings';
 import { fontClass, scaleStyle } from '../../state/typography';
@@ -12,25 +17,6 @@ import { weather } from '../../state/weather';
 import { WeatherIcon } from './WeatherIcon';
 
 import './Forecast.css';
-
-/**
- * Built from the parts rather than from Date.parse.
- *
- * `2026-08-20` parsed as a date string is midnight UTC, which formatted east or
- * west of the meridian is liable to come out as the day before or the day
- * after. The API already gave us the local calendar date, so the only honest
- * reading of it is a local one.
- */
-function localDate(date: string): Date | null {
-  const parts = date.split('-').map(Number);
-  const [year, month, day] = parts;
-
-  if (parts.length !== 3 || !year || !month || !day) {
-    return null;
-  }
-
-  return new Date(year, month - 1, day);
-}
 
 /**
  * A day ahead, in a column: what day it is, what it will be like, how warm.

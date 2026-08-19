@@ -53,6 +53,29 @@ export type Coordinates = {
 };
 
 /**
+ * A calendar date from the API, read as a local one.
+ *
+ * Built from the parts rather than handed to Date.parse. `2026-08-20` parsed as
+ * a date string is midnight UTC, which formatted east or west of the meridian
+ * is liable to come out as the day before or the day after. The API already
+ * gave us the local calendar date, so the only honest reading of it is a local
+ * one.
+ *
+ * Null for anything that is not three numbers, which is also how a zero gets
+ * turned away: there is no month 0 and no day 0.
+ */
+export function localDate(date: string): Date | null {
+  const parts = date.split('-').map(Number);
+  const [year, month, day] = parts;
+
+  if (parts.length !== 3 || !year || !month || !day) {
+    return null;
+  }
+
+  return new Date(year, month - 1, day);
+}
+
+/**
  * WMO weather interpretation codes, grouped into the handful of conditions
  * worth distinguishing on a display glanced at from across a room.
  */
@@ -134,7 +157,7 @@ function isFiniteNumber(value: unknown): value is number {
  * timezone=auto means the dates are already the local ones, so there is no
  * boundary to work out here.
  */
-function parseDaily(body: Record<string, unknown>): DailyForecast[] {
+export function parseDaily(body: Record<string, unknown>): DailyForecast[] {
   const daily = body['daily'];
 
   if (typeof daily !== 'object' || daily === null) {

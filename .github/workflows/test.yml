@@ -48,4 +48,6 @@ jobs:
       - if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: pnpm run typecheck
       - if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: pnpm run test
+      - if: ${{ !cancelled() && steps.install.outcome == 'success' }}
         run: pnpm run build
