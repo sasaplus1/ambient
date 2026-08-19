@@ -1,5 +1,6 @@
 import {
   convertTemperature,
+  detectTemperatureUnit,
   resolveTemperatureUnit,
 } from '../../lib/temperature';
 import { conditionFor, iconFor, type DailyForecast } from '../../lib/weather';
@@ -41,7 +42,19 @@ function localDate(date: string): Date | null {
 function Day({ day, index }: { day: DailyForecast; index: number }) {
   const when = localDate(day.date);
   const unit = resolveTemperatureUnit(settings.value.temperatureUnit);
-  const only = unit === 'both' ? 'celsius' : unit;
+
+  /*
+   * One unit per column, even when the setting asks for both: five columns of
+   * two readings apiece is a table, and this is meant to be taken in at a
+   * glance. Which one falls to the region rather than to celsius, which was
+   * only ever the one that came first in the type.
+   */
+  const only: 'celsius' | 'fahrenheit' =
+    unit === 'both'
+      ? detectTemperatureUnit() === 'fahrenheit'
+        ? 'fahrenheit'
+        : 'celsius'
+      : unit;
 
   const round = (value: number) =>
     new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }).format(
