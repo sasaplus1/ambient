@@ -1,0 +1,22 @@
+# pnpm reads its settings from here rather than from .npmrc
+
+# Fail if a package's trust level has dropped since a previous release
+trustPolicy: no-downgrade
+# A missing or invalid peer fails the command rather than warning
+strictPeerDependencies: true
+# Do not quietly install the peers that are missing
+autoInstallPeers: false
+# Skip staleness checks on what is cached; what is missing is still fetched
+preferOffline: true
+# No lifecycle scripts. Scripts run on purpose, like pnpm build, still run
+ignoreScripts: true
+# Nothing published in the last week. 7 days = 10080 minutes, default 1440
+minimumReleaseAge: 10080
+# Refuse a package that says it cannot run on this Node, rather than warn
+engineStrict: true
+# Exact versions, as save-exact writes them: 1.2.3, not ^1.2.3
+savePrefix: ''
+# Only direct dependencies may come from git or a tarball URL
+blockExoticSubdeps: true
+# Already the default; written down so a change of default is not silent
+strictSsl: true
