@@ -399,7 +399,19 @@ export function applyThemeTo(theme: Theme, element: HTMLElement): void {
   element.style.setProperty('--surface', colors.surface);
   element.style.setProperty('--surface-border', colors.surfaceBorder);
   element.style.setProperty('--scrim', colors.scrim);
-  element.style.setProperty('color-scheme', theme.tone);
+  /*
+   * `only`, so that the browser leaves the colours alone.
+   *
+   * A bare `light` says the element can be rendered in that scheme and nothing
+   * else, which Chrome's Auto Dark Theme reads as licence to invert it. The
+   * keyword forbids that. Every colour here was chosen against the one behind
+   * it - a theme is the pairing, not the palette - and a browser second-
+   * guessing them undoes the whole arrangement.
+   *
+   * What this actually governs is scrollbars and form controls; the widgets
+   * take their colours from the custom properties above.
+   */
+  element.style.setProperty('color-scheme', `only ${theme.tone}`);
 }
 
 /**

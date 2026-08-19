@@ -52,7 +52,8 @@
 }
 
 :root {
-  color-scheme: dark;
+  /* only, for the reason given where the themes are applied */
+  color-scheme: only dark;
 
   --surface-border: rgb(255 255 255 / 0.12);
   --scrim: rgb(0 0 0 / 0.6);
