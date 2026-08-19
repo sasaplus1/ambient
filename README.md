@@ -2,17 +2,17 @@
 
 my ambient dashboard for small display devices
 
-A static web app that turns a small screen — a spare phone, a tablet, whatever is left in a drawer — into an always-on display that shows a clock and just enough else, quietly.
+A static web app that turns a small screen — a spare phone, a tablet — into an always-on display that shows a clock and just enough else, quietly.
 
 There is no server. It runs on static hosting such as GitHub Pages.
 
 ## Features
 
-- Analog clock on Canvas 2D — no / stepping / sweeping second hand, and a dial of nothing, ticks, arabic or roman numerals
+- Analog clock on Canvas 2D — a second hand that sweeps, steps or is absent, over a dial of ticks, arabic or roman numerals
 - Digital clock — 12 or 24 hour, optional seconds
 - Date, in a choice of six formats
 - Monthly calendar with today marked, starting on Sunday or Monday, the days either side dimmed or hidden
-- Current weather from Open-Meteo, by geolocation or place name, in celsius, fahrenheit or both
+- Current weather from Open-Meteo, by geolocation or place name, in whichever unit the region reads or one you pick
 - A background image of your own, with a fit and a dimming level
 - Twenty themes, either fixed or following the time of day through morning, day, evening, night and the small hours
 - Per-widget visibility, size and typeface
@@ -20,10 +20,15 @@ There is no server. It runs on static hosting such as GitHub Pages.
 - Interface in Japanese or English, following the browser by default
 - Fullscreen and screen wake lock
 - A debug HUD for watching a device that has been running for days
-- Installable as a PWA
+- Installable as a PWA, though it does not start offline
+
+Out of the box it shows the analog clock and the calendar. The date and the
+weather are there to be turned on.
 
 Settings live in `localStorage` and the background image in IndexedDB, so each
-device keeps its own and nothing is uploaded anywhere.
+device keeps its own and neither ever leaves it. The weather is the one thing
+that reaches out, and only for what it needs: coordinates, or the place name
+you searched for.
 
 ## Always-on display
 
@@ -45,6 +50,9 @@ searching by place name sits beside it rather than behind it.
 The last reading is kept locally, so a device waking without a network shows
 something rather than an empty slot. Anything over 90 minutes old is faded
 instead of passed off as current.
+
+Weather data by [Open-Meteo](https://open-meteo.com/), under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
 ## Development
 

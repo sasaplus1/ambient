@@ -26,8 +26,9 @@ $ pnpm preview --host
 
 Install policy lives in `pnpm-workspace.yaml`, and most of it is stricter than
 pnpm's defaults: no lifecycle scripts, nothing published in the last seven days,
-no trust downgrades, exact versions. A dependency added today will not install
-until it has aged a week, which is deliberate.
+no trust downgrades, and anything added from here on written down exactly rather
+than with a caret. A dependency added today will not install until it has aged a
+week, which is deliberate.
 
 ## Deployment
 
