@@ -1,0 +1,51 @@
+name: test
+
+on:
+  - push
+  - pull_request
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name != github.repository }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: pnpm/action-setup@0977fd99725f1db4007ccb2928dbb4e90d06cc86 # v6.0.10
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - id: cache
+        run: |
+          set -euo pipefail
+          dir="$(pnpm store path)"
+          echo "dir=${dir}" >> "$GITHUB_OUTPUT"
+      - id: cache-key
+        run: |
+          set -euo pipefail
+          echo "value=${RUNNER_ENVIRONMENT}-${RUNNER_OS}-${RUNNER_ARCH}-${HASH_FILES}" >> "$GITHUB_OUTPUT"
+        env:
+          HASH_FILES: ${{ hashFiles('pnpm-lock.yaml') }}
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ${{ steps.cache.outputs.dir }}
+          key: ${{ steps.cache-key.outputs.value }}
+      - id: install
+        run: pnpm install --frozen-lockfile --ignore-scripts --prefer-offline
+      - if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: pnpm run lint
+      - if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: pnpm run typecheck
+      - if: ${{ !cancelled() && steps.install.outcome == 'success' }}
+        run: pnpm run build
