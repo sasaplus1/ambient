@@ -48,12 +48,9 @@ export function SettingsPreview() {
   }, [themeId, previewOpen]);
 
   const date = showDate && <DateDisplay />;
-  const weather = showWeather && (
-    <>
-      <Weather />
-      <Forecast />
-    </>
-  );
+  const weather = showWeather && <Weather />;
+  // Gates itself on the setting, and stands without today's reading beside it
+  const forecast = <Forecast />;
   const calendar = showCalendar && <Calendar />;
   const clock = showClock && <Clock themeId={themeId} />;
 
@@ -64,12 +61,14 @@ export function SettingsPreview() {
         {date}
         {calendar}
         {weather}
+        {forecast}
       </div>
     ) : (
       <div class="dashboard__stack">
         {date}
         {clock}
         {weather}
+        {forecast}
       </div>
     );
 

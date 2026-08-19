@@ -1,31 +1,10 @@
 import type { ComponentChildren } from 'preact';
 
-import {
-  FONT_FAMILIES,
-  TEXT_SCALES,
-  type FontFamily,
-  type FontTarget,
-  type TextScale,
-} from '../../lib/typography';
+import type { FontTarget } from '../../lib/typography';
 import { t } from '../../state/locale';
-import { settings, updateSettings } from '../../state/settings';
 
-import { OptionRow, type Option } from './OptionRow';
 import { ToggleRow } from './ToggleRow';
-
-function scaleOptions(): readonly Option<TextScale>[] {
-  return TEXT_SCALES.map((value) => ({
-    value,
-    label: t(`textScale.${value}`),
-  }));
-}
-
-function fontOptions(): readonly Option<FontFamily>[] {
-  return FONT_FAMILIES.map((value) => ({
-    value,
-    label: t(`font.${value}`),
-  }));
-}
+import { TypeRows } from './TypeRows';
 
 type WidgetSectionProps = {
   target: FontTarget;
@@ -51,8 +30,6 @@ export function WidgetSection({
   onVisibleChange,
   children,
 }: WidgetSectionProps) {
-  const { scales, fonts } = settings.value;
-
   return (
     <section class="settings-section">
       <h2 class="settings-section__title">{title}</h2>
@@ -66,23 +43,7 @@ export function WidgetSection({
         {visible && (
           <>
             {children}
-
-            <OptionRow
-              label={t('type.size')}
-              options={scaleOptions()}
-              selected={scales[target]}
-              onChange={(scale) =>
-                updateSettings({ scales: { ...scales, [target]: scale } })
-              }
-            />
-            <OptionRow
-              label={t('type.face')}
-              options={fontOptions()}
-              selected={fonts[target]}
-              onChange={(family) =>
-                updateSettings({ fonts: { ...fonts, [target]: family } })
-              }
-            />
+            <TypeRows target={target} />
           </>
         )}
       </div>

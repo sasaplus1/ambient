@@ -21,7 +21,9 @@ import './Footer.css';
  * everything else.
  */
 export function Footer() {
-  if (!settings.value.showWeather || !location.value || !weather.value) {
+  const { showWeather, showForecast } = settings.value;
+
+  if ((!showWeather && !showForecast) || !location.value || !weather.value) {
     return null;
   }
 

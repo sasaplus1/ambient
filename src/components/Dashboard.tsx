@@ -48,12 +48,9 @@ export function Dashboard() {
   const controlsVisible = !controlsSeen || recentlyTouched;
 
   const date = showDate && <DateDisplay />;
-  const weather = showWeather && (
-    <>
-      <Weather />
-      <Forecast />
-    </>
-  );
+  const weather = showWeather && <Weather />;
+  // Gates itself on the setting, and stands without today's reading beside it
+  const forecast = <Forecast />;
   const calendar = showCalendar && <Calendar />;
   const clock = showClock && <Clock />;
 
@@ -71,12 +68,14 @@ export function Dashboard() {
         {date}
         {calendar}
         {weather}
+        {forecast}
       </div>
     ) : (
       <div class="dashboard__stack">
         {date}
         {clock}
         {weather}
+        {forecast}
       </div>
     );
 
