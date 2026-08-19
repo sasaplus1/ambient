@@ -23,6 +23,7 @@ export function OptionRow<T extends string | number>({
   onChange,
 }: OptionRowProps<T>) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: a fieldset is for form controls and wants a legend; these are buttons, and role=group with a label is what describes them
     <div class="setting-options" role="group" aria-label={label}>
       <span class="setting-options__label">{label}</span>
       {options.map((option) => (

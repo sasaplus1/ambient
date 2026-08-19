@@ -1,0 +1,45 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    /*
+     * Everything the repository tracks, less the static assets. What is not
+     * understood - YAML, images - is passed over, and what is not tracked is
+     * already out through the ignore file above.
+     *
+     * public/ is shipped as it stands. The icons there are files a browser
+     * fetches, not markup anyone reads, and asking them for a title is asking
+     * the wrong question of them.
+     */
+    "includes": ["**", "!public"]
+  },
+  // Off for now. This is here to find mistakes, not to restyle what is written
+  "formatter": {
+    "enabled": false
+  },
+  // Would reorder imports, which is a matter of layout rather than of fault
+  "assist": {
+    "enabled": false
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        /*
+         * The compiler asks for the opposite of this one.
+         *
+         * noPropertyAccessFromIndexSignature is on through @tsconfig/strictest,
+         * so raw['locale'] is the only way to read a key off a
+         * Record<string, unknown>. The rule would rewrite every one of them
+         * into a type error.
+         */
+        "useLiteralKeys": "off"
+      }
+    }
+  }
+}

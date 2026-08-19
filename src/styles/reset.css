@@ -37,8 +37,16 @@ body {
   *,
   *::before,
   *::after {
+    /*
+     * Outweighing every author style is the whole of what this block is for.
+     * Someone who has asked for less motion is not asking to be overruled by
+     * whichever rule happens to come later.
+     */
+    /* biome-ignore lint/complexity/noImportantStyles: see above */
     animation-duration: 0.01ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: see above */
     animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: see above */
     transition-duration: 0.01ms !important;
   }
 }

@@ -119,6 +119,7 @@ function ThemeGrid({
   onChange: (id: string) => void;
 }) {
   return (
+    // biome-ignore lint/a11y/useSemanticElements: as in OptionRow - buttons in a labelled group, not fields in a fieldset
     <div class="setting-options" role="group" aria-label={label}>
       <span class="setting-options__label">{label}</span>
       {/*
