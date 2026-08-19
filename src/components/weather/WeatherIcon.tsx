@@ -94,6 +94,33 @@ function Body({ name }: WeatherIconProps) {
 }
 
 /**
+ * What each drawing needs in order to sit in the middle of the box.
+ *
+ * The box is bigger than any one icon, because it has to hold the tallest -
+ * thunder, at 21 units - and the widest - a sun with its rays, at 19. Left
+ * where they were drawn, a sun floated two units high and a moon sat over to
+ * the right, so each is moved onto the centre.
+ *
+ * Whole units, not whatever the measurement said. The exact figures ran to two
+ * decimals apiece and read as though someone had nudged each icon until it
+ * looked right. Rounded, the furthest any of them sits from the centre is 0.42
+ * of a unit - two thirds of a pixel at the usual size, under one at the
+ * largest. Ten numbers that can be read at a glance are worth that.
+ */
+const CENTRING: Record<WeatherIconName, string> = {
+  'clear-day': 'translate(0 2)',
+  'clear-night': 'translate(-1 2)',
+  'partly-day': 'translate(0 2)',
+  'partly-night': 'translate(-1 2)',
+  cloudy: 'translate(1 2)',
+  fog: 'translate(1 1)',
+  drizzle: 'translate(1 0)',
+  rain: 'translate(1 -1)',
+  snow: 'translate(1 -1)',
+  thunder: 'translate(1 -3)',
+};
+
+/**
  * Drawn with currentColor and no fill, so it takes the surrounding text colour
  * and follows the theme without any extra wiring.
  */
@@ -109,7 +136,9 @@ export function WeatherIcon({ name }: WeatherIconProps) {
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <Body name={name} />
+      <g transform={CENTRING[name]}>
+        <Body name={name} />
+      </g>
     </svg>
   );
 }

@@ -9,14 +9,21 @@
   line-height: 1;
 }
 
+/* Each drawing is centred inside this box; see WeatherIcon for how */
 .weather__icon {
   width: 1.5em;
   height: 1.625em;
   flex: none;
 }
 
+/*
+ * Centred on the digits rather than on the line box around them. A line box is
+ * built from the font's ascent and descent, and these are numbers - no
+ * descender, nothing reaching the ascent - so its middle is not theirs.
+ */
 .weather__temperature {
   font-variant-numeric: tabular-nums;
+  text-box: trim-both cap alphabetic;
 }
 
 /* A reading kept from before a network failure should not read as current */
