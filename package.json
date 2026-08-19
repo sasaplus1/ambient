@@ -14,11 +14,11 @@
     "lint:fix": "biome lint --write"
   },
   "dependencies": {
-    "@preact/signals": "^2.11.1",
+    "@preact/signals": "^2.11.0",
     "preact": "^10.29.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.9",
+    "@biomejs/biome": "^2.5.8",
     "@preact/preset-vite": "^2.10.6",
     "@tsconfig/strictest": "^2.0.8",
     "typescript": "^7.0.2",

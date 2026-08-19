@@ -1,5 +1,6 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.5.9/schema.json",
+  // The copy that ships with the installed version, so the two cannot drift
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
