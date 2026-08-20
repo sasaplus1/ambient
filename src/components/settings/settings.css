@@ -349,6 +349,17 @@
   padding: 0.75rem 1rem;
 }
 
+/*
+ * Except inside the location block, which is itself a padded column with a gap
+ * of its own. Nested, this row was adding a second inset to both - putting its
+ * buttons a whole rem to the right of the label above them and the search
+ * field below, the only row in the panel that did not line up with its
+ * neighbours.
+ */
+.location .setting-actions {
+  padding: 0;
+}
+
 .setting-message {
   padding: 0 1rem 0.75rem;
   color: var(--fg-secondary);
