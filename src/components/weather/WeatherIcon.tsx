@@ -1,3 +1,6 @@
+import type { ComponentChildren } from 'preact';
+import { useId } from 'preact/hooks';
+
 import type { WeatherIconName } from '../../lib/weather';
 
 type WeatherIconProps = {
@@ -11,11 +14,43 @@ const CLOUD_FRONT =
   'M9 19h8.2a3.4 3.4 0 0 0 .4-6.8 5 5 0 0 0-9.6-1A3.9 3.9 0 0 0 9 19z';
 
 /**
- * The front cloud is filled with the page background so it occludes the sun or
- * moon behind it. Without that the two outlines overlap into a tangle.
+ * The sun or the moon, with the shape of the front cloud taken out of it.
+ *
+ * Something has to occlude what sits behind the cloud, or the two outlines
+ * overlap into a tangle. This used to be done by filling the cloud with the
+ * page background colour, which worked as long as the page was that colour -
+ * but the dashboard can have a photograph behind it, and a shape painted in
+ * the theme colour over a photograph reads as a blob of paint. Taking the
+ * pixels away instead paints nothing, and it leaves every cloud in the set
+ * drawn the same way: outline, no fill.
+ *
+ * The hole is the cloud's own outline stroked at twice the width the icon is
+ * drawn at, so what is behind reappears clear of the cloud rather than flush
+ * against it.
+ *
+ * The mask needs an id to be referred to, and there are six of these icons on
+ * screen at once - the current conditions and five days of forecast - so the
+ * id comes from useId rather than being written down here.
  */
-function FrontCloud() {
-  return <path d={CLOUD_FRONT} fill="var(--bg)" />;
+function BehindCloud({ children }: { children: ComponentChildren }) {
+  const id = useId();
+
+  return (
+    <>
+      <mask
+        id={id}
+        maskUnits="userSpaceOnUse"
+        x="-2"
+        y="-2"
+        width="28"
+        height="30"
+      >
+        <rect x="-2" y="-2" width="28" height="30" fill="white" />
+        <path d={CLOUD_FRONT} fill="black" stroke="black" stroke-width="3.2" />
+      </mask>
+      <g mask={`url(#${id})`}>{children}</g>
+    </>
+  );
 }
 
 function Body({ name }: WeatherIconProps) {
@@ -34,17 +69,21 @@ function Body({ name }: WeatherIconProps) {
     case 'partly-day':
       return (
         <g>
-          <circle cx="8.5" cy="8" r="3" />
-          <path d="M8.5 2.4v1.5M2.9 8h1.5M4.5 4l1.1 1.1M12.5 4l-1.1 1.1M4.5 12l1.1-1.1" />
-          <FrontCloud />
+          <BehindCloud>
+            <circle cx="8.5" cy="8" r="3" />
+            <path d="M8.5 2.4v1.5M2.9 8h1.5M4.5 4l1.1 1.1M12.5 4l-1.1 1.1M4.5 12l1.1-1.1" />
+          </BehindCloud>
+          <path d={CLOUD_FRONT} />
         </g>
       );
 
     case 'partly-night':
       return (
         <g>
-          <path d="M15 10.5A6 6 0 0 1 8.2 3.6a5.2 5.2 0 1 0 6.8 6.9z" />
-          <FrontCloud />
+          <BehindCloud>
+            <path d="M15 10.5A6 6 0 0 1 8.2 3.6a5.2 5.2 0 1 0 6.8 6.9z" />
+          </BehindCloud>
+          <path d={CLOUD_FRONT} />
         </g>
       );
 
