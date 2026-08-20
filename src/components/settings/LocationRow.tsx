@@ -7,6 +7,24 @@ import { location, setLocation } from '../../state/weather';
 type Phase = 'idle' | 'locating' | 'searching';
 
 /**
+ * What a button says while it is working, and a mark that says so without
+ * being read.
+ *
+ * Both of these buttons wait on the network, and both go disabled while they
+ * do. Disabled on its own is ambiguous - it looks the same as a button that
+ * was never available - so someone who taps and sees nothing move cannot tell
+ * whether the tap registered.
+ */
+function Working({ label }: { label: string }) {
+  return (
+    <>
+      <span class="setting-throbber" aria-hidden="true" />
+      {label}
+    </>
+  );
+}
+
+/**
  * Picking a place for the weather.
  *
  * Geolocation is offered first, but it is not assumed to work: devices without
@@ -84,10 +102,15 @@ export function LocationRow() {
         <button
           type="button"
           class="setting-options__choice"
+          aria-busy={phase === 'locating'}
           disabled={phase === 'locating'}
           onClick={() => void useCurrentPosition()}
         >
-          {phase === 'locating' ? t('weather.locating') : t('weather.useCurrent')}
+          {phase === 'locating' ? (
+            <Working label={t('weather.locating')} />
+          ) : (
+            t('weather.useCurrent')
+          )}
         </button>
         {current && (
           <button
@@ -120,9 +143,14 @@ export function LocationRow() {
         <button
           type="submit"
           class="setting-options__choice"
+          aria-busy={phase === 'searching'}
           disabled={phase === 'searching' || query.trim() === ''}
         >
-          {t('weather.search')}
+          {phase === 'searching' ? (
+            <Working label={t('weather.searching')} />
+          ) : (
+            t('weather.search')
+          )}
         </button>
       </form>
 

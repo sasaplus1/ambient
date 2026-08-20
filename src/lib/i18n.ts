@@ -121,6 +121,7 @@ const DICTIONARY = {
   'weather.searchLabel': { ja: '地名で検索', en: 'Search by name' },
   'weather.searchPlaceholder': { ja: '例: 横浜', en: 'e.g. Yokohama' },
   'weather.search': { ja: '検索', en: 'Search' },
+  'weather.searching': { ja: '検索中', en: 'Searching' },
   'weather.noResults': { ja: '見つかりませんでした', en: 'Nothing found' },
   'weather.locating': { ja: '位置情報を取得中', en: 'Locating' },
   'weather.locateFailed': {
