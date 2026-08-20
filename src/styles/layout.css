@@ -92,9 +92,28 @@ body {
   display: none;
 }
 
+/*
+ * Upright, the widgets stack instead of standing side by side - and the gap
+ * that separated them sideways has to do a different job.
+ *
+ * --widget-gap is in vmin, which upright means the width. It is the right
+ * measure for the margins at the edges and the wrong one between two blocks
+ * stacked above each other: the clock and the calendar are each the better part
+ * of a third of the height, and fifteen pixels between them reads as touching.
+ * So the vertical separation is measured against the height, which is the
+ * dimension it actually divides.
+ *
+ * 2.5vh and not more. Measured at 375x667 with every widget on, 4vh overflowed
+ * the screen by nine pixels and 3vh by three; this is the most that fits.
+ */
 @media (orientation: portrait) {
   .dashboard__widgets {
     flex-direction: column;
+    gap: clamp(0.75rem, 2.5vh, 2.5rem);
+  }
+
+  .dashboard__stack {
+    gap: clamp(0.4rem, 1.25vh, 1.25rem);
   }
 
   /*
