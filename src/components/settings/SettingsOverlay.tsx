@@ -1,4 +1,4 @@
-import { useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 import {
   ADJACENT_DAYS,
@@ -222,11 +222,32 @@ export function SettingsOverlay({
 }: SettingsOverlayProps) {
   const current = settings.value;
 
+  /**
+   * Whether the reset has been asked about, and whether it has happened.
+   *
+   * Three states rather than a flag, because there is something to say
+   * afterwards as well as before.
+   */
+  const [reset, setReset] = useState<'idle' | 'asking' | 'done'>('idle');
+
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
+      if (event.key !== 'Escape') {
+        return;
       }
+
+      /*
+       * Escape answers the question in front of it before it closes anything.
+       * Someone who has just been asked whether to throw their settings away
+       * and reaches for Escape means no, not "and also put the panel away".
+       */
+      if (reset === 'asking') {
+        setReset('idle');
+
+        return;
+      }
+
+      onClose();
     };
 
     document.addEventListener('keydown', onKeyDown);
@@ -234,7 +255,7 @@ export function SettingsOverlay({
     return () => {
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, [onClose]);
+  }, [onClose, reset]);
 
   /*
    * Leave the miniature standing in the present for next time.
@@ -281,7 +302,8 @@ export function SettingsOverlay({
         <button
           type="button"
           class="settings-overlay__action"
-          onClick={() => resetSettings()}
+          aria-expanded={reset === 'asking'}
+          onClick={() => setReset(reset === 'asking' ? 'idle' : 'asking')}
         >
           {settingsText('settings.reset')}
         </button>
@@ -292,6 +314,56 @@ export function SettingsOverlay({
           {settingsText('settings.close')}
         </button>
       </header>
+
+      {/*
+        Asked here rather than through confirm(). A native dialog is not the
+        theme's, cannot be styled into it, and blocks the thread it is called
+        on - which on a screen carrying a sweeping second hand is a stall
+        anyone would see. This is also the panel's own idiom, used already for
+        anything it has to say.
+
+        The button that does it is deliberately not where the finger just was.
+        Every other control here is a preference that can be set back; this one
+        cannot, and the whole reason for asking is that the two were
+        indistinguishable to a mis-tap.
+      */}
+      {reset === 'asking' && (
+        <div class="settings-confirm" role="alertdialog" aria-label={settingsText('settings.reset')}>
+          <p class="settings-confirm__question">
+            {settingsText('settings.resetAsk')}
+          </p>
+          <div class="settings-confirm__actions">
+            <button
+              type="button"
+              class="setting-options__choice"
+              onClick={() => setReset('idle')}
+            >
+              {settingsText('settings.resetCancel')}
+            </button>
+            <button
+              type="button"
+              class="setting-options__choice settings-confirm__destructive"
+              onClick={() => {
+                resetSettings();
+                setReset('done');
+              }}
+            >
+              {settingsText('settings.resetConfirm')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/*
+        Every widget goes back to its default at once, and on a screen where
+        most of them were already off by choice the result can look like
+        nothing happened. Saying so costs a line.
+      */}
+      {reset === 'done' && (
+        <p class="setting-message settings-confirm__done">
+          {settingsText('settings.resetDone')}
+        </p>
+      )}
 
       <div class="settings-overlay__body">
         <SettingsPreview />
