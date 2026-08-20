@@ -42,17 +42,23 @@ export async function removeBackground(): Promise<void> {
   replaceUrl(null);
 }
 
-/** Restore the stored background. Call once at startup. */
+/**
+ * Restore the stored background. Call once at startup.
+ *
+ * Nothing is revoked on the way out. There used to be a pagehide handler here
+ * that dropped the URL, on the reasoning that a page going away should tidy up
+ * after itself - but object URLs belong to the document and go with it, so
+ * there was nothing for it to save.
+ *
+ * What it did instead was break the image. pagehide fires whenever the page is
+ * hidden rather than only when it is destroyed, which on an Android PWA is
+ * every trip to the home screen. The document survives, the URL it was still
+ * pointing at does not, and the background is gone until the app is restarted.
+ */
 export function startBackgroundSync(): void {
   void loadBackground().then((blob) => {
     if (blob) {
       replaceUrl(URL.createObjectURL(blob));
     }
-  });
-
-  // pagehide rather than unload: it also fires when the page goes into the
-  // back/forward cache, and unload is unreliable on mobile.
-  addEventListener('pagehide', () => {
-    replaceUrl(null);
   });
 }
