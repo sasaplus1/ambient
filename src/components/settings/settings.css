@@ -356,6 +356,55 @@
 }
 
 /*
+ * The question about throwing every setting away.
+ *
+ * Directly under the header, above the scrolling body, so it cannot be
+ * scrolled out of sight while it is waiting for an answer - and so it reads as
+ * belonging to the button that raised it rather than to whichever section
+ * happened to be on screen.
+ */
+.settings-confirm {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.625rem;
+
+  padding: 0.75rem 1rem;
+
+  border-bottom: 1px solid var(--surface-border);
+  background: var(--surface);
+}
+
+.settings-confirm__question {
+  flex: 1 1 12rem;
+  color: var(--fg-secondary);
+  font-size: 0.8125rem;
+}
+
+.settings-confirm__actions {
+  display: flex;
+  flex: none;
+  gap: 0.375rem;
+}
+
+/*
+ * Coloured, and the only thing in the panel that is. Everything else here sets
+ * a preference that can be set straight back; this one cannot be undone, and
+ * it should not look like its neighbour.
+ */
+.settings-confirm__destructive {
+  border-color: transparent;
+  background: #c0392b;
+  color: #ffffff;
+}
+
+.settings-confirm__done {
+  padding-top: 0.75rem;
+}
+
+/*
  * A note belongs to the row above it, so the rule goes below the pair rather
  * than between them - which is where the row's own rule would have put it.
  */

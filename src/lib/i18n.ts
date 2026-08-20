@@ -44,6 +44,13 @@ const DICTIONARY = {
   'settings.open': { ja: '設定を開く', en: 'Open settings' },
   'settings.close': { ja: '閉じる', en: 'Close' },
   'settings.reset': { ja: '初期化', en: 'Reset' },
+  'settings.resetAsk': {
+    ja: 'すべての設定を既定に戻します。地点と背景画像はそのまま残ります',
+    en: 'This resets every setting to its default. Your location and background image are kept.',
+  },
+  'settings.resetConfirm': { ja: '初期化する', en: 'Reset everything' },
+  'settings.resetCancel': { ja: 'やめる', en: 'Keep my settings' },
+  'settings.resetDone': { ja: '初期化しました', en: 'Settings reset' },
   'settings.previewShow': { ja: 'プレビューを開く', en: 'Show preview' },
   'settings.previewHide': { ja: 'プレビューを閉じる', en: 'Hide preview' },
 
