@@ -40,17 +40,57 @@
   }
 }
 
+/*
+ * A dialog, so the browser does the parts that are tedious and easy to get
+ * wrong: the page behind it goes inert, focus cannot leave, and it sits in the
+ * top layer - which is why there is no z-index here any more.
+ *
+ * The cost is a set of defaults built for a small box in the middle of the
+ * screen, and this is a full-screen panel. Undone below: the box would
+ * otherwise be shrink-to-fit, centred by auto margins, inset from the edges by
+ * its own max-width, and drawn with a border on the system's canvas colour.
+ */
 .settings-overlay {
   position: fixed;
   inset: 0;
-  z-index: 20;
 
   display: flex;
   flex-direction: column;
 
+  width: auto;
+  max-width: none;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+
+  border: none;
   background: var(--scrim);
+  color: inherit;
   backdrop-filter: blur(12px);
   animation: settings-overlay-in 120ms ease-out;
+}
+
+/*
+ * The panel is its own scrim, painted in the theme's own colours and blurring
+ * what is behind it. The one the browser supplies would sit under that and
+ * darken it a second time.
+ */
+.settings-overlay::backdrop {
+  background: transparent;
+}
+
+/*
+ * The panel takes focus as it opens, so that nothing inside it arrives armed,
+ * and a focus ring then framed the whole screen in blue.
+ *
+ * Suppressed on the panel alone. A ring exists to say which of several things
+ * a key would act on, and there is nothing to distinguish here: the box is the
+ * screen. Every control inside it keeps its own, which is where the question
+ * is ever actually asked.
+ */
+.settings-overlay:focus {
+  outline: none;
 }
 
 .settings-overlay[data-closing='true'] {

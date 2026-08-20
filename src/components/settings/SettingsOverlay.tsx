@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
 import {
   ADJACENT_DAYS,
@@ -230,32 +230,35 @@ export function SettingsOverlay({
    */
   const [reset, setReset] = useState<'idle' | 'asking' | 'done'>('idle');
 
+  const dialogRef = useRef<HTMLDialogElement>(null);
+
+  /*
+   * Shown as a modal, which is where everything this panel needs comes from:
+   * the page behind it goes inert, so focus cannot tab out into a dashboard
+   * nobody can see; it lands in the top layer, so it needs no z-index of its
+   * own; and Escape arrives as a cancel event rather than as a key this had to
+   * recognise itself.
+   *
+   * Imperative, and only once. showModal has no declarative equivalent, but
+   * closing does - taking the element away closes it - so the effect has
+   * nothing to undo.
+   */
   useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') {
-        return;
-      }
+    const dialog = dialogRef.current;
 
-      /*
-       * Escape answers the question in front of it before it closes anything.
-       * Someone who has just been asked whether to throw their settings away
-       * and reaches for Escape means no, not "and also put the panel away".
-       */
-      if (reset === 'asking') {
-        setReset('idle');
+    dialog?.showModal();
 
-        return;
-      }
-
-      onClose();
-    };
-
-    document.addEventListener('keydown', onKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [onClose, reset]);
+    /*
+     * And onto the panel itself, rather than into it.
+     *
+     * showModal focuses the first thing it can, and here that is the button
+     * offering to throw every setting away - nothing should arrive pre-armed.
+     * An autofocus attribute on the dialog is supposed to mean this and was
+     * measured not to: Chrome went to the button regardless. So it is said
+     * plainly instead, which needs no attribute and cannot be misread.
+     */
+    dialog?.focus();
+  }, []);
 
   /*
    * Leave the miniature standing in the present for next time.
@@ -274,7 +277,8 @@ export function SettingsOverlay({
   );
 
   return (
-    <div
+    <dialog
+      ref={dialogRef}
       class="settings-overlay"
       /*
        * The document's lang is the dashboard's, so this panel has to say its
@@ -282,10 +286,34 @@ export function SettingsOverlay({
        * covers, and a screen reader has no other way to know.
        */
       lang={settingsLocale.value}
-      role="dialog"
-      aria-modal="true"
+      /*
+       * role and aria-modal are what a modal dialog already is, so they are
+       * gone. The label stays: the heading inside says "Settings" too, but the
+       * element wants a name of its own.
+       */
       aria-label={settingsText('settings.title')}
       data-closing={closing}
+      /*
+       * Escape, and whatever else the platform counts as asking to close -
+       * the back gesture on Android among them. Prevented, because closing
+       * here means playing the way out and unmounting afterwards, and the
+       * default would take the panel away mid-fade.
+       *
+       * And it answers the question in front of it first. Someone who has just
+       * been asked whether to throw their settings away and reaches for Escape
+       * means no, not "and also put the panel away".
+       */
+      onCancel={(event) => {
+        event.preventDefault();
+
+        if (reset === 'asking') {
+          setReset('idle');
+
+          return;
+        }
+
+        onClose();
+      }}
       /*
        * By name, because the panel holds plenty of other things that animate
        * and every one of them ends here as well. Reduced motion cuts the
@@ -622,6 +650,6 @@ export function SettingsOverlay({
           </div>
         </section>
       </div>
-    </div>
+    </dialog>
   );
 }
