@@ -1,4 +1,4 @@
-import { useEffect } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 import { useFullscreen } from '../hooks/useFullscreen';
 import { useWakeLock } from '../hooks/useWakeLock';
@@ -25,6 +25,9 @@ export function AmbientModeButton() {
   const fullscreen = useFullscreen();
   const wakeLock = useWakeLock();
 
+  /* Declared up here with the other hooks, ahead of the early return below */
+  const [engaged, setEngaged] = useState(false);
+
   const { request: requestWakeLock } = wakeLock;
 
   useEffect(() => {
@@ -38,16 +41,32 @@ export function AmbientModeButton() {
     return null;
   }
 
-  const active = fullscreen.active || wakeLock.active;
+  /*
+   * Whether this button was pressed, which is not the same as whether a wake
+   * lock is held.
+   *
+   * Launched as a PWA, a lock is taken above without anyone asking for one. A
+   * button reading its state from the lock was therefore born already pressed,
+   * and the first press ran the stopping branch: it released a lock that has
+   * no appearance, tried to leave a fullscreen it had never entered, and left
+   * the screen exactly as it was. Only the second press went fullscreen, which
+   * is precisely how it was described - the first tap does nothing.
+   *
+   * Fullscreen still counts towards this, because that one can be entered and
+   * left by other means than this button and the icon should follow.
+   */
+  const active = engaged || fullscreen.active;
 
   const toggle = () => {
     if (active) {
+      setEngaged(false);
       void fullscreen.exit();
       void wakeLock.release();
 
       return;
     }
 
+    setEngaged(true);
     void fullscreen.enter();
     void wakeLock.request();
   };
