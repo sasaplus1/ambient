@@ -71,7 +71,17 @@ function Body({ name }: WeatherIconProps) {
         <g>
           <BehindCloud>
             <circle cx="8.5" cy="8" r="3" />
-            <path d="M8.5 2.4v1.5M2.9 8h1.5M4.5 4l1.1 1.1M12.5 4l-1.1 1.1M4.5 12l1.1-1.1" />
+            {/*
+              Four rays, not five. There was one more at the sun's lower left,
+              which is exactly where the cloud is: almost all of it fell inside
+              the mask and what came out the far side was a hairline sitting
+              off on its own, reading as a stray mark rather than as a ray.
+
+              Removing it is also the more honest drawing. The sun is partly
+              behind a cloud, so the part of it pointing into the cloud is not
+              something that would be seen.
+            */}
+            <path d="M8.5 2.4v1.5M2.9 8h1.5M4.5 4l1.1 1.1M12.5 4l-1.1 1.1" />
           </BehindCloud>
           <path d={CLOUD_FRONT} />
         </g>
