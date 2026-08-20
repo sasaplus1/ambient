@@ -5,6 +5,7 @@ export const DATE_FORMATS = [
   'long',
   'monthDayWeekday',
   'monthDay',
+  'yearMonth',
   'numeric',
   'weekday',
 ] as const;
@@ -23,14 +24,20 @@ export const DEFAULT_DATE_FORMAT: DateFormat = 'full';
  *   long             2026年8月18日         August 18, 2026
  *   monthDayWeekday  8月18日(火)           Tue, August 18
  *   monthDay         8月18日               August 18
+ *   yearMonth        2026年8月             August 2026
  *   numeric          2026/08/18            08/18/2026
  *   weekday          火曜日                Tuesday
+ *
+ * yearMonth names no day, which is the point of it: above a calendar, the day
+ * is already on the grid and picked out, and repeating it in the line overhead
+ * says the same thing twice. It reads as the heading the calendar never had.
  */
 const OPTIONS: Record<DateFormat, Intl.DateTimeFormatOptions> = {
   full: { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' },
   long: { year: 'numeric', month: 'long', day: 'numeric' },
   monthDayWeekday: { month: 'long', day: 'numeric', weekday: 'short' },
   monthDay: { month: 'long', day: 'numeric' },
+  yearMonth: { year: 'numeric', month: 'long' },
   numeric: { year: 'numeric', month: '2-digit', day: '2-digit' },
   weekday: { weekday: 'long' },
 };
