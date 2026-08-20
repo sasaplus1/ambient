@@ -145,6 +145,10 @@ const DICTIONARY = {
   'background.replace': { ja: '画像を変える', en: 'Replace image' },
   'background.remove': { ja: '画像を消す', en: 'Remove image' },
   'background.failed': { ja: '保存できませんでした', en: 'Could not save it' },
+  'background.unreadable': {
+    ja: 'この画像は読み込めません。端末にダウンロードされていないか、対応していない形式（HEIC など）の可能性があります',
+    en: 'This image cannot be read. It may not be downloaded to this device, or it may be in a format the browser cannot decode, such as HEIC.',
+  },
   'background.fit': { ja: '合わせ方', en: 'Fit' },
   'background.dim': { ja: '減光', en: 'Dim' },
   'backgroundFit.cover': { ja: '画面を覆う', en: 'Cover' },

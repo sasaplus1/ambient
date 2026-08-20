@@ -5,6 +5,7 @@ import {
   loadBackground,
   saveBackground,
 } from '../lib/imageStore';
+import { logger } from '../lib/logger';
 
 /**
  * Object URL for the stored background, or null when there is none.
@@ -25,16 +26,68 @@ function replaceUrl(next: string | null): void {
   }
 }
 
-export async function setBackground(blob: Blob): Promise<boolean> {
-  const saved = await saveBackground(blob);
+/**
+ * Why a picture was not taken, so the panel can say something more useful than
+ * that it did not work.
+ */
+export type BackgroundRefusal = 'unreadable' | 'save-failed';
 
-  if (!saved) {
+/**
+ * Whether the browser can actually turn these bytes into an image.
+ *
+ * Nothing before this point checks. createObjectURL succeeds on any blob at
+ * all, an <img> accepts the URL, and the first thing that tries to read the
+ * bytes is the decoder - by which point the picture is stored, the setting
+ * says there is a background, and what the user gets is the broken-image mark.
+ *
+ * Two ways in, both of them ordinary. Android's picker can return a file that
+ * is only in the cloud and not on the device, as a File of zero bytes; and
+ * accept="image/*" offers HEIC, which phones are happy to record in and which
+ * no browser can decode.
+ *
+ * createImageBitmap rejects for either, which is the whole reason to use it
+ * over reading a header ourselves.
+ */
+async function canDecode(blob: Blob): Promise<boolean> {
+  try {
+    const bitmap = await createImageBitmap(blob);
+
+    // Decoded only to find out whether it could be; the pixels are not wanted
+    bitmap.close();
+
+    return true;
+  } catch (error) {
+    logger.error('background', `cannot decode: ${String(error)}`);
+
     return false;
+  }
+}
+
+export async function setBackground(blob: Blob): Promise<BackgroundRefusal | null> {
+  /*
+   * Recorded before anything is attempted, because these three facts separate
+   * the two causes on their own: zero bytes is the cloud-only file, and an
+   * image/heic type is the other. Worth having in the log of a device that is
+   * across the room from whoever is trying to work out what happened.
+   */
+  const name = blob instanceof File ? blob.name : '(blob)';
+
+  logger.info(
+    'background',
+    `chose ${name} type=${blob.type || '(none)'} size=${blob.size}`,
+  );
+
+  if (!(await canDecode(blob))) {
+    return 'unreadable';
+  }
+
+  if (!(await saveBackground(blob))) {
+    return 'save-failed';
   }
 
   replaceUrl(URL.createObjectURL(blob));
 
-  return true;
+  return null;
 }
 
 export async function removeBackground(): Promise<void> {
