@@ -95,8 +95,17 @@ export type Settings = {
   /** Minutes between moves */
   pixelShiftInterval: PixelShiftInterval;
 
-  /** 'auto' follows the browser's language settings */
+  /**
+   * The language the dashboard is written in. 'auto' follows the browser's
+   * language settings.
+   *
+   * Named without a qualifier because it was here first and renaming it would
+   * discard everyone's choice for the sake of symmetry.
+   */
   locale: LocaleSetting;
+
+  /** The language of the settings panel; see `locale` above */
+  settingsLocale: LocaleSetting;
 
   /**
    * Whether the corner controls have been used yet. Until they have, they stay

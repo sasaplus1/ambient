@@ -1,7 +1,7 @@
 import { useNow } from '../hooks/useNow';
 import { formatDate } from '../lib/dateFormat';
 import { fontClass, scaleStyle } from '../state/typography';
-import { locale } from '../state/locale';
+import { displayLocale } from '../state/locale';
 import { settings } from '../state/settings';
 
 import './DateDisplay.css';
@@ -24,7 +24,7 @@ export function DateDisplay() {
       style={scaleStyle('date')}
       dateTime={toIsoDate(now)}
     >
-      {formatDate(locale.value, settings.value.dateFormat, now)}
+      {formatDate(displayLocale.value, settings.value.dateFormat, now)}
     </time>
   );
 }

@@ -85,6 +85,7 @@ export const DEFAULT_SETTINGS: Settings = {
   pixelShiftStrength: 'medium',
   pixelShiftInterval: 30,
   locale: 'auto',
+  settingsLocale: 'auto',
   controlsSeen: false,
   previewOpen: true,
   showDebug: false,
@@ -266,6 +267,13 @@ export function parseSettings(
     locale: isLocaleSetting(raw['locale'])
       ? raw['locale']
       : DEFAULT_SETTINGS.locale,
+    /*
+     * Absent from anything stored before this existed, and the default is what
+     * it should be then: follow the browser, as the one language used to.
+     */
+    settingsLocale: isLocaleSetting(raw['settingsLocale'])
+      ? raw['settingsLocale']
+      : DEFAULT_SETTINGS.settingsLocale,
     controlsSeen: pickBoolean(
       raw,
       'controlsSeen',

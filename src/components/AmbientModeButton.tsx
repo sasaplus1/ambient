@@ -2,7 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 
 import { useFullscreen } from '../hooks/useFullscreen';
 import { useWakeLock } from '../hooks/useWakeLock';
-import { t } from '../state/locale';
+import { displayText } from '../state/locale';
 
 import './AmbientModeButton.css';
 
@@ -75,7 +75,7 @@ export function AmbientModeButton() {
     <button
       type="button"
       class="ambient-button"
-      aria-label={active ? t('ambient.stop') : t('ambient.start')}
+      aria-label={active ? displayText('ambient.stop') : displayText('ambient.start')}
       aria-pressed={active}
       onClick={toggle}
     >

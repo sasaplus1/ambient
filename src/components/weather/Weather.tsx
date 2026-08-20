@@ -4,7 +4,7 @@ import {
   temperatureSymbol,
 } from '../../lib/temperature';
 import { conditionFor, iconFor } from '../../lib/weather';
-import { locale, t } from '../../state/locale';
+import { displayLocale, displayText } from '../../state/locale';
 import { settings } from '../../state/settings';
 import { fontClass, scaleStyle } from '../../state/typography';
 import { location, weather, weatherStatus } from '../../state/weather';
@@ -22,13 +22,13 @@ export function Weather() {
   const unit = resolveTemperatureUnit(settings.value.temperatureUnit);
 
   if (!location.value) {
-    return <p class="weather__placeholder">{t('weather.noLocation')}</p>;
+    return <p class="weather__placeholder">{displayText('weather.noLocation')}</p>;
   }
 
   if (!reading) {
     return (
       <p class="weather__placeholder">
-        {status === 'error' ? t('weather.failed') : t('weather.loading')}
+        {status === 'error' ? displayText('weather.failed') : displayText('weather.loading')}
       </p>
     );
   }
@@ -36,7 +36,7 @@ export function Weather() {
   const stale = Date.now() - reading.fetchedAt > STALE_AFTER_MS;
 
   const format = (value: number) =>
-    new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }).format(
+    new Intl.NumberFormat(displayLocale.value, { maximumFractionDigits: 0 }).format(
       value,
     );
   const show = (only: 'celsius' | 'fahrenheit') =>
@@ -46,7 +46,7 @@ export function Weather() {
     unit === 'both'
       ? `${show('celsius')} ${show('fahrenheit')}`
       : show(unit);
-  const condition = t(`condition.${conditionFor(reading.weatherCode)}`);
+  const condition = displayText(`condition.${conditionFor(reading.weatherCode)}`);
 
   return (
     <div

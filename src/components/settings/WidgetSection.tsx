@@ -1,7 +1,7 @@
 import type { ComponentChildren } from 'preact';
 
 import type { FontTarget } from '../../lib/typography';
-import { t } from '../../state/locale';
+import { settingsText } from '../../state/locale';
 
 import { ToggleRow } from './ToggleRow';
 import { TypeRows } from './TypeRows';
@@ -35,7 +35,7 @@ export function WidgetSection({
       <h2 class="settings-section__title">{title}</h2>
       <div class="settings-section__items">
         <ToggleRow
-          label={t('widget.visible')}
+          label={settingsText('widget.visible')}
           checked={visible}
           onChange={onVisibleChange}
         />

@@ -26,7 +26,11 @@ import {
   type TemperatureUnitSetting,
 } from '../../lib/temperature';
 import { THEMES } from '../../lib/theme';
-import { locale, t } from '../../state/locale';
+import {
+  displayLocale,
+  settingsLocale,
+  settingsText,
+} from '../../state/locale';
 import { previewHour } from '../../state/theme';
 import { resetSettings, settings, updateSettings } from '../../state/settings';
 import {
@@ -55,57 +59,61 @@ import './settings.css';
  */
 function clockTypeOptions(): readonly Option<ClockType>[] {
   return [
-    { value: 'digital', label: t('clock.digital') },
-    { value: 'analog', label: t('clock.analog') },
+    { value: 'digital', label: settingsText('clock.digital') },
+    { value: 'analog', label: settingsText('clock.analog') },
   ];
 }
 
 function secondHandOptions(): readonly Option<SecondHand>[] {
   return [
-    { value: 'none', label: t('secondHand.none') },
-    { value: 'step', label: t('secondHand.step') },
-    { value: 'sweep', label: t('secondHand.sweep') },
+    { value: 'none', label: settingsText('secondHand.none') },
+    { value: 'step', label: settingsText('secondHand.step') },
+    { value: 'sweep', label: settingsText('secondHand.sweep') },
   ];
 }
 
 function numeralsOptions(): readonly Option<AnalogNumerals>[] {
   return [
-    { value: 'none', label: t('numerals.none') },
-    { value: 'ticks', label: t('numerals.ticks') },
-    { value: 'arabic', label: t('numerals.arabic') },
-    { value: 'roman', label: t('numerals.roman') },
+    { value: 'none', label: settingsText('numerals.none') },
+    { value: 'ticks', label: settingsText('numerals.ticks') },
+    { value: 'arabic', label: settingsText('numerals.arabic') },
+    { value: 'roman', label: settingsText('numerals.roman') },
   ];
 }
 
 /**
  * Each preset is labelled with today's date as it would actually appear, which
  * says more than a name for the format ever could.
+ *
+ * In the dashboard's language, not this panel's - the sample is a promise
+ * about what the wall will say. Reading the options in Japanese and then being
+ * handed "August 20, 2026" would be the panel breaking its own promise.
  */
 function dateFormatOptions(today: Date): readonly Option<DateFormat>[] {
   return DATE_FORMATS.map((value) => ({
     value,
-    label: formatDate(locale.value, value, today),
+    label: formatDate(displayLocale.value, value, today),
   }));
 }
 
 function weekStartOptions(): readonly Option<WeekStart>[] {
   return WEEK_STARTS.map((value) => ({
     value,
-    label: t(`weekStart.${value}`),
+    label: settingsText(`weekStart.${value}`),
   }));
 }
 
 function adjacentDaysOptions(): readonly Option<AdjacentDays>[] {
   return ADJACENT_DAYS.map((value) => ({
     value,
-    label: t(`adjacentDays.${value}`),
+    label: settingsText(`adjacentDays.${value}`),
   }));
 }
 
 function themeModeOptions(): readonly Option<ThemeMode>[] {
   return THEME_MODES.map((value) => ({
     value,
-    label: t(`themeMode.${value}`),
+    label: settingsText(`themeMode.${value}`),
   }));
 }
 
@@ -150,13 +158,13 @@ function ThemeGrid({
 }
 
 function bandLabel(band: TimeBand): string {
-  return `${t(`timeBand.${band}`)} ${bandStartHour(band)}:00-`;
+  return `${settingsText(`timeBand.${band}`)} ${bandStartHour(band)}:00-`;
 }
 
 function temperatureUnitOptions(): readonly Option<TemperatureUnitSetting>[] {
   return TEMPERATURE_UNITS.map((value) => ({
     value,
-    label: t(`temperatureUnit.${value}`),
+    label: settingsText(`temperatureUnit.${value}`),
   }));
 }
 
@@ -167,28 +175,28 @@ function temperatureUnitOptions(): readonly Option<TemperatureUnitSetting>[] {
 function pixelShiftStrengthOptions(): readonly Option<PixelShiftStrength>[] {
   return PIXEL_SHIFT_STRENGTHS.map((value) => ({
     value,
-    label: `${t(`pixelShiftStrength.${value}`)} ±${PIXEL_SHIFT_RANGE[value]}px`,
+    label: `${settingsText(`pixelShiftStrength.${value}`)} ±${PIXEL_SHIFT_RANGE[value]}px`,
   }));
 }
 
 function pixelShiftIntervalOptions(): readonly Option<PixelShiftInterval>[] {
   return PIXEL_SHIFT_INTERVALS.map((value) => ({
     value,
-    label: `${value} ${t('burnIn.minutes')}`,
+    label: `${value} ${settingsText('burnIn.minutes')}`,
   }));
 }
 
 function logLevelOptions(): readonly Option<LogLevel>[] {
   return LOG_LEVELS.map((value) => ({
     value,
-    label: t(`logLevel.${value}`),
+    label: settingsText(`logLevel.${value}`),
   }));
 }
 
 function localeOptions(): readonly Option<LocaleSetting>[] {
   return LOCALE_SETTINGS.map((value) => ({
     value,
-    label: t(`language.${value}`),
+    label: settingsText(`language.${value}`),
   }));
 }
 
@@ -247,9 +255,15 @@ export function SettingsOverlay({
   return (
     <div
       class="settings-overlay"
+      /*
+       * The document's lang is the dashboard's, so this panel has to say its
+       * own - it can be written in a different language from the page it
+       * covers, and a screen reader has no other way to know.
+       */
+      lang={settingsLocale.value}
       role="dialog"
       aria-modal="true"
-      aria-label={t('settings.title')}
+      aria-label={settingsText('settings.title')}
       data-closing={closing}
       /*
        * By name, because the panel holds plenty of other things that animate
@@ -269,13 +283,13 @@ export function SettingsOverlay({
           class="settings-overlay__action"
           onClick={() => resetSettings()}
         >
-          {t('settings.reset')}
+          {settingsText('settings.reset')}
         </button>
 
-        <h1 class="settings-overlay__title">{t('settings.title')}</h1>
+        <h1 class="settings-overlay__title">{settingsText('settings.title')}</h1>
 
         <button type="button" class="settings-overlay__action" onClick={onClose}>
-          {t('settings.close')}
+          {settingsText('settings.close')}
         </button>
       </header>
 
@@ -283,10 +297,21 @@ export function SettingsOverlay({
         <SettingsPreview />
 
         <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.language')}</h2>
+          <h2 class="settings-section__title">{settingsText('section.language')}</h2>
           <div class="settings-section__items">
+            {/*
+              This panel's own language first. It is the one the reader is
+              already looking at, and someone who has landed here in a language
+              they cannot read needs that row before any other.
+            */}
             <OptionRow
-              label={t('language.label')}
+              label={settingsText('language.settings')}
+              options={localeOptions()}
+              selected={current.settingsLocale}
+              onChange={(settingsLocale) => updateSettings({ settingsLocale })}
+            />
+            <OptionRow
+              label={settingsText('language.display')}
               options={localeOptions()}
               selected={current.locale}
               onChange={(locale) => updateSettings({ locale })}
@@ -296,12 +321,12 @@ export function SettingsOverlay({
 
         <WidgetSection
           target="clock"
-          title={t('section.clock')}
+          title={settingsText('section.clock')}
           visible={current.showClock}
           onVisibleChange={(showClock) => updateSettings({ showClock })}
         >
           <OptionRow
-            label={t('clock.type')}
+            label={settingsText('clock.type')}
             options={clockTypeOptions()}
             selected={current.clockType}
             onChange={(clockType) => updateSettings({ clockType })}
@@ -311,12 +336,12 @@ export function SettingsOverlay({
           {current.clockType === 'digital' ? (
             <>
               <ToggleRow
-                label={t('clock.hour12')}
+                label={settingsText('clock.hour12')}
                 checked={current.hour12}
                 onChange={(hour12) => updateSettings({ hour12 })}
               />
               <ToggleRow
-                label={t('clock.showSeconds')}
+                label={settingsText('clock.showSeconds')}
                 checked={current.showSeconds}
                 onChange={(showSeconds) => updateSettings({ showSeconds })}
               />
@@ -324,13 +349,13 @@ export function SettingsOverlay({
           ) : (
             <>
               <OptionRow
-                label={t('clock.secondHand')}
+                label={settingsText('clock.secondHand')}
                 options={secondHandOptions()}
                 selected={current.secondHand}
                 onChange={(secondHand) => updateSettings({ secondHand })}
               />
               <OptionRow
-                label={t('clock.dial')}
+                label={settingsText('clock.dial')}
                 options={numeralsOptions()}
                 selected={current.analogNumerals}
                 onChange={(analogNumerals) => updateSettings({ analogNumerals })}
@@ -341,12 +366,12 @@ export function SettingsOverlay({
 
         <WidgetSection
           target="date"
-          title={t('section.date')}
+          title={settingsText('section.date')}
           visible={current.showDate}
           onVisibleChange={(showDate) => updateSettings({ showDate })}
         >
           <OptionRow
-            label={t('date.format')}
+            label={settingsText('date.format')}
             options={dateFormatOptions(new Date())}
             selected={current.dateFormat}
             onChange={(dateFormat) => updateSettings({ dateFormat })}
@@ -360,15 +385,15 @@ export function SettingsOverlay({
           the other, and neither may take the other's settings out of reach.
         */}
         <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.weather')}</h2>
+          <h2 class="settings-section__title">{settingsText('section.weather')}</h2>
           <div class="settings-section__items">
             <ToggleRow
-              label={t('weather.today')}
+              label={settingsText('weather.today')}
               checked={current.showWeather}
               onChange={(showWeather) => updateSettings({ showWeather })}
             />
             <ToggleRow
-              label={t('weather.forecast')}
+              label={settingsText('weather.forecast')}
               checked={current.showForecast}
               onChange={(showForecast) => updateSettings({ showForecast })}
             />
@@ -377,7 +402,7 @@ export function SettingsOverlay({
               <>
                 <LocationRow />
                 <OptionRow
-                  label={t('weather.unit')}
+                  label={settingsText('weather.unit')}
                   options={temperatureUnitOptions()}
                   selected={current.temperatureUnit}
                   onChange={(temperatureUnit) =>
@@ -392,18 +417,18 @@ export function SettingsOverlay({
 
         <WidgetSection
           target="calendar"
-          title={t('section.calendar')}
+          title={settingsText('section.calendar')}
           visible={current.showCalendar}
           onVisibleChange={(showCalendar) => updateSettings({ showCalendar })}
         >
           <OptionRow
-            label={t('calendar.weekStart')}
+            label={settingsText('calendar.weekStart')}
             options={weekStartOptions()}
             selected={current.weekStart}
             onChange={(weekStart) => updateSettings({ weekStart })}
           />
           <OptionRow
-            label={t('calendar.adjacentDays')}
+            label={settingsText('calendar.adjacentDays')}
             options={adjacentDaysOptions()}
             selected={current.adjacentDays}
             onChange={(adjacentDays) => updateSettings({ adjacentDays })}
@@ -411,10 +436,10 @@ export function SettingsOverlay({
         </WidgetSection>
 
         <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.theme')}</h2>
+          <h2 class="settings-section__title">{settingsText('section.theme')}</h2>
           <div class="settings-section__items">
             <OptionRow
-              label={t('theme.mode')}
+              label={settingsText('theme.mode')}
               options={themeModeOptions()}
               selected={current.themeMode}
               onChange={(themeMode) => updateSettings({ themeMode })}
@@ -424,7 +449,7 @@ export function SettingsOverlay({
 
             {current.themeMode === 'fixed' ? (
               <ThemeGrid
-                label={t('theme.palette')}
+                label={settingsText('theme.palette')}
                 selected={current.theme}
                 onChange={(theme) => updateSettings({ theme })}
               />
@@ -446,17 +471,17 @@ export function SettingsOverlay({
         </section>
 
         <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.background')}</h2>
+          <h2 class="settings-section__title">{settingsText('section.background')}</h2>
           <div class="settings-section__items">
             <BackgroundRow />
           </div>
         </section>
 
         <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.burnIn')}</h2>
+          <h2 class="settings-section__title">{settingsText('section.burnIn')}</h2>
           <div class="settings-section__items">
             <ToggleRow
-              label={t('burnIn.pixelShift')}
+              label={settingsText('burnIn.pixelShift')}
               checked={current.pixelShift}
               onChange={(pixelShift) => updateSettings({ pixelShift })}
             />
@@ -465,12 +490,12 @@ export function SettingsOverlay({
               The one setting on this page whose name gives away nothing about
               what it is for, or who would want it.
             */}
-            <p class="setting-message">{t('burnIn.hint')}</p>
+            <p class="setting-message">{settingsText('burnIn.hint')}</p>
 
             {current.pixelShift && (
               <>
                 <OptionRow
-                  label={t('burnIn.distance')}
+                  label={settingsText('burnIn.distance')}
                   options={pixelShiftStrengthOptions()}
                   selected={current.pixelShiftStrength}
                   onChange={(pixelShiftStrength) =>
@@ -478,7 +503,7 @@ export function SettingsOverlay({
                   }
                 />
                 <OptionRow
-                  label={t('burnIn.interval')}
+                  label={settingsText('burnIn.interval')}
                   options={pixelShiftIntervalOptions()}
                   selected={current.pixelShiftInterval}
                   onChange={(pixelShiftInterval) =>
@@ -491,17 +516,17 @@ export function SettingsOverlay({
         </section>
 
         <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.debug')}</h2>
+          <h2 class="settings-section__title">{settingsText('section.debug')}</h2>
           <div class="settings-section__items">
             <ToggleRow
-              label={t('debug.overlay')}
+              label={settingsText('debug.overlay')}
               checked={current.showDebug}
               onChange={(showDebug) => updateSettings({ showDebug })}
             />
             {current.showDebug && (
               <>
                 <OptionRow
-                  label={t('debug.level')}
+                  label={settingsText('debug.level')}
                   options={logLevelOptions()}
                   selected={current.debugLevel}
                   onChange={(debugLevel) => updateSettings({ debugLevel })}
@@ -511,7 +536,7 @@ export function SettingsOverlay({
                   class="setting-row"
                   onClick={() => clearLogs()}
                 >
-                  <span class="setting-row__label">{t('debug.clear')}</span>
+                  <span class="setting-row__label">{settingsText('debug.clear')}</span>
                 </button>
               </>
             )}
@@ -519,7 +544,7 @@ export function SettingsOverlay({
         </section>
 
         <section class="settings-section">
-          <h2 class="settings-section__title">{t('section.about')}</h2>
+          <h2 class="settings-section__title">{settingsText('section.about')}</h2>
           <div class="settings-section__items">
             <AboutRow />
           </div>

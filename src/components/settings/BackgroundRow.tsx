@@ -6,7 +6,7 @@ import {
   setBackground,
   type BackgroundRefusal,
 } from '../../state/background';
-import { t } from '../../state/locale';
+import { settingsText } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
 import { BACKGROUND_FITS, type BackgroundFit } from '../../types';
 
@@ -15,7 +15,7 @@ import { OptionRow, type Option } from './OptionRow';
 function fitOptions(): readonly Option<BackgroundFit>[] {
   return BACKGROUND_FITS.map((value) => ({
     value,
-    label: t(`backgroundFit.${value}`),
+    label: settingsText(`backgroundFit.${value}`),
   }));
 }
 
@@ -46,8 +46,8 @@ export function BackgroundRow() {
    * - and telling someone only that it did not work leaves them to guess which.
    */
   const message: Record<BackgroundRefusal, string> = {
-    unreadable: t('background.unreadable'),
-    'save-failed': t('background.failed'),
+    unreadable: settingsText('background.unreadable'),
+    'save-failed': settingsText('background.failed'),
   };
 
   return (
@@ -58,7 +58,7 @@ export function BackgroundRow() {
           class="setting-options__choice"
           onClick={() => inputRef.current?.click()}
         >
-          {hasImage ? t('background.replace') : t('background.choose')}
+          {hasImage ? settingsText('background.replace') : settingsText('background.choose')}
         </button>
         {hasImage && (
           <button
@@ -66,7 +66,7 @@ export function BackgroundRow() {
             class="setting-options__choice"
             onClick={() => void removeBackground()}
           >
-            {t('background.remove')}
+            {settingsText('background.remove')}
           </button>
         )}
         <input
@@ -87,7 +87,7 @@ export function BackgroundRow() {
       {hasImage && (
         <>
           <OptionRow
-            label={t('background.fit')}
+            label={settingsText('background.fit')}
             options={fitOptions()}
             selected={backgroundFit}
             onChange={(fit) => updateSettings({ backgroundFit: fit })}
@@ -96,7 +96,7 @@ export function BackgroundRow() {
           <div class="setting-slider">
             <label class="setting-slider__field">
               <span class="setting-slider__label">
-                {`${t('background.dim')} ${backgroundDim}%`}
+                {`${settingsText('background.dim')} ${backgroundDim}%`}
               </span>
               <input
                 class="setting-slider__input"

@@ -1,7 +1,7 @@
 import { useNow } from '../hooks/useNow';
 import { monthGrid, weekdayLabels } from '../lib/calendar';
 import { fontClass, scaleStyle } from '../state/typography';
-import { locale } from '../state/locale';
+import { displayLocale } from '../state/locale';
 import { settings } from '../state/settings';
 
 import './Calendar.css';
@@ -12,7 +12,7 @@ export function Calendar() {
   const today = useNow('day');
 
   const { weekStart, adjacentDays } = settings.value;
-  const tag = locale.value;
+  const tag = displayLocale.value;
 
   const cells = monthGrid(today, weekStart);
 
