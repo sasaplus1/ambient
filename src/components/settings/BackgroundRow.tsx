@@ -1,6 +1,11 @@
 import { useRef, useState } from 'preact/hooks';
 
-import { backgroundUrl, removeBackground, setBackground } from '../../state/background';
+import {
+  backgroundUrl,
+  removeBackground,
+  setBackground,
+  type BackgroundRefusal,
+} from '../../state/background';
 import { t } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
 import { BACKGROUND_FITS, type BackgroundFit } from '../../types';
@@ -22,7 +27,7 @@ function fitOptions(): readonly Option<BackgroundFit>[] {
  */
 export function BackgroundRow() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [failed, setFailed] = useState(false);
+  const [refusal, setRefusal] = useState<BackgroundRefusal | null>(null);
 
   const hasImage = backgroundUrl.value !== null;
   const { backgroundFit, backgroundDim } = settings.value;
@@ -32,7 +37,17 @@ export function BackgroundRow() {
       return;
     }
 
-    setFailed(!(await setBackground(file)));
+    setRefusal(await setBackground(file));
+  };
+
+  /*
+   * A picture the browser cannot decode and a picture that would not fit are
+   * different problems with different answers - try another one, or make room
+   * - and telling someone only that it did not work leaves them to guess which.
+   */
+  const message: Record<BackgroundRefusal, string> = {
+    unreadable: t('background.unreadable'),
+    'save-failed': t('background.failed'),
   };
 
   return (
@@ -67,7 +82,7 @@ export function BackgroundRow() {
         />
       </div>
 
-      {failed && <p class="setting-message">{t('background.failed')}</p>}
+      {refusal && <p class="setting-message">{message[refusal]}</p>}
 
       {hasImage && (
         <>

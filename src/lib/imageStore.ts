@@ -5,6 +5,8 @@
  * A single record in a single store: there is only ever one background.
  */
 
+import { logger } from './logger';
+
 const DB_NAME = 'ambient';
 const DB_VERSION = 1;
 const STORE = 'images';
@@ -30,6 +32,22 @@ function openDatabase(): Promise<IDBDatabase> {
   });
 }
 
+/**
+ * Runs one request and waits for the transaction around it, not for the
+ * request.
+ *
+ * The difference only shows when something goes wrong, and then it shows
+ * badly. Under readwrite a successful request means the write was accepted,
+ * not that it was kept: the commit comes afterwards and can still fail - a
+ * device out of space is the ordinary way - by which point a promise settled
+ * on the request has already reported success. Waiting for oncomplete means
+ * the answer is about what is on disk.
+ *
+ * onabort matters for the opposite reason. A transaction can be aborted
+ * without any request erroring, and with only the two handlers this had, the
+ * promise was then never settled at all: the caller's await simply never
+ * returned, with nothing logged and nothing shown.
+ */
 function runTransaction<T>(
   mode: IDBTransactionMode,
   work: (store: IDBObjectStore) => IDBRequest<T>,
@@ -40,20 +58,40 @@ function runTransaction<T>(
         const transaction = db.transaction(STORE, mode);
         const request = work(transaction.objectStore(STORE));
 
-        request.onsuccess = () => {
+        transaction.oncomplete = () => {
+          db.close();
           resolve(request.result);
         };
 
-        request.onerror = () => {
-          reject(request.error ?? new Error('indexeddb request failed'));
+        /*
+         * A request that errors and is left unhandled aborts its transaction,
+         * so both of these can arrive for one failure. Whichever is first
+         * settles the promise and the other is ignored; closing twice is
+         * harmless.
+         */
+        const fail = (fallback: string) => {
+          db.close();
+          reject(transaction.error ?? request.error ?? new Error(fallback));
         };
 
-        transaction.oncomplete = () => {
-          db.close();
+        transaction.onerror = () => {
+          fail('indexeddb transaction failed');
+        };
+
+        transaction.onabort = () => {
+          fail('indexeddb transaction aborted');
         };
       }),
   );
 }
+
+/*
+ * Every failure here is caught, because none of them is worth taking the
+ * dashboard down for - a device with IndexedDB blocked should still show the
+ * clock. But caught is not the same as unrecorded. These used to discard the
+ * reason as well, which left the debug overlay with nothing to say at the one
+ * moment someone would go looking at it.
+ */
 
 export async function loadBackground(): Promise<Blob | null> {
   try {
@@ -62,8 +100,9 @@ export async function loadBackground(): Promise<Blob | null> {
     );
 
     return stored instanceof Blob ? stored : null;
-  } catch {
-    // A device with IndexedDB blocked still shows everything else
+  } catch (error) {
+    logger.error('background', `load failed: ${String(error)}`);
+
     return null;
   }
 }
@@ -75,7 +114,9 @@ export async function saveBackground(blob: Blob): Promise<boolean> {
     );
 
     return true;
-  } catch {
+  } catch (error) {
+    logger.error('background', `save failed: ${String(error)}`);
+
     return false;
   }
 }
@@ -83,7 +124,8 @@ export async function saveBackground(blob: Blob): Promise<boolean> {
 export async function clearBackground(): Promise<void> {
   try {
     await runTransaction('readwrite', (store) => store.delete(BACKGROUND_KEY));
-  } catch {
-    // Nothing to do; the caller drops its reference either way
+  } catch (error) {
+    // The caller drops its reference either way, so this is only worth saying
+    logger.error('background', `clear failed: ${String(error)}`);
   }
 }
