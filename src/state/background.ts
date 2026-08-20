@@ -48,6 +48,32 @@ export type BackgroundRefusal = 'unreadable' | 'save-failed';
  * createImageBitmap rejects for either, which is the whole reason to use it
  * over reading a header ourselves.
  */
+/**
+ * The bytes themselves, held by us rather than by whatever handed them over.
+ *
+ * A File chosen on Android is a window onto a content:// provider, not a copy
+ * of anything. The window can close: the provider is free to stop answering,
+ * and on a Xiaomi with the picture coming from Google Photos it does. Reading
+ * it once works, so the decode check passes, and the write afterwards fails
+ * with `DataError: Failed to write blobs (InvalidBlob)` - IndexedDB going back
+ * for the bytes it was promised and finding nobody there.
+ *
+ * Observed on a Redmi 12 5G, which is what sent us looking.
+ *
+ * So the bytes are pulled into memory once, up front, and everything after
+ * this point - the decode, the write, the URL the <img> is given - works from
+ * that copy. Nothing downstream depends on the provider still being willing.
+ */
+async function readBytes(blob: Blob): Promise<Blob | null> {
+  try {
+    return new Blob([await blob.arrayBuffer()], { type: blob.type });
+  } catch (error) {
+    logger.error('background', `cannot read: ${String(error)}`);
+
+    return null;
+  }
+}
+
 async function canDecode(blob: Blob): Promise<boolean> {
   try {
     const bitmap = await createImageBitmap(blob);
@@ -65,10 +91,10 @@ async function canDecode(blob: Blob): Promise<boolean> {
 
 export async function setBackground(blob: Blob): Promise<BackgroundRefusal | null> {
   /*
-   * Recorded before anything is attempted, because these three facts separate
-   * the two causes on their own: zero bytes is the cloud-only file, and an
-   * image/heic type is the other. Worth having in the log of a device that is
-   * across the room from whoever is trying to work out what happened.
+   * Recorded before anything is attempted. Name, type and size are what tell
+   * the ways this goes wrong apart from one another, and they are worth having
+   * in the log of a device that is across the room from whoever is trying to
+   * work out what happened.
    */
   const name = blob instanceof File ? blob.name : '(blob)';
 
@@ -77,15 +103,21 @@ export async function setBackground(blob: Blob): Promise<BackgroundRefusal | nul
     `chose ${name} type=${blob.type || '(none)'} size=${blob.size}`,
   );
 
-  if (!(await canDecode(blob))) {
+  const bytes = await readBytes(blob);
+
+  if (!bytes) {
     return 'unreadable';
   }
 
-  if (!(await saveBackground(blob))) {
+  if (!(await canDecode(bytes))) {
+    return 'unreadable';
+  }
+
+  if (!(await saveBackground(bytes))) {
     return 'save-failed';
   }
 
-  replaceUrl(URL.createObjectURL(blob));
+  replaceUrl(URL.createObjectURL(bytes));
 
   return null;
 }

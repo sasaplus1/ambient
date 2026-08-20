@@ -33,16 +33,34 @@
   font-weight: 600;
 }
 
+/*
+ * When there is more than fits, the oldest lines are the ones to lose. The
+ * column is anchored to its bottom so what gets cut off the top is what has
+ * already been read, rather than the line that has just arrived.
+ */
 .debug-overlay__log {
   display: flex;
   flex-direction: column;
+  justify-content: flex-end;
+
   overflow: hidden;
 }
 
+/*
+ * Long lines wrap rather than trailing off into an ellipsis.
+ *
+ * The overlay ignores taps, by design - it sits over a dashboard that is meant
+ * to stay usable - so a line cut short here could not be scrolled, selected or
+ * opened. It was simply gone. And the lines worth reading are the long ones:
+ * an exception's name and message together run well past the width of a phone.
+ *
+ * The indent is so a wrapped line is not mistaken for a new entry; every entry
+ * starts with a timestamp, and a continuation now visibly does not.
+ */
 .debug-overlay__entry {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  padding-left: 1.5em;
+  text-indent: -1.5em;
+  overflow-wrap: anywhere;
 }
 
 .debug-overlay__entry[data-level='warn'] {
