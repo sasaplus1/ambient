@@ -5,7 +5,7 @@ import {
   type FontTarget,
   type TextScale,
 } from '../../lib/typography';
-import { t } from '../../state/locale';
+import { settingsText } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
 
 import { OptionRow, type Option } from './OptionRow';
@@ -13,14 +13,14 @@ import { OptionRow, type Option } from './OptionRow';
 function scaleOptions(): readonly Option<TextScale>[] {
   return TEXT_SCALES.map((value) => ({
     value,
-    label: t(`textScale.${value}`),
+    label: settingsText(`textScale.${value}`),
   }));
 }
 
 function fontOptions(): readonly Option<FontFamily>[] {
   return FONT_FAMILIES.map((value) => ({
     value,
-    label: t(`font.${value}`),
+    label: settingsText(`font.${value}`),
   }));
 }
 
@@ -37,7 +37,7 @@ export function TypeRows({ target }: { target: FontTarget }) {
   return (
     <>
       <OptionRow
-        label={t('type.size')}
+        label={settingsText('type.size')}
         options={scaleOptions()}
         selected={scales[target]}
         onChange={(scale) =>
@@ -45,7 +45,7 @@ export function TypeRows({ target }: { target: FontTarget }) {
         }
       />
       <OptionRow
-        label={t('type.face')}
+        label={settingsText('type.face')}
         options={fontOptions()}
         selected={fonts[target]}
         onChange={(family) =>

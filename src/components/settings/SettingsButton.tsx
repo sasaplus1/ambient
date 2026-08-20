@@ -1,4 +1,4 @@
-import { t } from '../../state/locale';
+import { displayText } from '../../state/locale';
 
 type SettingsButtonProps = {
   onClick: () => void;
@@ -9,7 +9,7 @@ export function SettingsButton({ onClick }: SettingsButtonProps) {
     <button
       type="button"
       class="settings-button"
-      aria-label={t('settings.open')}
+      aria-label={displayText('settings.open')}
       onClick={onClick}
     >
       <svg

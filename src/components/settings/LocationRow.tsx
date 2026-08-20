@@ -1,7 +1,7 @@
 import { useState } from 'preact/hooks';
 
 import { requestPosition, searchPlaces, type Place } from '../../lib/weather';
-import { locale, t } from '../../state/locale';
+import { settingsLocale, settingsText } from '../../state/locale';
 import { location, setLocation } from '../../state/weather';
 
 type Phase = 'idle' | 'locating' | 'searching';
@@ -51,7 +51,7 @@ export function LocationRow() {
       setLocation({ ...coordinates, label: '' });
       setQuery('');
     } catch {
-      setMessage(t('weather.locateFailed'));
+      setMessage(settingsText('weather.locateFailed'));
     } finally {
       setPhase('idle');
     }
@@ -62,15 +62,15 @@ export function LocationRow() {
     setMessage(null);
 
     try {
-      const found = await searchPlaces(query, locale.value);
+      const found = await searchPlaces(query, settingsLocale.value);
 
       setResults(found);
 
       if (found.length === 0) {
-        setMessage(t('weather.noResults'));
+        setMessage(settingsText('weather.noResults'));
       }
     } catch {
-      setMessage(t('weather.noResults'));
+      setMessage(settingsText('weather.noResults'));
     } finally {
       setPhase('idle');
     }
@@ -89,12 +89,12 @@ export function LocationRow() {
   return (
     <div class="location">
       <div class="location__current">
-        <span class="setting-row__label">{t('weather.location')}</span>
+        <span class="setting-row__label">{settingsText('weather.location')}</span>
         <span class="setting-row__value">
           {current
             ? current.label ||
               `${current.latitude.toFixed(2)}, ${current.longitude.toFixed(2)}`
-            : t('weather.noLocation')}
+            : settingsText('weather.noLocation')}
         </span>
       </div>
 
@@ -107,9 +107,9 @@ export function LocationRow() {
           onClick={() => void useCurrentPosition()}
         >
           {phase === 'locating' ? (
-            <Working label={t('weather.locating')} />
+            <Working label={settingsText('weather.locating')} />
           ) : (
-            t('weather.useCurrent')
+            settingsText('weather.useCurrent')
           )}
         </button>
         {current && (
@@ -118,7 +118,7 @@ export function LocationRow() {
             class="setting-options__choice"
             onClick={() => setLocation(null)}
           >
-            {t('weather.clear')}
+            {settingsText('weather.clear')}
           </button>
         )}
       </div>
@@ -131,12 +131,12 @@ export function LocationRow() {
         }}
       >
         <label class="location__field">
-          <span class="location__field-label">{t('weather.searchLabel')}</span>
+          <span class="location__field-label">{settingsText('weather.searchLabel')}</span>
           <input
             class="location__input"
             type="search"
             value={query}
-            placeholder={t('weather.searchPlaceholder')}
+            placeholder={settingsText('weather.searchPlaceholder')}
             onInput={(event) => setQuery(event.currentTarget.value)}
           />
         </label>
@@ -147,9 +147,9 @@ export function LocationRow() {
           disabled={phase === 'searching' || query.trim() === ''}
         >
           {phase === 'searching' ? (
-            <Working label={t('weather.searching')} />
+            <Working label={settingsText('weather.searching')} />
           ) : (
-            t('weather.search')
+            settingsText('weather.search')
           )}
         </button>
       </form>

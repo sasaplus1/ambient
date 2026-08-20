@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 
-import { t } from '../../state/locale';
+import { settingsText } from '../../state/locale';
 import { previewHour } from '../../state/theme';
 
 /**
@@ -42,8 +42,8 @@ export function SchedulePreviewRow() {
     <div class="setting-slider">
       <label class="setting-slider__field">
         <span class="setting-slider__label">
-          {`${t('theme.previewHour')} ${
-            hour === null ? t('theme.previewNow') : `${hour}:00`
+          {`${settingsText('theme.previewHour')} ${
+            hour === null ? settingsText('theme.previewNow') : `${hour}:00`
           }`}
         </span>
         <input
@@ -67,7 +67,7 @@ export function SchedulePreviewRow() {
           aria-pressed={playing}
           onClick={() => setPlaying(!playing)}
         >
-          {playing ? t('theme.previewStop') : t('theme.previewPlay')}
+          {playing ? settingsText('theme.previewStop') : settingsText('theme.previewPlay')}
         </button>
       </div>
     </div>

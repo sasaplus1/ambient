@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'preact/hooks';
 
 import { applyThemeTo, DEFAULT_THEME, findTheme } from '../../lib/theme';
-import { t } from '../../state/locale';
+import { settingsText } from '../../state/locale';
 import { settings, updateSettings } from '../../state/settings';
 import { Background } from '../Background';
 import { Calendar } from '../Calendar';
@@ -110,7 +110,7 @@ export function SettingsPreview() {
         aria-expanded={previewOpen}
         onClick={() => updateSettings({ previewOpen: !previewOpen })}
       >
-        {previewOpen ? t('settings.previewHide') : t('settings.previewShow')}
+        {previewOpen ? settingsText('settings.previewHide') : settingsText('settings.previewShow')}
       </button>
     </div>
   );

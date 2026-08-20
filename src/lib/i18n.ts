@@ -100,7 +100,8 @@ const DICTIONARY = {
   'timeBand.night': { ja: '夜', en: 'Night' },
   'timeBand.lateNight': { ja: '深夜', en: 'Late night' },
 
-  'language.label': { ja: '表示言語', en: 'Interface' },
+  'language.display': { ja: 'ダッシュボード', en: 'Dashboard' },
+  'language.settings': { ja: '設定画面', en: 'Settings' },
   'language.auto': { ja: '自動', en: 'Auto' },
   'language.ja': { ja: '日本語', en: '日本語' },
   'language.en': { ja: 'English', en: 'English' },

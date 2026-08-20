@@ -9,7 +9,7 @@ import {
   localDate,
   type DailyForecast,
 } from '../../lib/weather';
-import { locale, t } from '../../state/locale';
+import { displayLocale, displayText } from '../../state/locale';
 import { settings } from '../../state/settings';
 import { fontClass, scaleStyle } from '../../state/typography';
 import { weather } from '../../state/weather';
@@ -43,22 +43,22 @@ function Day({ day, index }: { day: DailyForecast; index: number }) {
       : unit;
 
   const round = (value: number) =>
-    new Intl.NumberFormat(locale.value, { maximumFractionDigits: 0 }).format(
+    new Intl.NumberFormat(displayLocale.value, { maximumFractionDigits: 0 }).format(
       convertTemperature(value, only),
     );
 
   // The first column is today, which is worth saying rather than dating
   const label =
     index === 0
-      ? t('forecast.today')
+      ? displayText('forecast.today')
       : when
-        ? new Intl.DateTimeFormat(locale.value, { weekday: 'short' }).format(
+        ? new Intl.DateTimeFormat(displayLocale.value, { weekday: 'short' }).format(
             when,
           )
         : '';
 
   return (
-    <div class="forecast__day" title={t(`condition.${conditionFor(day.weatherCode)}`)}>
+    <div class="forecast__day" title={displayText(`condition.${conditionFor(day.weatherCode)}`)}>
       <span class="forecast__weekday">{label}</span>
       {/* Daylight: nobody reads a whole day as night, whatever hour it is now */}
       <WeatherIcon name={iconFor(day.weatherCode, true)} />

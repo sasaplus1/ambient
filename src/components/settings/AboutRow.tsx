@@ -1,4 +1,4 @@
-import { t } from '../../state/locale';
+import { settingsText } from '../../state/locale';
 
 const REPOSITORY = 'https://github.com/sasaplus1/ambient';
 const SITE = 'https://sasaplus1.github.io/ambient';
@@ -39,34 +39,34 @@ export function AboutRow() {
   return (
     <>
       <LinkRow
-        label={t('about.repository')}
+        label={settingsText('about.repository')}
         href={REPOSITORY}
         text="github.com/sasaplus1/ambient"
       />
       <LinkRow
-        label={t('about.site')}
+        label={settingsText('about.site')}
         href={SITE}
         text="sasaplus1.github.io/ambient"
       />
 
       <div class="setting-row">
-        <span class="setting-row__label">{t('about.build')}</span>
+        <span class="setting-row__label">{settingsText('about.build')}</span>
         <span class="setting-row__value">{__COMMIT_SHA__}</span>
       </div>
 
       <LinkRow
-        label={t('about.weatherData')}
+        label={settingsText('about.weatherData')}
         href={OPEN_METEO}
         text="Open-Meteo"
       />
       <LinkRow
-        label={t('about.weatherLicence')}
+        label={settingsText('about.weatherLicence')}
         href={CC_BY}
         text="CC BY 4.0"
       />
 
       <div class="setting-row">
-        <span class="setting-row__label">{t('about.licence')}</span>
+        <span class="setting-row__label">{settingsText('about.licence')}</span>
         <span class="setting-row__value">MIT</span>
       </div>
     </>
