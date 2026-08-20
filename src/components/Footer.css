@@ -6,17 +6,6 @@
  * than to the arrangement of widgets, and it should not travel when the pixel
  * shift moves them.
  */
-/*
- * The bar is fixed, so it takes no room in the flow and the widgets would
- * happily settle underneath it. Only when it is actually there: without the
- * credit the strip is empty and the widgets should have it.
- *
- * 3.25rem is the bar's own height plus the offset it sits at.
- */
-.dashboard:has(.dashboard__footer) {
-  padding-bottom: calc(var(--edge-bottom) + 3.25rem);
-}
-
 .dashboard__footer {
   position: fixed;
   bottom: max(0.5rem, env(safe-area-inset-bottom));
