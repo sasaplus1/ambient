@@ -40,11 +40,8 @@ body {
   width: 100%;
   min-height: 100dvh;
 
-  /* Named, because the footer reserves its own strip on top of it */
-  --edge-bottom: max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-bottom));
-
   padding-top: max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-top));
-  padding-bottom: var(--edge-bottom);
+  padding-bottom: max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-bottom));
   padding-left: max(var(--widget-gap), env(safe-area-inset-left));
   padding-right: max(var(--widget-gap), env(safe-area-inset-right));
 }
@@ -98,6 +95,20 @@ body {
 @media (orientation: portrait) {
   .dashboard__widgets {
     flex-direction: column;
+  }
+
+  /*
+   * And the credit stops floating. Fixed, it takes no room in the flow, which
+   * is fine where the widgets sit in the middle of a wide screen and nothing
+   * reaches the foot of it. Upright they reach it, and the row of days would
+   * sit underneath the line crediting where it came from.
+   *
+   * 3.25rem is the bar's own height plus the offset it sits at.
+   */
+  .dashboard:has(.dashboard__footer) {
+    padding-bottom: calc(
+      max(clamp(0.75rem, 3vmin, 2.5rem), env(safe-area-inset-bottom)) + 3.25rem
+    );
   }
 }
 
