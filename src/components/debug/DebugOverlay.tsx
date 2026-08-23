@@ -34,11 +34,9 @@ export function DebugOverlay() {
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      const at = Date.now();
-
-      setNow(at);
+      setNow(Date.now());
       // Read on the timer, not in render: asking closes the window it measured
-      setRates(takeClockRates(at));
+      setRates(takeClockRates());
     }, STATUS_INTERVAL_MS);
 
     return () => {

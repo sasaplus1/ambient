@@ -53,7 +53,7 @@ export function noteCanvas(drawnAt: number, askedFor: number): void {
   offered = askedFor;
   frames = 0;
   draws = 0;
-  since = Date.now();
+  since = performance.now();
 }
 
 /**
@@ -69,8 +69,14 @@ export function forgetCanvas(): void {
  * The rates since this was last asked, or nothing while no clock is drawing.
  * Asking resets the window, so the reading describes the interval just passed
  * rather than the whole run.
+ *
+ * The clock is read in here rather than handed in. An elapsed time has to be
+ * measured against something that only moves forwards, and a caller holding a
+ * timestamp is usually holding the wall clock - which is the right clock for
+ * everything else on the line this ends up in, and the wrong one for this.
  */
-export function takeClockRates(now: number): ClockRates | undefined {
+export function takeClockRates(): ClockRates | undefined {
+  const now = performance.now();
   const elapsed = now - since;
 
   if (live === 0 || elapsed <= 0) {
