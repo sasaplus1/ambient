@@ -2,6 +2,11 @@ import { useEffect, useState } from 'preact/hooks';
 
 import { atLeast, errorCount, formatTime, logs } from '../../lib/logger';
 import { formatShift } from '../../lib/pixelShift';
+import {
+  type ClockRates,
+  formatClockRates,
+  takeClockRates,
+} from '../../state/clockMetrics';
 import { formatUptime, online, startedAt } from '../../state/diagnostics';
 import { shift } from '../../state/pixelShift';
 import { settings } from '../../state/settings';
@@ -25,10 +30,15 @@ function ageInMinutes(fetchedAt: number, now: number): number {
 
 export function DebugOverlay() {
   const [now, setNow] = useState(() => Date.now());
+  const [rates, setRates] = useState<ClockRates | undefined>(undefined);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
-      setNow(Date.now());
+      const at = Date.now();
+
+      setNow(at);
+      // Read on the timer, not in render: asking closes the window it measured
+      setRates(takeClockRates(at));
     }, STATUS_INTERVAL_MS);
 
     return () => {
@@ -64,6 +74,10 @@ export function DebugOverlay() {
   return (
     <div class="debug-overlay">
       <div class="debug-overlay__status">{status}</div>
+      {/* Its own line: four readings on the end of the first one would wrap */}
+      {rates && (
+        <div class="debug-overlay__status">{formatClockRates(rates)}</div>
+      )}
       <div class="debug-overlay__log">
         {visible.map((entry) => (
           <div
