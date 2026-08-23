@@ -1,30 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 
-export type TickUnit = 'second' | 'minute' | 'day';
-
-const UNIT_MS: Record<TickUnit, number> = {
-  second: 1_000,
-  minute: 60_000,
-  day: 86_400_000,
-};
-
-/**
- * Milliseconds remaining until the next boundary.
- * 'day' is computed separately because it must account for the timezone offset.
- */
-function msUntilNextTick(now: Date, unit: TickUnit): number {
-  if (unit === 'day') {
-    const nextMidnight = new Date(now);
-
-    nextMidnight.setHours(24, 0, 0, 0);
-
-    return nextMidnight.getTime() - now.getTime();
-  }
-
-  const interval = UNIT_MS[unit];
-
-  return interval - (now.getTime() % interval);
-}
+import { msUntilNextTick, type TickUnit } from '../lib/clockSchedule';
 
 /**
  * Returns the current time, updated exactly on the boundary of the given unit.
@@ -46,11 +22,7 @@ export function useNow(unit: TickUnit): Date {
 
       setNow(current);
 
-      timer = window.setTimeout(
-        schedule,
-        // A floor stops a rounding error just short of the boundary spinning at 0ms
-        Math.max(msUntilNextTick(current, unit), 16),
-      );
+      timer = window.setTimeout(schedule, msUntilNextTick(current, unit));
     };
 
     const resync = () => {
