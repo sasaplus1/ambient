@@ -30,6 +30,17 @@ function angleOf(value: number, total: number): number {
 }
 
 /**
+ * Where the dial sits inside the canvas.
+ * The face and the hands are drawn onto separate canvases, so this is the one
+ * thing they have to agree on for the hands to turn about the centre of it.
+ */
+function geometryOf(size: number): { center: number; radius: number } {
+  const center = size / 2;
+
+  return { center, radius: center * 0.94 };
+}
+
+/**
  * How the hour ticks are drawn.
  * Long ticks collide with the numerals, so when numerals are shown the hour
  * ticks keep the minute length and differ only in weight.
@@ -119,21 +130,26 @@ function drawHand(
 }
 
 /**
- * Draws the dial in CSS pixel coordinates.
- * The caller must have already applied the devicePixelRatio setTransform.
+ * Draws the face: everything that stands still.
+ *
+ * Sixty ticks and twelve numerals, which is nearly all of the drawing this
+ * clock does and none of the drawing it has to repeat. It goes on a canvas of
+ * its own so that a sweeping second hand does not drag it along sixty times a
+ * second, and is asked for again only when the size, the theme, the typeface or
+ * the choice of numerals changes.
+ *
+ * Coordinates are CSS pixels; the caller must have applied the
+ * devicePixelRatio setTransform.
  */
-export function drawAnalogClock(
+export function drawDial(
   ctx: CanvasRenderingContext2D,
   size: number,
   colors: ClockColors,
   numerals: AnalogNumerals,
-  secondHand: SecondHand,
-  now: Date,
   /** A canvas has no stylesheet, so the chosen face has to be handed to it. */
   fontFamily: string,
 ): void {
-  const center = size / 2;
-  const radius = center * 0.94;
+  const { center, radius } = geometryOf(size);
 
   ctx.clearRect(0, 0, size, size);
 
@@ -143,6 +159,26 @@ export function drawAnalogClock(
     drawTicks(ctx, center, radius, colors, 'thick');
     drawNumerals(ctx, center, radius, colors, numerals === 'roman', fontFamily);
   }
+}
+
+/**
+ * Draws the hands: everything that moves.
+ *
+ * Three strokes and a cap, on top of the face rather than in place of it.
+ *
+ * Coordinates are CSS pixels; the caller must have applied the
+ * devicePixelRatio setTransform.
+ */
+export function drawHands(
+  ctx: CanvasRenderingContext2D,
+  size: number,
+  colors: ClockColors,
+  secondHand: SecondHand,
+  now: Date,
+): void {
+  const { center, radius } = geometryOf(size);
+
+  ctx.clearRect(0, 0, size, size);
 
   // Only a sweeping second hand needs sub-second precision
   const seconds =

@@ -1,11 +1,23 @@
 import { useEffect, useRef } from 'preact/hooks';
 
 import { useElementSize } from '../../hooks/useElementSize';
+import {
+  isPaintDue,
+  msUntilNextTick,
+  SWEEP_TARGET_HZ,
+  type TickUnit,
+} from '../../lib/clockSchedule';
 import { readCssVar } from '../../lib/theme';
+import {
+  countDraw,
+  countFrame,
+  forgetCanvas,
+  noteCanvas,
+} from '../../state/clockMetrics';
 import { fontClass, fontFamilyOf, scaleStyle } from '../../state/typography';
 import type { AnalogNumerals, SecondHand } from '../../types';
 
-import { drawAnalogClock, type ClockColors } from './drawAnalogClock';
+import { type ClockColors, drawDial, drawHands } from './drawAnalogClock';
 
 import './AnalogClock.css';
 
@@ -18,6 +30,16 @@ type AnalogClockProps = {
    */
   theme: string;
 };
+
+/**
+ * The most device pixels a dial is drawn at.
+ *
+ * Everything that rasterises - the clear of the whole face included - grows
+ * with the square of this, so a phone offering 2.75 asks for nearly twice the
+ * pixels of one offering 2. What that buys on a face made of hairline strokes
+ * is very little, and this dashboard is left running for days at a time.
+ */
+const MAX_RATIO = 2;
 
 /** How long a theme change takes, read from the same place the CSS uses. */
 function fadeDuration(from: Element): number {
@@ -53,107 +75,149 @@ function readColors(from: Element): ClockColors {
  * It never updates state per second. The draw loop reads new Date() and
  * repaints the canvas, so a running clock triggers no Preact re-render and
  * never drags the other widgets along with it.
+ *
+ * The face and the hands go on separate canvases. Nearly all of the drawing
+ * here is the face, and none of it moves, so a sweeping hand repaints three
+ * strokes and a cap rather than seventy-six of them.
  */
 export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
   const [containerRef, { width, height }] = useElementSize<HTMLDivElement>();
   // Only a dependency: the face itself is read off the canvas below
   const fontSetting = fontFamilyOf('clock');
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const dialRef = useRef<HTMLCanvasElement>(null);
+  const handsRef = useRef<HTMLCanvasElement>(null);
 
   // Match the shorter side so the dial stays a true circle
   const size = Math.floor(Math.min(width, height));
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const dial = dialRef.current;
+    const hands = handsRef.current;
 
-    if (!canvas || size <= 0) {
+    if (!dial || !hands || size <= 0) {
       return;
     }
 
-    const ctx = canvas.getContext('2d');
+    const dialCtx = dial.getContext('2d');
+    const handsCtx = hands.getContext('2d');
 
-    if (!ctx) {
+    if (!dialCtx || !handsCtx) {
       return;
     }
 
     // devicePixelRatio changes on rotation and zoom, so read it on every setup
-    const ratio = window.devicePixelRatio || 1;
+    const offered = window.devicePixelRatio || 1;
+    const ratio = Math.min(offered, MAX_RATIO);
 
-    canvas.width = Math.round(size * ratio);
-    canvas.height = Math.round(size * ratio);
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size}px`;
-    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    for (const canvas of [dial, hands]) {
+      canvas.width = Math.round(size * ratio);
+      canvas.height = Math.round(size * ratio);
+      canvas.style.width = `${size}px`;
+      canvas.style.height = `${size}px`;
+    }
 
-    let colors = readColors(canvas);
+    dialCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    handsCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    noteCanvas(ratio, offered);
+
+    let colors = readColors(hands);
     // A canvas has no stylesheet of its own, so the face has to be looked up
-    const fontFamily = getComputedStyle(canvas).fontFamily;
+    const fontFamily = getComputedStyle(hands).fontFamily;
 
     /*
      * Themes cross-fade, and the canvas cannot inherit that: it holds whatever
      * colour it was last told. So for as long as the fade runs, the colours are
-     * read again on every paint, and the hands travel with the background
-     * instead of snapping at the end of it.
+     * read again on every paint and the face is drawn again with them, and the
+     * clock travels with the background instead of snapping at the end of it.
      */
-    const fadeEndsAt = performance.now() + fadeDuration(canvas);
+    const fadeEndsAt = performance.now() + fadeDuration(hands);
 
-    const paint = () => {
+    drawDial(dialCtx, size, colors, numerals, fontFamily);
+
+    const paint = (now: Date) => {
       if (performance.now() < fadeEndsAt) {
-        colors = readColors(canvas);
+        colors = readColors(hands);
+        drawDial(dialCtx, size, colors, numerals, fontFamily);
       }
 
-      drawAnalogClock(
-        ctx,
-        size,
-        colors,
-        numerals,
-        secondHand,
-        new Date(),
-        fontFamily,
-      );
+      countDraw();
+      drawHands(handsCtx, size, colors, secondHand, now);
     };
 
     let frameId = 0;
     let timerId: number | undefined;
+    let lastPaintAt = performance.now();
+    let previousFrameAt = 0;
+
+    /**
+     * Books a frame in, and says whether it is this one's turn to be drawn.
+     * Shared by the sweep loop and the fade follower, which want the same rate.
+     */
+    const takeFrame = (timestamp: number): boolean => {
+      countFrame();
+
+      const frameMs = timestamp - previousFrameAt;
+
+      previousFrameAt = timestamp;
+
+      if (!isPaintDue(timestamp - lastPaintAt, frameMs, SWEEP_TARGET_HZ)) {
+        return false;
+      }
+
+      lastPaintAt = timestamp;
+
+      return true;
+    };
 
     if (secondHand === 'sweep') {
-      // Draw every frame only when the motion has to look smooth
-      const loop = () => {
-        paint();
+      const loop = (timestamp: number) => {
         frameId = requestAnimationFrame(loop);
+
+        if (takeFrame(timestamp)) {
+          paint(new Date());
+        }
       };
 
-      loop();
+      // Drawn now rather than on the first frame, which would flash an empty face
+      paint(new Date());
+      frameId = requestAnimationFrame(loop);
     } else {
       // Without a sweeping hand, one paint per boundary is enough
-      const interval = secondHand === 'step' ? 1_000 : 60_000;
+      const unit: TickUnit = secondHand === 'step' ? 'second' : 'minute';
 
       const tick = () => {
-        paint();
-        timerId = window.setTimeout(
-          tick,
-          Math.max(interval - (Date.now() % interval), 16),
-        );
+        const now = new Date();
+
+        paint(now);
+        /*
+         * Measured from the time drawn for, not from now. Reading the clock
+         * again after the drawing would aim at the boundary after the one just
+         * crossed, and the tick in between would never be shown.
+         */
+        timerId = window.setTimeout(tick, msUntilNextTick(now, unit));
       };
 
       tick();
 
       // A once-a-second repaint would show the fade as a handful of steps
-      const followFade = () => {
+      const followFade = (timestamp: number) => {
         if (performance.now() >= fadeEndsAt) {
           return;
         }
 
-        paint();
         frameId = requestAnimationFrame(followFade);
+
+        if (takeFrame(timestamp)) {
+          paint(new Date());
+        }
       };
 
-      followFade();
+      frameId = requestAnimationFrame(followFade);
     }
 
     const repaintOnVisible = () => {
       if (document.visibilityState === 'visible') {
-        paint();
+        paint(new Date());
       }
     };
 
@@ -163,7 +227,13 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
       cancelAnimationFrame(frameId);
       window.clearTimeout(timerId);
       document.removeEventListener('visibilitychange', repaintOnVisible);
+      forgetCanvas();
     };
+    /*
+     * theme is in here so the colours are read again, which means a theme
+     * change also reallocates both backing stores. Left as it is: the face has
+     * to be redrawn either way, and a theme changes a handful of times a day.
+     */
   }, [size, numerals, secondHand, theme, fontSetting]);
 
   return (
@@ -172,7 +242,8 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
       ref={containerRef}
       style={scaleStyle('clock')}
     >
-      <canvas class="analog-clock__canvas" ref={canvasRef} />
+      <canvas class="analog-clock__layer" ref={dialRef} />
+      <canvas class="analog-clock__layer" ref={handsRef} />
     </div>
   );
 }

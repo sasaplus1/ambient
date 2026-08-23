@@ -1,7 +1,5 @@
 .analog-clock {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  position: relative;
 
   /* Follows the text scale so the whole dashboard grows together */
   width: calc(clamp(9rem, 62vmin, 32rem) * var(--text-scale, 1) * var(--widget-scale, 1));
@@ -9,6 +7,20 @@
   aspect-ratio: 1;
 }
 
-.analog-clock__canvas {
+/*
+ * Stacked, not laid out side by side. The face and the hands are two canvases
+ * drawing one clock - split so that a sweeping second hand does not have to
+ * carry sixty ticks and twelve numerals along with it - and they only read as
+ * one clock while they sit exactly on top of each other.
+ *
+ * The size is a whole number of pixels so the dial stays a true circle, which
+ * leaves up to a pixel of slack inside the box; auto margins take up the
+ * difference on both sides.
+ */
+.analog-clock__layer {
+  position: absolute;
+  inset: 0;
+
   display: block;
+  margin: auto;
 }
