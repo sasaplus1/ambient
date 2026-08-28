@@ -9,6 +9,7 @@ import {
 } from '../../state/clockMetrics';
 import { formatUptime, online, startedAt } from '../../state/diagnostics';
 import { shift } from '../../state/pixelShift';
+import { swStatus } from '../../state/serviceWorker';
 import { settings } from '../../state/settings';
 import { weather, weatherStatus } from '../../state/weather';
 
@@ -54,6 +55,7 @@ export function DebugOverlay() {
       ? `WX ${ageInMinutes(reading.fetchedAt, now)}m`
       : `WX ${weatherStatus.value}`,
     `ERR ${errorCount.value}`,
+    `SW ${swStatus.value}`,
   ];
 
   // Only while it is moving. Left in, it would read +0,+0 for good

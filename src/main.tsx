@@ -5,6 +5,7 @@ import { startBackgroundSync } from './state/background';
 import { startDiagnostics } from './state/diagnostics';
 import { startLocaleSync } from './state/locale';
 import { startPixelShift } from './state/pixelShift';
+import { startServiceWorker } from './state/serviceWorker';
 import { startSettingsSync } from './state/settings';
 import { startThemeSync } from './state/theme';
 import { startWeatherSync } from './state/weather';
@@ -22,6 +23,7 @@ if (!root) {
 
 // First, so that anything the others log is captured
 startDiagnostics();
+startServiceWorker();
 
 startSettingsSync();
 startThemeSync();
