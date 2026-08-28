@@ -11,8 +11,8 @@
     <title>Ambient Dashboard</title>
 
     <!--
-      No service worker. A manifest alone satisfies the install criteria, so
-      giving up offline startup avoids a stale cache lodging on the device.
+      The service worker caches only the versioned app shell for offline startup.
+      Weather API requests stay network-only, so it never serves a stale response.
     -->
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="./icons/icon.svg" />
