@@ -157,7 +157,7 @@ function isFiniteNumber(value: unknown): value is number {
  * timezone=auto means the dates are already the local ones, so there is no
  * boundary to work out here.
  */
-export function parseDaily(body: Record<string, unknown>): DailyForecast[] {
+function parseDaily(body: Record<string, unknown>): DailyForecast[] {
   const daily = body['daily'];
 
   if (typeof daily !== 'object' || daily === null) {
