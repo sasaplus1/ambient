@@ -26,4 +26,6 @@ declare module 'node:fs' {
     path: string,
     options: { recursive: true; withFileTypes: true },
   ): Dirent[];
+
+  export function readFileSync(path: string, encoding: 'utf8'): string;
 }
