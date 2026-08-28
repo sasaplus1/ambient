@@ -1,21 +1,45 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import {
   conditionFor,
+  fetchCurrentWeather,
   iconFor,
   localDate,
-  parseDaily,
   type DailyForecast,
 } from './weather';
 
+const stubFetch = (daily: unknown) => {
+  const body = {
+    current: { temperature_2m: 30, weather_code: 2, is_day: 1 },
+    daily,
+  };
+
+  vi.stubGlobal(
+    'fetch',
+    vi.fn(async () => ({
+      ok: true,
+      json: async () => body,
+    })),
+  );
+};
+
+const fetchDaily = async () =>
+  (await fetchCurrentWeather({ latitude: 35.4437, longitude: 139.638 })).daily;
+
 /**
- * Open-Meteo answers with four arrays side by side rather than a list of days.
- * Everything here is about what happens when they stop agreeing with each
- * other, because that is the shape of the bug this guards against: a Tuesday
- * paired with Wednesday's high is worse than no forecast at all.
+ * Open-Meteo answers with four arrays side by side rather than a list of
+ * days. Everything here is about what happens when they stop agreeing with
+ * each other, because that is the shape of the bug this guards against: a
+ * Tuesday paired with Wednesday's high is worse than no forecast at all.
+ *
+ * Going through `fetchCurrentWeather` rather than a bare parser also keeps
+ * the request itself honest, since a stubbed `fetch` is the only place that
+ * can see the URL that goes out.
  */
-describe('parseDaily', () => {
-  const body = (daily: unknown) => ({ daily });
+describe('fetchCurrentWeather', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
 
   const wellFormed = {
     time: ['2026-08-19', '2026-08-20'],
@@ -24,52 +48,72 @@ describe('parseDaily', () => {
     temperature_2m_min: [23.6, 24.6],
   };
 
-  it('pairs the arrays up by position', () => {
-    expect(parseDaily(body(wellFormed))).toEqual<DailyForecast[]>([
+  it('pairs the arrays up by position', async () => {
+    stubFetch(wellFormed);
+
+    expect(await fetchDaily()).toEqual<DailyForecast[]>([
       { date: '2026-08-19', weatherCode: 2, max: 32.2, min: 23.6 },
       { date: '2026-08-20', weatherCode: 61, max: 31, min: 24.6 },
     ]);
   });
 
-  it('drops everything when one array is short', () => {
-    expect(
-      parseDaily(body({ ...wellFormed, temperature_2m_min: [23.6] })),
-    ).toEqual([]);
+  it('drops everything when one array is short', async () => {
+    stubFetch({ ...wellFormed, temperature_2m_min: [23.6] });
+
+    expect(await fetchDaily()).toEqual([]);
   });
 
-  it('drops everything when one value is not a number', () => {
-    expect(
-      parseDaily(body({ ...wellFormed, temperature_2m_max: [32.2, null] })),
-    ).toEqual([]);
+  it('drops everything when one value is not a number', async () => {
+    stubFetch({ ...wellFormed, temperature_2m_max: [32.2, null] });
+
+    expect(await fetchDaily()).toEqual([]);
   });
 
-  it('drops everything when a date is not a string', () => {
-    expect(
-      parseDaily(body({ ...wellFormed, time: ['2026-08-19', 20260820] })),
-    ).toEqual([]);
+  it('drops everything when a date is not a string', async () => {
+    stubFetch({ ...wellFormed, time: ['2026-08-19', 20260820] });
+
+    expect(await fetchDaily()).toEqual([]);
   });
 
   it.each([
-    ['no daily block', {}],
-    ['daily is null', body(null)],
-    ['daily is not an object', body('tomorrow')],
-    ['an array is missing', body({ time: ['2026-08-19'] })],
-    ['an array is not an array', body({ ...wellFormed, weather_code: 2 })],
-  ])('returns nothing for %s', (_label, input) => {
-    expect(parseDaily(input as Record<string, unknown>)).toEqual([]);
+    ['no daily block', undefined],
+    ['daily is null', null],
+    ['daily is not an object', 'tomorrow'],
+    ['an array is missing', { time: ['2026-08-19'] }],
+    ['an array is not an array', { ...wellFormed, weather_code: 2 }],
+  ])('returns nothing for %s', async (_label, daily) => {
+    stubFetch(daily);
+
+    expect(await fetchDaily()).toEqual([]);
   });
 
-  it('accepts an empty forecast without complaint', () => {
-    expect(
-      parseDaily(
-        body({
-          time: [],
-          weather_code: [],
-          temperature_2m_max: [],
-          temperature_2m_min: [],
-        }),
-      ),
-    ).toEqual([]);
+  it('accepts an empty forecast without complaint', async () => {
+    stubFetch({
+      time: [],
+      weather_code: [],
+      temperature_2m_max: [],
+      temperature_2m_min: [],
+    });
+
+    expect(await fetchDaily()).toEqual([]);
+  });
+
+  it('asks for the daily and current fields the row needs, for five days, in local time', async () => {
+    stubFetch(wellFormed);
+
+    await fetchCurrentWeather({ latitude: 35.4437, longitude: 139.638 });
+
+    const fetchMock = fetch as unknown as ReturnType<typeof vi.fn>;
+    const [url] = fetchMock.mock.calls[0] as [URL];
+
+    expect(url.searchParams.get('daily')).toBe(
+      'weather_code,temperature_2m_max,temperature_2m_min',
+    );
+    expect(url.searchParams.get('forecast_days')).toBe('5');
+    expect(url.searchParams.get('timezone')).toBe('auto');
+    expect(url.searchParams.get('current')).toBe(
+      'temperature_2m,weather_code,is_day',
+    );
   });
 });
 
