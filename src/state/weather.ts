@@ -2,18 +2,17 @@ import { effect, signal, untracked } from '@preact/signals';
 
 import { logger } from '../lib/logger';
 import { loadRecord, saveRecord } from '../lib/storage';
+import { fetchCurrentWeather, type CurrentWeather } from '../lib/weather';
 import {
-  fetchCurrentWeather,
-  type CurrentWeather,
-  type Coordinates,
-  type DailyForecast,
-} from '../lib/weather';
+  LOCATION_KEY,
+  parseLocation,
+  parseWeather,
+  SCHEMA_VERSION,
+  WEATHER_KEY,
+  type StoredLocation,
+} from '../lib/weatherSchema';
 
 import { settings } from './settings';
-
-const LOCATION_KEY = 'ambient:location';
-const WEATHER_KEY = 'ambient:weather';
-const SCHEMA_VERSION = 1;
 
 /** Refetch once the reading is older than this. */
 const MAX_AGE_MS = 30 * 60 * 1000;
@@ -21,106 +20,7 @@ const MAX_AGE_MS = 30 * 60 * 1000;
 /** How often to reconsider whether the reading has gone stale. */
 const CHECK_INTERVAL_MS = 5 * 60 * 1000;
 
-export type StoredLocation = Coordinates & {
-  /** Shown in settings so it is clear which place is in use. */
-  label: string;
-};
-
 export type WeatherStatus = 'idle' | 'loading' | 'ready' | 'error';
-
-function isFiniteNumber(value: unknown): value is number {
-  return typeof value === 'number' && Number.isFinite(value);
-}
-
-export function parseLocation(
-  raw: Record<string, unknown> | undefined,
-): StoredLocation | null {
-  if (!raw) {
-    return null;
-  }
-
-  const latitude = raw['latitude'];
-  const longitude = raw['longitude'];
-  const label = raw['label'];
-
-  if (!isFiniteNumber(latitude) || !isFiniteNumber(longitude)) {
-    return null;
-  }
-
-  return {
-    latitude,
-    longitude,
-    label: typeof label === 'string' ? label : '',
-  };
-}
-
-/**
- * The stored forecast, distrusted the same way everything else here is.
- *
- * A day missing a field takes the whole row with it rather than leaving a gap
- * in the middle of the week. There is nothing to lose by it: the next fetch is
- * along within the half hour, and the temperature above the row is unaffected.
- */
-export function parseStoredDaily(stored: unknown): DailyForecast[] {
-  if (!Array.isArray(stored)) {
-    return [];
-  }
-
-  const days: DailyForecast[] = [];
-
-  for (const entry of stored) {
-    if (typeof entry !== 'object' || entry === null) {
-      return [];
-    }
-
-    const record = entry as Record<string, unknown>;
-    const date = record['date'];
-    const weatherCode = record['weatherCode'];
-    const max = record['max'];
-    const min = record['min'];
-
-    if (
-      typeof date !== 'string' ||
-      !isFiniteNumber(weatherCode) ||
-      !isFiniteNumber(max) ||
-      !isFiniteNumber(min)
-    ) {
-      return [];
-    }
-
-    days.push({ date, weatherCode, max, min });
-  }
-
-  return days;
-}
-
-export function parseWeather(
-  raw: Record<string, unknown> | undefined,
-): CurrentWeather | null {
-  if (!raw) {
-    return null;
-  }
-
-  const temperature = raw['temperature'];
-  const weatherCode = raw['weatherCode'];
-  const fetchedAt = raw['fetchedAt'];
-
-  if (
-    !isFiniteNumber(temperature) ||
-    !isFiniteNumber(weatherCode) ||
-    !isFiniteNumber(fetchedAt)
-  ) {
-    return null;
-  }
-
-  return {
-    temperature,
-    weatherCode,
-    isDay: raw['isDay'] !== false,
-    daily: parseStoredDaily(raw['daily']),
-    fetchedAt,
-  };
-}
 
 export const location = signal<StoredLocation | null>(
   parseLocation(loadRecord(LOCATION_KEY, SCHEMA_VERSION)),

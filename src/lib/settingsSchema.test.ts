@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { DEFAULT_SETTINGS, parseSettings } from './settings';
+import { DEFAULT_SETTINGS, parseSettings } from './settingsSchema';
 
 /**
  * Nothing stored is trusted. The promise is that one bad field costs only

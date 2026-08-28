@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { parseLocation, parseStoredDaily, parseWeather } from './weather';
+import { parseLocation, parseStoredDaily, parseWeather } from './weatherSchema';
 
 /**
  * The stored side of the same distrust. What comes back from localStorage was
