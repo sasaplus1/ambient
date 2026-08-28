@@ -20,7 +20,7 @@ There is no server. It runs on static hosting such as GitHub Pages.
 - Interface in Japanese or English, following the browser by default
 - Fullscreen and screen wake lock
 - A debug HUD for watching a device that has been running for days
-- Installable as a PWA, though it does not start offline
+- Installable as a PWA, with offline startup after the first successful load
 
 Out of the box it shows the analog clock and the calendar. The date and the
 weather are there to be turned on.

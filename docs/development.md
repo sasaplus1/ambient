@@ -51,26 +51,30 @@ Attaching DevTools to a device left on a shelf is awkward, so the log can be
 overlaid on the running dashboard instead. Turn it on under Debug in the
 settings.
 
-The status line reads uptime, network, weather age, error count and the commit
-the build came from.
+The status line reads uptime, network, weather age, error count, service worker
+state and the commit the build came from.
 
 ```text
-UP 3d4h | NET OK | WX 12m | ERR 0 | 86ba0bd
+UP 3d4h | NET OK | WX 12m | ERR 0 | SW ready | 86ba0bd
 ```
 
 ## On service workers
 
-This app ships no service worker.
+The production build generates a versioned service worker and precaches one app
+shell: `index.html`, the hashed JavaScript and CSS bundles, the manifest and the
+icons. Navigation is cache-first, so the dashboard can start without waiting for
+a slow or absent connection. Requests outside that shell are never added to the
+cache, and cross-origin weather requests are not intercepted.
 
-A PWA is installable with a manifest, icons and HTTPS alone, so home screen
-installation and fullscreen launch work without one. The only thing given up is
-offline startup.
+The page checks for an update whenever it becomes visible and every six hours
+while it remains open. A new worker waits until the page is hidden before taking
+control, then the page reloads once onto the new version. Activation removes the
+previous version's cache so storage stays bounded to one shell.
 
-On a device that runs for days, a stale cache that refuses to hand over an
-update hurts more, and on hardware where attaching DevTools is awkward you
-would never notice it happening. The debug HUD now exists to watch that, so a
-service worker could follow — but it has not been added, and offline startup is
-not supported today.
+The debug HUD reports the current state as `SW unsupported`, `SW none`,
+`SW installing`, `SW ready` or `SW waiting`. Worker registration and update
+failures are also recorded in the HUD log without preventing the app from
+running.
 
 ## Regenerating icons
 
