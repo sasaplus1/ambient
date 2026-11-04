@@ -11,10 +11,6 @@ on:
     types:
       - submitted
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 defaults:
   run:
     shell: bash
@@ -24,12 +20,16 @@ permissions: {}
 jobs:
   gate:
     if: ${{ github.event_name != 'pull_request_review' || github.event.review.state == 'approved' }}
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       statuses: write
       checks: read
       pull-requests: read
+      actions: read
     steps:
       - uses: pkgdeps/automerge-gate@fe5d7cd2fc17778dc42f6916f9d9990cb259ad01 # v5.0.0
         with:
