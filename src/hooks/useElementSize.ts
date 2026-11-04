@@ -12,7 +12,7 @@ export type ElementSize = {
  * size follows device rotation and the browser UI collapsing too.
  */
 export function useElementSize<T extends Element>(): [
-  RefObject<T>,
+  RefObject<T | null>,
   ElementSize,
 ] {
   const ref = useRef<T>(null);
