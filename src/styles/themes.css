@@ -55,6 +55,16 @@
   /* only, for the reason given where the themes are applied */
   color-scheme: only dark;
 
+  /*
+   * On the root rather than the body, because the backdrop sits at a negative
+   * z-index and so paints below the background of every non-positioned block
+   * in the document - the body among them. A background on the body escapes
+   * that only by propagating to the canvas, which it stops doing the moment
+   * anything gives the root one of its own. The root's always propagates, so
+   * putting it here leaves nothing in between that could cover the gradient.
+   */
+  background-color: var(--bg);
+
   --surface-border: rgb(255 255 255 / 0.12);
   --scrim: rgb(0 0 0 / 0.6);
 
@@ -77,9 +87,6 @@
 }
 
 /*
- * Only the flat colour here. The gradient belongs to the theme too, but it is
- * painted by ThemeBackdrop, which can cross-fade one into the next.
+ * The flat colour is on :root above. The gradient belongs to the theme too,
+ * but it is painted by ThemeBackdrop, which can cross-fade one into the next.
  */
-body {
-  background-color: var(--bg);
-}
