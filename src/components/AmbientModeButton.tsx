@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 
 import { useFullscreen } from '../hooks/useFullscreen';
 import { useWakeLock } from '../hooks/useWakeLock';
+import { startKeepAlive, stopKeepAlive } from '../state/keepAlive';
 import { displayText } from '../state/locale';
 
 import './AmbientModeButton.css';
@@ -62,6 +63,7 @@ export function AmbientModeButton() {
       setEngaged(false);
       void fullscreen.exit();
       void wakeLock.release();
+      stopKeepAlive();
 
       return;
     }
@@ -69,6 +71,7 @@ export function AmbientModeButton() {
     setEngaged(true);
     void fullscreen.enter();
     void wakeLock.request();
+    startKeepAlive();
   };
 
   return (

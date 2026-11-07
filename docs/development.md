@@ -76,6 +76,31 @@ The debug HUD reports the current state as `SW unsupported`, `SW none`,
 failures are also recorded in the HUD log without preventing the app from
 running.
 
+## Keeping Silk open
+
+Amazon Echo Show returns to its home screen after a few minutes without input,
+and Amazon offers no setting to stop it. Playing media holds it off, so on Silk
+the always-on button also starts a near-silent WAV built in code. Nothing is
+shown for it and no other browser creates the audio at all.
+
+The clip is a 100 Hz square wave at one unit of amplitude rather than digital
+silence, because a decoder that finds nothing but zeroes may drop the session
+the trick depends on. At fifteen seconds of 8 kHz mono it costs about 234 KB,
+and the length is a single constant.
+
+The technique comes from [keep-silk-open][], which refetches an MP3 with a
+changing query string every cycle. Two changes were needed here. The source is
+a blob URL, minted fresh on each `ended` event and revoked after, which keeps
+the same changing-URL behaviour while avoiding the network entirely - a query
+string would otherwise miss the precache, since the worker matches on the full
+URL, and the audio would stop whenever the device was offline. And `loop` is
+still not used: it suppresses `ended` and the whole run of load and play events
+with it, and whether Silk's idle timer watches for those is not known.
+
+[keep-silk-open]: https://gitlab.com/DaGammla/keep-silk-open
+
+None of this has been tried on real hardware.
+
 ## Regenerating icons
 
 The SVG files under `public/icons/` are the sources. PNGs are produced with ImageMagick.
