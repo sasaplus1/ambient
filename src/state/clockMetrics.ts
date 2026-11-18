@@ -1,8 +1,6 @@
 export type ClockRates = {
-  /** Device pixels per CSS pixel the dial is actually drawn at. */
+  /** Device pixels per CSS pixel the dial is drawn at. */
   ratio: number;
-  /** What the device asked for, which may be more than it was given. */
-  offered: number;
   /**
    * Animation frames delivered per second, drawn or not. While a hand is
    * sweeping this is also the display's refresh rate, since every frame the
@@ -31,7 +29,6 @@ let frames = 0;
 let draws = 0;
 let since = 0;
 let ratio = 0;
-let offered = 0;
 
 export function countFrame(): void {
   frames += 1;
@@ -41,16 +38,10 @@ export function countDraw(): void {
   draws += 1;
 }
 
-/**
- * A clock canvas has been sized, which is also when it first appears.
- *
- * `askedFor` is what the device offered, so that a ratio held down to a cap can
- * be told apart from a device that never asked for more than the cap allows.
- */
-export function noteCanvas(drawnAt: number, askedFor: number): void {
+/** A clock canvas has been sized, which is also when it first appears. */
+export function noteCanvas(drawnAt: number): void {
   live += 1;
   ratio = drawnAt;
-  offered = askedFor;
   frames = 0;
   draws = 0;
   since = performance.now();
@@ -85,7 +76,6 @@ export function takeClockRates(): ClockRates | undefined {
 
   const rates: ClockRates = {
     ratio,
-    offered,
     fps: (frames * 1000) / elapsed,
     draws: (draws * 1000) / elapsed,
   };
@@ -114,13 +104,8 @@ function rateText(value: number): string {
 
 /** One line for the debug overlay. */
 export function formatClockRates(rates: ClockRates): string {
-  const ratio =
-    rates.offered > rates.ratio
-      ? `${ratioText(rates.offered)}>${ratioText(rates.ratio)}`
-      : ratioText(rates.ratio);
-
   return [
-    `DPR ${ratio}`,
+    `DPR ${ratioText(rates.ratio)}`,
     `FPS ${rateText(rates.fps)}`,
     `DRAW ${rateText(rates.draws)}`,
   ].join(' | ');
