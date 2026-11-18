@@ -107,7 +107,7 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
 
     dialCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
     handsCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    noteCanvas(ratio, ratio);
+    noteCanvas(ratio);
 
     let colors = readColors(hands);
     // A canvas has no stylesheet of its own, so the face has to be looked up
