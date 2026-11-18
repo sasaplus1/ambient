@@ -31,16 +31,6 @@ type AnalogClockProps = {
   theme: string;
 };
 
-/**
- * The most device pixels a dial is drawn at.
- *
- * Everything that rasterises - the clear of the whole face included - grows
- * with the square of this, so a phone offering 2.75 asks for nearly twice the
- * pixels of one offering 2. What that buys on a face made of hairline strokes
- * is very little, and this dashboard is left running for days at a time.
- */
-const MAX_RATIO = 2;
-
 /** How long a theme change takes, read from the same place the CSS uses. */
 function fadeDuration(from: Element): number {
   const declared = readCssVar('--theme-fade', from);
@@ -106,8 +96,7 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
     }
 
     // devicePixelRatio changes on rotation and zoom, so read it on every setup
-    const offered = window.devicePixelRatio || 1;
-    const ratio = Math.min(offered, MAX_RATIO);
+    const ratio = window.devicePixelRatio || 1;
 
     for (const canvas of [dial, hands]) {
       canvas.width = Math.round(size * ratio);
@@ -118,7 +107,7 @@ export function AnalogClock({ secondHand, numerals, theme }: AnalogClockProps) {
 
     dialCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
     handsCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
-    noteCanvas(ratio, offered);
+    noteCanvas(ratio, ratio);
 
     let colors = readColors(hands);
     // A canvas has no stylesheet of its own, so the face has to be looked up
