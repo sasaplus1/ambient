@@ -145,7 +145,7 @@ describe('startKeepAlive', () => {
 });
 
 describe('the ended handler', () => {
-  it('revokes the old url, mints a new one and replays from the start', () => {
+  it('revokes the old url, mints a new one and replays from the start', async () => {
     startKeepAlive();
 
     const audio = only();
@@ -153,13 +153,15 @@ describe('the ended handler', () => {
     audio.currentTime = 12;
     audio.emit('ended');
 
-    expect(revokeObjectURL).toHaveBeenCalledWith('blob:fake/1');
+    await vi.waitFor(() => {
+      expect(revokeObjectURL).toHaveBeenCalledWith('blob:fake/1');
+    });
     expect(audio.src).toBe('blob:fake/2');
     expect(audio.currentTime).toBe(0);
     expect(audio.play).toHaveBeenCalledTimes(2);
   });
 
-  it('keeps minting a fresh url on every cycle', () => {
+  it('keeps minting a fresh url on every cycle', async () => {
     startKeepAlive();
 
     const audio = only();
@@ -169,7 +171,9 @@ describe('the ended handler', () => {
     audio.emit('ended');
 
     expect(audio.src).toBe('blob:fake/4');
-    expect(revokeObjectURL).toHaveBeenCalledTimes(3);
+    await vi.waitFor(() => {
+      expect(revokeObjectURL).toHaveBeenCalledTimes(3);
+    });
     expect(audio.play).toHaveBeenCalledTimes(4);
   });
 });
@@ -217,19 +221,79 @@ describe('stopKeepAlive', () => {
 });
 
 describe('a refused play', () => {
-  it('logs it, tears down and never retries', async () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
     FakeAudio.refusePlay = true;
+  });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('logs it and keeps the element alive', async () => {
     startKeepAlive();
 
     const audio = only();
 
-    await vi.waitFor(() => {
-      expect(audio.pause).toHaveBeenCalledTimes(1);
-    });
+    await vi.advanceTimersByTimeAsync(0);
 
     expect(errorCount.value).toBe(1);
+    expect(audio.pause).not.toHaveBeenCalled();
+  });
+
+  it('retries with a fresh url after five seconds', async () => {
+    startKeepAlive();
+
+    const audio = only();
+
+    await vi.advanceTimersByTimeAsync(4999);
     expect(audio.play).toHaveBeenCalledTimes(1);
+
+    await vi.advanceTimersByTimeAsync(1);
+    expect(audio.play).toHaveBeenCalledTimes(2);
+    expect(audio.src).toBe('blob:fake/2');
     expect(revokeObjectURL).toHaveBeenCalledWith('blob:fake/1');
+  });
+
+  it('keeps retrying until play succeeds, then cycles on ended', async () => {
+    startKeepAlive();
+
+    const audio = only();
+
+    await vi.advanceTimersByTimeAsync(10000);
+    expect(audio.play).toHaveBeenCalledTimes(3);
+
+    FakeAudio.refusePlay = false;
+    await vi.advanceTimersByTimeAsync(5000);
+    expect(audio.play).toHaveBeenCalledTimes(4);
+
+    await vi.advanceTimersByTimeAsync(60000);
+    expect(audio.play).toHaveBeenCalledTimes(4);
+
+    audio.emit('ended');
+    expect(audio.play).toHaveBeenCalledTimes(5);
+  });
+
+  it('stops retrying once stopped', async () => {
+    startKeepAlive();
+
+    const audio = only();
+
+    await vi.advanceTimersByTimeAsync(0);
+    stopKeepAlive();
+    await vi.advanceTimersByTimeAsync(60000);
+
+    expect(audio.play).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not retry a failure that lands after a stop', async () => {
+    startKeepAlive();
+
+    const audio = only();
+
+    stopKeepAlive();
+    await vi.advanceTimersByTimeAsync(60000);
+
+    expect(audio.play).toHaveBeenCalledTimes(1);
   });
 });
