@@ -4,35 +4,48 @@ import { logger } from '../lib/logger';
 import { createNearSilentWav } from '../lib/silentAudio';
 
 const SECONDS = 15;
+const RETRY_MS = 5000;
 
 let audio: HTMLAudioElement | null = null;
-let blob: Blob | null = null;
 let objectUrl: string | null = null;
 let onEnded: (() => void) | null = null;
+let retryTimer: ReturnType<typeof setTimeout> | null = null;
 
 export function isSilk(userAgent: string): boolean {
   return userAgent.toLowerCase().includes('silk');
 }
 
-function releaseUrl(): void {
-  if (objectUrl) {
-    URL.revokeObjectURL(objectUrl);
-    objectUrl = null;
+function cancelRetry(): void {
+  if (retryTimer !== null) {
+    clearTimeout(retryTimer);
+    retryTimer = null;
   }
 }
 
-function mintUrl(source: Blob): string {
-  releaseUrl();
+async function cycle(element: HTMLAudioElement, source: Blob): Promise<void> {
+  const previous = objectUrl;
+
   objectUrl = URL.createObjectURL(source);
+  element.src = objectUrl;
+  element.currentTime = 0;
 
-  return objectUrl;
-}
-
-function attempt(element: HTMLAudioElement): void {
-  void element.play().catch((error: unknown) => {
+  try {
+    await element.play();
+  } catch (error: unknown) {
     logger.error('keep-alive', `play failed: ${String(error)}`);
-    stopKeepAlive();
-  });
+
+    if (audio === element) {
+      cancelRetry();
+      retryTimer = setTimeout(() => {
+        retryTimer = null;
+        void cycle(element, source);
+      }, RETRY_MS);
+    }
+  } finally {
+    if (previous) {
+      URL.revokeObjectURL(previous);
+    }
+  }
 }
 
 export function startKeepAlive(): void {
@@ -40,20 +53,15 @@ export function startKeepAlive(): void {
     return;
   }
 
-  blob = new Blob([createNearSilentWav(SECONDS)], { type: 'audio/wav' });
-
+  const source = new Blob([createNearSilentWav(SECONDS)], {
+    type: 'audio/wav',
+  });
   const element = new Audio();
 
-  element.src = mintUrl(blob);
-
   onEnded = () => {
-    if (!audio || !blob) {
-      return;
+    if (audio === element) {
+      void cycle(element, source);
     }
-
-    audio.src = mintUrl(blob);
-    audio.currentTime = 0;
-    attempt(audio);
   };
 
   element.addEventListener('ended', onEnded);
@@ -61,18 +69,21 @@ export function startKeepAlive(): void {
   audio = element;
   logger.info('keep-alive', 'started');
 
-  attempt(element);
+  void cycle(element, source);
 }
 
 export function stopKeepAlive(): void {
   const element = audio;
 
   audio = null;
-  blob = null;
+  cancelRetry();
+
+  if (objectUrl) {
+    URL.revokeObjectURL(objectUrl);
+    objectUrl = null;
+  }
 
   if (!element) {
-    releaseUrl();
-
     return;
   }
 
@@ -85,6 +96,5 @@ export function stopKeepAlive(): void {
   element.removeAttribute('src');
   element.load();
 
-  releaseUrl();
   logger.info('keep-alive', 'stopped');
 }
